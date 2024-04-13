@@ -75,4 +75,9 @@ public class RendezVousService implements IService<RendezVous>{
         }
         return rendezVousList;
     }
+
+    @Override
+    public RendezVous selectWhere(int id) throws SQLException {
+        return null;
+    }
 }

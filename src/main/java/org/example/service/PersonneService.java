@@ -57,4 +57,9 @@ public class PersonneService implements IService<Personne> {
       }
         return personnes;
     }
+
+    @Override
+    public Personne selectWhere(int id) throws SQLException {
+        return null;
+    }
 }
