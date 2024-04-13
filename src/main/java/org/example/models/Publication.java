@@ -1,6 +1,5 @@
 package org.example.models;
 
-
 import java.time.LocalDateTime;
 
 public class Publication {
@@ -32,7 +31,6 @@ public class Publication {
         date_c = dateC;
         date_m = dateM;
         this.vues = vues;
-
         this.titre = titre;
         this.image = image;
     }
@@ -49,6 +47,19 @@ public class Publication {
         this.vues = 0;
         this.titre = titre;
         this.image = image;
+    }
+    public Publication(User user, Categorie categorie, SousCategorie sousCategorie, String titre, String contenu , Boolean comOuvert, Boolean anonyme) {
+        this.user = user;
+        this.categorie = categorie;
+        this.sousCategorie = sousCategorie;
+        this.contenu = contenu;
+        com_ouvert = comOuvert;
+        this.anonyme = anonyme;
+        this.valide = false;
+        date_c = LocalDateTime.now();
+        date_m = LocalDateTime.now();
+        this.vues = 0;
+        this.titre = titre;
     }
     public int getId() {
         return id;
@@ -129,24 +140,6 @@ public class Publication {
     public void setImage(String image) {
         this.image = image;
     }
-    @Override
-    public String toString() {
-        return "Publication{" +
-                "id=" + id +
-                ", user_id=" + user +
-                ", categorie_id=" + categorie +
-                ", sousCategorie_id=" + sousCategorie +
-                ", contenu='" + contenu + '\'' +
-                ", com_ouvert=" + com_ouvert +
-                ", anonyme=" + anonyme +
-                ", valide=" + valide +
-                ", date_c=" + date_c +
-                ", date_m=" + date_m +
-                ", vues=" + vues +
-                ", titre='" + titre + '\'' +
-                ", image='" + image + '\'' +
-                '}';
-    }
 
     public Categorie getCategorie() {
         return categorie;
@@ -171,4 +164,23 @@ public class Publication {
     public void setUser(User user) {
         this.user = user;
     }
+    @Override
+    public String toString() {
+        return "Publication{" +
+                "id=" + id +
+                ", user_id=" + user +
+                ", categorie_id=" + categorie +
+                ", sousCategorie_id=" + sousCategorie +
+                ", contenu='" + contenu + '\'' +
+                ", com_ouvert=" + com_ouvert +
+                ", anonyme=" + anonyme +
+                ", valide=" + valide +
+                ", date_c=" + date_c +
+                ", date_m=" + date_m +
+                ", vues=" + vues +
+                ", titre='" + titre + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
+
 }

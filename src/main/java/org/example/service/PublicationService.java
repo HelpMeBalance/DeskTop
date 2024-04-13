@@ -102,7 +102,7 @@ public class PublicationService implements IService <Publication>{
         }
         return publications;
     }
-    public List<Publication> select(String searchTerm) throws SQLException{
+    public List<Publication> search(String searchTerm) throws SQLException{
         List<Publication> publications = new ArrayList<>();
         String sql = "SELECT * FROM publication";
         if (searchTerm != null && !searchTerm.isEmpty()) {
@@ -201,7 +201,7 @@ public class PublicationService implements IService <Publication>{
             sortField = "date_m"; // Default sort field
         }
         if (!Arrays.asList("asc", "desc").contains(sortOrder)) {
-            sortOrder = "asc"; // Default sort order
+            sortOrder = "desc"; // Default sort order
         }
         String sql = "SELECT * FROM publication ORDER BY " + sortField + " " + sortOrder.toUpperCase()+" LIMIT ? OFFSET ?";
         PreparedStatement preparedStatement = connect.prepareStatement(sql );
