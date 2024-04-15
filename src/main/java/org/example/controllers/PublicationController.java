@@ -8,11 +8,17 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.models.Publication;
 import org.example.service.CommentaireService;
@@ -131,7 +137,7 @@ public class PublicationController implements Initializable {
                     viewButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
                         // Handle view action here using publication.getId() or other relevant data
-                        System.out.println("View button clicked for publication with ID: " + publication.getId());
+                        showPublicationDetails(publication);
                     });
 
                     updateButton.setOnAction(event -> {
@@ -167,7 +173,7 @@ public class PublicationController implements Initializable {
         }
     }
     private void showDeleteConfirmationDialog(Publication publication) throws SQLException {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Confirm Deletion");
         alert.setHeaderText("Are you sure you want to delete the publication ?");
         alert.setContentText("Publication Title: " + publication.getTitre() + "\n Posted By : "+publication.getUser().getLastname()+" "+publication.getUser().getFirstname());
@@ -183,6 +189,85 @@ public class PublicationController implements Initializable {
             Publications.refresh();
         }
     }
+    private void showPublicationDetails(Publication publication) {
+        // Create a new Dialog
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("HelpMeBalance");
+
+        // Create a label for the title
+        Label titleLabel = new Label("Publication Details");
+        titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+
+        ImageView imageView = new ImageView();
+        try {
+            String imageFile = "file:///C:/Users/HP/Desktop/PiDev HelpMeBalance/Web_2/public/uploads/pub_pictures/" + publication.getImage();
+            Image image = new Image(imageFile);
+            imageView.setImage(image);
+            imageView.setFitWidth(200);
+            imageView.setFitHeight(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Set the content text with publication details
+        Label contentLabel = new Label(
+                "Categorie : "+publication.getCategorie().getNom() + "\n" +
+                        "Sub-Categorie : "+publication.getSous_categorie().getNom() + "\n" +
+                        "Title: " + publication.getTitre() + "\n" +
+                        "Content: \n" + publication.getContenu() + "\n"
+        );
+
+        // Create an HBox to hold the title and image, and center them
+        VBox titleImageBox = new VBox();
+        titleImageBox.getChildren().addAll(titleLabel, imageView);
+        titleImageBox.setAlignment(Pos.CENTER);
+        titleImageBox.setSpacing(10);
+
+        // Create a VBox to hold the content
+        VBox contentBox = new VBox();
+        contentBox.getChildren().addAll(titleImageBox, contentLabel);
+        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setAlignment(Pos.CENTER_LEFT);
+        String val=(publication.getValide())?"Invalidate":"Validate";
+        // Create a button for validating the publication
+                Button validateButton = new Button(val);
+                HBox buttonBox = new HBox();
+                buttonBox.getChildren().add(validateButton);
+                buttonBox.setAlignment(Pos.CENTER);
+        // Create an action for the validate button
+                validateButton.setOnAction(event -> {
+                    try {
+                        pS.validate(publication.getId()); // Call the validate function
+                        publicationsList.replaceAll(pub -> {
+                            if (pub.getId() == publication.getId()) {
+                                // Update the publication that was validated
+                                pub.setValide(!pub.getValide()); // Assuming there's a property for validation status
+                            }
+                            return pub;
+                        });
+                        Publications.refresh();
+                        dialog.close(); // Close the dialog after validation
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+        // Set the content of the dialog
+        dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
+        // Set the button as the action for the dialog
+               dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+        dialog.getDialogPane().addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (!dialog.getDialogPane().getBoundsInLocal().contains(event.getX(), event.getY())) {
+                dialog.close();
+            }
+        });
+
+        // Show the dialog
+        dialog.showAndWait();
+    }
+
+
     public void action()
     {
         try {
