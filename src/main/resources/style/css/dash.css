@@ -1,0 +1,349 @@
+
+
+/*******
+
+        @Skeleton
+
+******/
+
+.root {
+
+}
+
+.label {
+}
+
+Text, .text, .label {
+    -fx-font-family : Roboto Regular;
+}
+
+.scroll-pane,
+.scroll-pane .viewport:focused,
+.scroll-pane .viewport {
+    -fx-border-color : transparent;
+    -fx-background-color : transparent;
+    -fx-effect : none;
+    -fx-padding : 0px;
+    -fx-background-insets : 0px;
+    -fx-border-width : 0px;
+}
+
+/*******
+
+        @Dashboard
+
+******/
+
+.center-layout .bar {
+    -fx-background-color : -fx-background;
+    -fx-min-height : 40px;
+    -fx-border-color : -light-gray-2;
+    -fx-border-width : 0 0 1 0;
+}
+
+.hamburger {
+    -fx-background-color : transparent;
+
+    -fx-border-color: -light-gray-2;
+    -fx-border-width: 1px;
+    -fx-border-radius: 100px;
+    -fx-cursor: hand;
+}
+
+.hamburger .icon {
+    -fx-fill : -text-color;
+}
+
+.snack-bar .label-action {
+    -fx-padding : 2px;
+    -fx-border-width : 1px;
+    -fx-background-color : white;
+    -fx-border-color : white;
+    -fx-background-radius : 3px;
+    -fx-border-radius : 3px;
+    -fx-text-fill : -snack-color;
+}
+
+.snack-bar .label-action:pressed   {
+    -fx-background-color : transparent;
+    -fx-text-fill : white;
+}
+
+.snack-bar .info-text {
+    -fx-text-fill : white;
+}
+
+#wrapper .alert-container {
+    -fx-background-radius : 50;
+    -fx-padding : 10 0 0 0;
+}
+
+#wrapper .alert-body {
+    -fx-background-color : white;
+    -fx-padding : 0px;
+    -fx-background-radius : 10;
+}
+
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-padding : 30px 0px 0px 0px;
+}
+
+
+.bubble-item {
+    -fx-pref-width : 30px;
+    -fx-min-width : 30px;
+    -fx-max-width : 30px;
+
+    -fx-pref-height : 30px;
+    -fx-min-height : 30px;
+    -fx-max-height : 30px;
+
+    -fx-border-color : -cyan;
+
+    -fx-border-radius : 100px;
+    -fx-background-radius : 100px;
+
+    -fx-background-color : -fx-accent;
+    -fx-border-color : -fx-accent;
+    -fx-border-width : 4px;
+    -fx-cursor : hand;
+}
+
+.bubble-item:selected {
+    -fx-background-color : transparent;
+}
+
+
+.schedule-item .icon {
+    -fx-border-width : 2px;
+    -fx-border-radius : 100px;
+    -fx-font-weight : bold;
+}
+
+.schedule-item .title {
+    -fx-font-weight : bold;
+    -fx-font-size : 10pt;
+}
+
+.donut-chart {
+    -fx-border-color : -light-gray-2;
+}
+
+.toggle-box {
+    -fx-border-width : 2px;
+    -fx-border-color : -light-gray-2;
+    -fx-background-color : transparent;
+}
+
+.toggle-box:selected .icon {
+    -fx-fill : -fx-accent;
+}
+
+.badge-search {
+    -fx-border-width : 1px;
+    -fx-border-radius : 10px;
+    -fx-background-radius : 10px;
+    -fx-padding : 5px;
+    -fx-background-color : -light-gray;
+    -fx-border-color : -light-gray-2;
+    -fx-text-fill : -text-color;
+}
+
+.title-text {
+    -fx-text-fill : -aqua;
+}
+
+.gn-badge:hover, #box-user:hover {
+    -fx-background-color : -light-gray;
+}
+
+.overview-item {
+    -fx-border-width: 0px;
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-color;
+}
+
+.overview-item:hover {
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.overview-item Circle {
+    -fx-fill: transparent;
+}
+
+.overview-item:selected Circle {
+    -fx-fill: -fx-accent;
+}
+
+.overview-item:selected {
+    -fx-border-color: transparent;
+}
+
+.btn-option {
+    -fx-background-color: white;
+}
+
+.btn-option:focused {
+    -fx-background-color : -fx-background;
+}
+
+.fore-login {
+    -fx-background-image: url("predios.jpg");
+    -fx-background-size: cover;
+}
+
+.btn-option .text {
+    -fx-fill: -text-color;
+}
+
+.btn-option .icon {
+    -fx-fill: -text-color;
+}
+
+#tf-search .gn-text-box-base {
+    -fx-background-color: transparent;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+#tf-search {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-border-width: 0px;
+}
+
+.toggle-pay,
+.toggle-pay:selected {
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+.toggle-pay:selected {
+    -fx-background-color: -fx-accent;
+}
+.toggle-pay:selected .text {
+    -fx-fill: white;
+}
+.toggle-pay {
+    -fx-background-color: transparent;
+}
+
+.toggle-pay .text {
+    -fx-fill: -fx-accent;
+}
+
+#view-block {
+    -fx-border-radius: 10px;
+    -fx-border-color: -light-gray-2;
+    -fx-border-width: 1px;
+}
+
+.block01 {
+    -fx-background-image: url('../img/laptop.jpg');
+    -fx-background-size: stretch;
+}
+
+.block02 {
+    -fx-background-image: url('../img/office.jpg');
+    -fx-background-size: stretch;
+}
+
+.block03 {
+    -fx-background-image: url('../img/white_office.jpg');
+    -fx-background-size: stretch;
+}
+
+.radio-color {
+    -fx-border-width: 2px;
+}
+
+.radio-color .radio {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: -fx-accent;
+    -fx-border-radius: 100px;
+    -fx-background-insets: 16px;
+    -fx-border-width: 2px;
+    -fx-padding: 10px;
+}
+
+.radio-color .radio .dot {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: -fx-accent;
+    -fx-background-insets: -10px;
+        -fx-border-radius: 100px;
+}
+
+
+.radio-color:selected .radio  {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: -fx-accent;
+    -fx-border-radius: 100px;
+    -fx-border-width: 2px;
+}
+
+.radio-color:selected .radio .dot {
+    -fx-background-color: -fx-accent;
+    -fx-background-insets: -8px;
+    -fx-border-width: 2px;
+    -fx-background-radius: 100px;
+}
+
+
+
+
+
+.radio-danger .radio,
+.radio-danger .radio .dot,
+.radio-danger:selected .radio,
+.radio-danger:selected .radio .dot
+{
+    -fx-background-color: -danger;
+    -fx-border-color:  -danger;
+}
+
+
+.radio-info .radio,
+.radio-info .radio .dot,
+.radio-info:selected .radio,
+.radio-info:selected .radio .dot
+{
+    -fx-background-color: -info;
+    -fx-border-color:  -info;
+}
+
+.radio-warning .radio,
+.radio-warning .radio .dot,
+.radio-warning:selected .radio,
+.radio-warning:selected .radio .dot
+{
+    -fx-background-color: -warning;
+    -fx-border-color:  -warning;
+}
+
+.radio-success .radio,
+.radio-success .radio .dot,
+.radio-success:selected .radio,
+.radio-success:selected .radio .dot
+{
+    -fx-background-color: -success;
+    -fx-border-color:  -success;
+}
+
+.radio-secondary .radio,
+.radio-secondary .radio .dot,
+.radio-secondary:selected .radio,
+.radio-secondary:selected .radio .dot
+{
+    -fx-background-color: -secondary;
+    -fx-border-color:  -secondary;
+}
+
+
+.inner-toggle {
+    -fx-background-color: transparent;
+    -fx-border-color: -light-gray-2;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+}

@@ -198,4 +198,17 @@ public class CommentaireService implements IService <Commentaire> {
         preparedStatement.setInt(2,id);
         preparedStatement.executeUpdate();
     }
+    public int countComments(Publication publication) throws SQLException {
+        int count = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM commentaire WHERE publication_id = ?");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, publication.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        }
+        return count;
+    }
 }

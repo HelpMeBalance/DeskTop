@@ -16,12 +16,11 @@ import java.util.List;
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("AppointmentCreation.fxml"));
+            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("Publication.fxml"));
             primaryStage.setTitle("HelpMeBalance");
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
     }
-
     public static void main(String[] args) {
         launch(args);
     }
