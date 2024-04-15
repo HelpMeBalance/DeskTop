@@ -96,7 +96,7 @@ public class CommentaireService implements IService <Commentaire> {
         }
         return commentaires;
     }
-    public List<Commentaire> select(String searchTerm) throws SQLException {
+    public List<Commentaire> search(String searchTerm) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
         String sql = "SELECT * FROM commentaire";
         if (searchTerm != null && !searchTerm.isEmpty()) {
