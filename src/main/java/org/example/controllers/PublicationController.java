@@ -272,14 +272,8 @@ public class PublicationController implements Initializable {
     {
         try {
             // Load the new FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AppointmentCreation.fxml"));
-            Parent root = loader.load();
-            // Create a new Scene with the loaded FXML root node
-            Scene newScene = new Scene(root);
-            // Get the current window (stage)
-            Stage currentStage = (Stage) appointmentsButton.getScene().getWindow(); // Replace 'yourButton' with the reference to your button
-            // Set the scene of the current window to the new scene
-            currentStage.setScene(newScene);
+            System.out.println("Action");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
