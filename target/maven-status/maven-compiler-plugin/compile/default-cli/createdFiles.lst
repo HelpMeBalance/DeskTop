@@ -1,5 +1,8 @@
+org\example\controllers\BackOfficeController.class
 org\example\utils\MyDataBase.class
+org\example\controllers\PublicationController$1.class
 org\example\models\User.class
+org\example\controllers\PublicationController.class
 org\example\service\LikeService.class
 org\example\service\CommentaireService.class
 org\example\models\Publication.class
