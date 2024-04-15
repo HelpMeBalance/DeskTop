@@ -1,0 +1,79 @@
+.root {
+    -fx-background-color: white;
+}
+
+.form-container {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5;
+    -fx-padding: 30;
+    -fx-spacing: 10; /* spacing between elements */
+    -fx-alignment: center;
+}
+
+.text-field {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 40px;
+    -fx-max-height: 40px;
+    -fx-font-size: 14px;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #C7C7C7;
+    -fx-border-width: 1;
+    -fx-padding: 0 15; /* padding inside text fields */
+}
+
+.checkbox {
+    -fx-font-size: 14px;
+}
+
+.login-button, .forget-password-button {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-font-size: 14px;
+}
+
+.login-button {
+    -fx-background-color: #78AB46; /* Green color */
+    -fx-text-fill: #FFFFFF;
+    -fx-pref-width: 90px;
+}
+
+.forget-password-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #78AB46; /* Green color */
+    -fx-underline: true;
+}
+
+.google-button {
+    -fx-background-color: #DB4437; /* Google red color */
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-font-size: 14px;
+    -fx-pref-width: 200px;
+}
+
+/* Style for the registration prompt */
+.hbox {
+    -fx-alignment: center;
+    -fx-spacing: 5px;
+}
+
+.text, .hyperlink {
+    -fx-font-size: 12px;
+}
+
+.hyperlink {
+    -fx-text-fill: #0000EE; /* Hyperlink color */
+}
+.hbox {
+    -fx-background-color: #F2F2F2;
+}
+
+.image-container {
+    -fx-background-image: url('/assets/login.jpg'); /* Adjust the path */
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}

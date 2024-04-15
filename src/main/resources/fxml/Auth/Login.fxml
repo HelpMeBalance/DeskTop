@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controllers.LoginController"
+      stylesheets="@../../css/login.css"
+        >
+
+    <VBox fx:id="imageContainer" styleClass="form-container" minWidth="300" prefWidth="400">
+        <!-- Using ImageView to display the image -->
+        <ImageView fitWidth="400" fitHeight="200" preserveRatio="true">
+            <Image url="@../../assets/login.jpg" />
+        </ImageView>
+        <!-- Other contents of the VBox -->
+    </VBox>
+
+    <!-- Main layout container -->
+    <VBox styleClass="form-container" spacing="15" alignment="CENTER" minWidth="300" prefWidth="400">
+
+        <!-- Email field -->
+        <TextField fx:id="emailField" promptText="E-mail Address" styleClass="text-field"/>
+
+        <!-- Password field -->
+        <PasswordField fx:id="passwordField" promptText="Password" styleClass="text-field"/>
+
+        <!-- Remember me checkbox -->
+        <CheckBox fx:id="rememberMeCheckbox" text="Remember me" styleClass="checkbox"/>
+
+        <!-- Action buttons container -->
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Login" fx:id="loginButton" styleClass="login-button"/>
+            <Button text="Forget password?" fx:id="forgetPasswordButton" styleClass="forget-password-button"/>
+        </HBox>
+
+        <!-- Google sign-in button -->
+        <Button fx:id="googleSignInButton" text="Sign in with Google" styleClass="google-button" onAction="#handleLogin"/>
+
+        <!-- Registration prompt -->
+        <HBox>
+            <Text text="Don't have an account?"/>
+            <Button text="Register" onAction="#handleRegisterAction"/>
+        </HBox>
+    </VBox>
+</HBox>
