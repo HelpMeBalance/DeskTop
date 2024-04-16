@@ -96,7 +96,7 @@ public class CommentaireService implements IService <Commentaire> {
         }
         return commentaires;
     }
-    public List<Commentaire> select(String searchTerm) throws SQLException {
+    public List<Commentaire> search(String searchTerm) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
         String sql = "SELECT * FROM commentaire";
         if (searchTerm != null && !searchTerm.isEmpty()) {
@@ -197,5 +197,18 @@ public class CommentaireService implements IService <Commentaire> {
         preparedStatement.setBoolean(1,!(selectWhere(id).getValide()));
         preparedStatement.setInt(2,id);
         preparedStatement.executeUpdate();
+    }
+    public int countComments(Publication publication) throws SQLException {
+        int count = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM commentaire WHERE publication_id = ?");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, publication.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        }
+        return count;
     }
 }

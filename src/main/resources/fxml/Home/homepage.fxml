@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane stylesheets="@../../css/homepage.css"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.HomeController">
+
+    <!-- Top menu bar -->
+    <top>
+        <HBox styleClass="top-menu" spacing="10">
+
+            <!-- Logo on the right -->
+            <ImageView fx:id="logoImage" preserveRatio="true" fitHeight="60">
+                <image>
+                    <Image url="@../../assets/logo.png" />
+                </image>
+            </ImageView>
+
+            <!-- Spacer to center the navigation buttons -->
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Navigation buttons centered -->
+            <Button text="Home" styleClass="top-menu-button" />
+            <Button text="About Us" styleClass="top-menu-button" />
+            <Button text="Our Services" styleClass="top-menu-button" />
+            <Button text="Contact Us" styleClass="top-menu-button" />
+            <Button fx:id="adminButton" text="Admin" styleClass="top-menu-button" onAction="#handleAdmin" />
+
+            <!-- Spacer to push the login button to the left -->
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Login button on the left -->
+            <Button fx:id="loginButton" text="Login" styleClass="action-button" onAction="#handleLogin" />
+        </HBox>
+
+    </top>
+
+    <!-- Center content -->
+    <center>
+        <HBox spacing="20" alignment="CENTER">
+            <!-- Left content with text -->
+            <VBox alignment="CENTER" spacing="20">
+                <Text text="Your Safe Haven" styleClass="title-text"/>
+                <Text text="Compassionate Support When You Need It Most" styleClass="subtitle-text"/>
+                <Text text="Step into a nurturing space where your concerns are met with empathy and care..." styleClass="description-text"/>
+                <HBox alignment="CENTER" spacing="10">
+                    <Button text="Get Started" styleClass="action-button" />
+                    <Button text="Who Are We" styleClass="action-button" />
+                </HBox>
+                <!-- Statistics section can be another HBox or GridPane -->
+                <!-- Insert other components as needed -->
+            </VBox>
+
+            <!-- Right content with image -->
+            <VBox alignment="CENTER" spacing="20" HBox.hgrow="ALWAYS"> <!-- This VBox will grow as needed -->
+                <ImageView preserveRatio="true" fitHeight="600">
+                    <image>
+                        <Image url="@../../assets/psyg.png" /> <!-- Make sure this path is correct -->
+                    </image>
+                </ImageView>
+            </VBox>
+        </HBox>
+
+
+    </center>
+
+    <!-- Bottom footer or additional content can be added here -->
+
+</BorderPane>
