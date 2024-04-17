@@ -2,15 +2,25 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 
-
-<?import javafx.scene.layout.HBox?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="132.0" prefWidth="622.0" style="-fx-background-color: #26aba3;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+       <HBox alignment="CENTER" prefHeight="104.0" BorderPane.alignment="CENTER">
+
+       <ImageView fx:id="logoImage" fitHeight="60" preserveRatio="true">
+           <image>
+               <Image url="@../../assets/logo.png" />
+           </image>
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin>
+       </ImageView>
+       </HBox>
    </left>
    <bottom>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="© 2024 HelpMeBalance All rights reserved." BorderPane.alignment="CENTER">
@@ -19,13 +29,19 @@
          </BorderPane.margin>
       </Text>
    </bottom>
-    <center>
-            <Hyperlink text="Home" />
-            <Hyperlink text="About" />
-            <Hyperlink text="Store" />
-            <Hyperlink text="Services" />
-            <Hyperlink text="Blog" />
-            <Hyperlink text="Contacts" />
-            <!-- Add other links as needed -->
-    </center>
+   <center>
+      <HBox alignment="CENTER" prefHeight="104.0" prefWidth="233.0" BorderPane.alignment="CENTER">
+         <children>
+            <Hyperlink text="Home" textAlignment="CENTER" textFill="WHITE" />
+            <Hyperlink text="About" textFill="WHITE" />
+            <Hyperlink text="Store" textFill="WHITE" />
+            <Hyperlink text="Services" textFill="WHITE" />
+            <Hyperlink text="Blog" textFill="WHITE" />
+            <Hyperlink text="Contacts" textFill="WHITE" />
+         </children>
+      </HBox>
+   </center>
+   <right>
+      <HBox prefHeight="106.0" prefWidth="150.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>
