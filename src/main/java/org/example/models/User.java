@@ -152,4 +152,5 @@ public class User {
                 ", google_id='" + google_id + '\'' +
                 '}';
     }
+
 }

@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.IOException;
+import org.example.utils.Navigation; // Import the Navigation class
 
 public class LoginController {
 
@@ -56,10 +57,12 @@ public class LoginController {
 
 
     @FXML
-    private void handleRegisterAction(ActionEvent event) throws IOException {
-        Parent registerRoot = FXMLLoader.load(getClass().getResource("/fxml/Auth/Register.fxml"));
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(registerRoot, 1200, 700));
-        stage.show();
+    private void handleRegisterAction() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Auth/Register.fxml", loginButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 }

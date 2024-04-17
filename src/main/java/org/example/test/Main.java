@@ -21,7 +21,10 @@ public class Main extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home/homepage.fxml"));
 
             primaryStage.setTitle("HelpMeBalance");
-            primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        primaryStage.setScene(scene);
+        primaryStage.setMaximized(true); // Ensures the stage is maximized
+
         Image logoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/style/img/iconlogo.png")));
         // Set the logo image as the application icon
         primaryStage.getIcons().add(logoImage);

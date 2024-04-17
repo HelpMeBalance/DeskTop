@@ -1,0 +1,36 @@
+.main-borderpane {
+    -fx-background-color: #ffffff; /* or any other color that matches your theme */
+}
+
+.form-container {
+    -fx-background-color: #f4f4f4; /* Light grey background for the form area */
+    -fx-background-radius: 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 10);
+}
+
+.header-label {
+    -fx-font-size: 24px;
+    -fx-text-fill: #333; /* Dark grey text */
+    -fx-font-weight: bold;
+}
+
+.combo-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #333;
+}
+
+.combo-box {
+    -fx-pref-width: 200px;
+}
+
+.date-picker {
+    -fx-pref-width: 200px;
+}
+
+.save-button {
+    -fx-font-size: 16px;
+    -fx-background-color: #2ecc71; /* Green background */
+    -fx-text-fill: white; /* White text */
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 20;
+}

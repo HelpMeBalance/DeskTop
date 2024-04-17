@@ -1,25 +1,28 @@
 package org.example.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.time.LocalDateTime;
+
+import org.example.models.User;
+import org.example.service.UserService;
 import org.example.utils.MyDataBase;
 import org.example.utils.PasswordUtil;
 import java.time.LocalDateTime;  // Import this at the top
 import java.time.format.DateTimeFormatter;  // Import this to format the datetime
+import org.example.utils.Navigation; // Import the Navigation class
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class RegisterController {
@@ -66,49 +69,43 @@ public class RegisterController {
 
     @FXML
     private void handleRegister() {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("HelpMeBalance");
         if (!areFieldsValid()) {
             return; // Stop the registration process if validation fails
         }
-        String firstname = firstnameField.getText();
-        String lastname = lastnameField.getText();
-        String email = emailField.getText();
-        String password = passwordField.getText();
-        String repeatPassword = repeatPasswordField.getText();
-        // Formatting the current datetime
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = now.format(formatter); // Format as a string
+        User newUser = new User();
+        newUser.setEmail(emailField.getText());
+        newUser.setPassword(passwordField.getText());
+        newUser.setFirstname(firstnameField.getText());
+        newUser.setLastname(lastnameField.getText());
+        newUser.setRoles(new ArrayList<>(Arrays.asList("ROLE_USER")));
+        newUser.setIs_banned(false);
+        newUser.setCreated_at(LocalDateTime.now());
 
-        if (!password.equals(repeatPassword)) {
-            System.out.println("Passwords do not match.");
-            return;
-        }
 
-        String hashedPassword = PasswordUtil.hashPassword(password);
 
-        try (Connection conn = MyDataBase.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO user (firstname, lastname, email, password, roles, is_banned, created_at) VALUES (?, ?, ?, ?, ?, 0, NOW())")) {
-            stmt.setString(1, firstname);
-            stmt.setString(2, lastname);
-            stmt.setString(3, email);
-            stmt.setString(4, hashedPassword);
-            stmt.setString(5, "ROLE_USER");  // Ensure this matches the constraints or exists in the roles table
-
-            int result = stmt.executeUpdate();
-            System.out.println(result + " user(s) registered.");
+        // Use UserService to add the new user
+        UserService userService = new UserService();
+        try {
+            userService.add(newUser);
+            System.out.println("User registered successfully!");
         } catch (SQLException e) {
-            System.err.println("Error when registering user: " + e.getMessage());
+            e.printStackTrace();
+            errorMessage.setText("An error occurred while registering the user.");
         }
 
     }
 
 
     @FXML
-    private void handleSignIn() throws IOException {
-        Parent loginRoot = FXMLLoader.load(getClass().getResource("/fxml/Auth/Login.fxml"));
-        Stage stage = (Stage) firstnameField.getScene().getWindow();
-        stage.setScene(new Scene(loginRoot, 1200, 700));
-        stage.show();
+    private void handleSignIn() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Auth/Login.fxml", signInLink);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 
 

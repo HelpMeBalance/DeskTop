@@ -7,47 +7,76 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import org.example.utils.Navigation; // Import the Navigation class
 
 import java.io.IOException;
 
 public class NavbarController {
     @FXML
-    private Button loginButton; // This field must match the fx:id in the FXML file
+    private Button loginButton;
     @FXML
     private Button adminButton;
     @FXML
     private Button StoreButton;
     @FXML
-    private void handleLogin() throws IOException {
-        Parent loginRoot = FXMLLoader.load(getClass().getResource("/fxml/Auth/Login.fxml"));
+    private Button HomeButton; // Add this button for the home navigation
 
-        // Get the current stage (window) using any known component, here it's the login button
-        Stage stage = (Stage) loginButton.getScene().getWindow(); // loginButton is a Button on your Home screen
+    @FXML
+    private void handleLogin() {
+        try {
+        // Use the Navigation utility class to navigate
+        Navigation.navigateTo("/fxml/Auth/Login.fxml", loginButton);
+    } catch (IOException e) {
+        e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
+    @FXML
+    private void handleAdmin() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Admin/admin.fxml", adminButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
 
-        // Set the Login screen scene to the stage and show it
-        stage.setScene(new Scene(loginRoot));
-        stage.show();
+        }
+        // Use the Navigation utility class to navigate
     }
 
-    public void handleAdmin() throws IOException {
-        Parent loginRoot = FXMLLoader.load(getClass().getResource("/fxml/Admin/Publication.fxml"));
-
-        // Get the current stage (window) using any known component, here it's the login button
-        Stage stage = (Stage) adminButton.getScene().getWindow(); // loginButton is a Button on your Home screen
-
-        // Set the Login screen scene to the stage and show it
-        stage.setScene(new Scene(loginRoot));
-        stage.show();
+    @FXML
+    private void handleStore() {
+        // Use the Navigation utility class to navigate
+        try {
+            Navigation.navigateTo("/fxml/Store/store.fxml", StoreButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 
-    public void handleStore() throws IOException {
-        Parent loginRoot = FXMLLoader.load(getClass().getResource("/fxml/Store/Store.fxml"));
+    @FXML
+    private void handleHome() {
+        // Use the Navigation utility class to navigate
+        try {
+            Navigation.navigateTo("/fxml/Home/homepage.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 
-        // Get the current stage (window) using any known component, here it's the login button
-        Stage stage = (Stage) StoreButton.getScene().getWindow(); // loginButton is a Button on your Home screen
+    public void handleBookSession() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Appointment/AppointmentCreation.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 
-        // Set the Login screen scene to the stage and show it
-        stage.setScene(new Scene(loginRoot));
-        stage.show();
+    public void handleBraveChat() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Blog/Blog.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 }

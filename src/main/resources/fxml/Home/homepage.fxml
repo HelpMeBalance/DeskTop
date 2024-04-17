@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.image.*?>
 
-<BorderPane stylesheets="@../../css/homepage.css"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.HomeController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane stylesheets="@../../css/homepage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.HomeController">
 
     <!-- Top menu bar -->
     <top>
@@ -15,15 +17,15 @@
 
     <!-- Center content -->
     <center>
-        <HBox spacing="20" alignment="CENTER">
+        <HBox alignment="CENTER" spacing="20" style="-fx-background-color: white;">
             <!-- Left content with text -->
-            <VBox alignment="CENTER" spacing="20">
-                <Text text="Your Safe Haven" styleClass="title-text"/>
-                <Text text="Compassionate Support When You Need It Most" styleClass="subtitle-text"/>
-                <Text text="Step into a nurturing space where your concerns are met with empathy and care..." styleClass="description-text"/>
+            <VBox alignment="CENTER" spacing="20" style="-fx-background-color: white;">
+                <Text styleClass="title-text" text="Your Safe Haven" />
+                <Text styleClass="subtitle-text" text="Compassionate Support When You Need It Most" />
+                <Text styleClass="description-text" text="Step into a nurturing space where your concerns are met with empathy and care..." />
                 <HBox alignment="CENTER" spacing="10">
-                    <Button text="Get Started" styleClass="action-button" />
-                    <Button text="Who Are We" styleClass="action-button" />
+                    <Button styleClass="action-button" text="Get Started" />
+                    <Button styleClass="action-button" text="Who Are We" />
                 </HBox>
                 <!-- Statistics section can be another HBox or GridPane -->
                 <!-- Insert other components as needed -->
@@ -31,7 +33,7 @@
 
             <!-- Right content with image -->
             <VBox alignment="CENTER" spacing="20" HBox.hgrow="ALWAYS"> <!-- This VBox will grow as needed -->
-                <ImageView preserveRatio="true" fitHeight="600">
+                <ImageView fitHeight="600" preserveRatio="true">
                     <image>
                         <Image url="@../../assets/psyg.png" /> <!-- Make sure this path is correct -->
                     </image>
@@ -43,5 +45,9 @@
     </center>
 
     <!-- Bottom footer or additional content can be added here -->
+    <bottom>
+        <!-- Footer can be added here -->
+        <fx:include source="../Reusable/Footer.fxml" />
+    </bottom>
 
 </BorderPane>
