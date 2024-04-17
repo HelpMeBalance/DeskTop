@@ -26,11 +26,11 @@
             <CheckBox fx:id="rememberMeCheckbox" styleClass="checkbox" text="Remember me" />
             <HBox alignment="CENTER" spacing="10">
                <children>
-                  <Button fx:id="loginButton" styleClass="login-button" text="Login" />
+                  <Button fx:id="loginButton" styleClass="login-button" text="Login" onAction="#handleLogin" />
                   <Button fx:id="forgetPasswordButton" styleClass="forget-password-button" text="Forget password?" />
                </children>
             </HBox>
-            <Button fx:id="googleSignInButton" onAction="#handleLogin" styleClass="google-button" text="Sign in with Google" />
+            <Button fx:id="googleSignInButton"  styleClass="google-button" text="Sign in with Google" />
             <HBox>
                <children>
                   <Text text="Don't have an account?" />

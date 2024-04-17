@@ -35,4 +35,13 @@
 
     <!-- Login button on the left -->
     <Button fx:id="loginButton" onAction="#handleLogin" styleClass="action-button" text="Login" />
+    <!-- Profile MenuButton on the left -->
+    <MenuButton fx:id="profileButton" styleClass="action-button" text="Profile" visible="false">
+        <items>
+            <MenuItem text="View Profile" onAction="#handleViewProfile" />
+            <MenuItem text="Logout" onAction="#handleLogout" />
+            <!-- Add other profile related menu items here -->
+        </items>
+    </MenuButton>
+
 </HBox>

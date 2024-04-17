@@ -89,7 +89,7 @@ public class RegisterController {
         UserService userService = new UserService();
         try {
             userService.add(newUser);
-            System.out.println("User registered successfully!");
+            dialog.setContentText("User registered successfully.");
         } catch (SQLException e) {
             e.printStackTrace();
             errorMessage.setText("An error occurred while registering the user.");
