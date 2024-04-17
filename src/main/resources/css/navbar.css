@@ -1,0 +1,52 @@
+/* Top Menu Bar */
+.top-menu {
+    -fx-background-color: #f4f4f4;
+    -fx-padding: 10px;
+}
+
+.top-menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333;
+}
+
+.top-menu-button:hover {
+    -fx-background-color: #ececec;
+}
+/* Action Buttons ('Get Started' and 'Who Are We') */
+.action-button {
+    -fx-background-color: #2ecc71; /* Replace with your desired color */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+}
+
+.action-button:hover {
+    -fx-background-color: #27ae60; /* Darker shade for hover effect */
+}
+/* Logo */
+#logoImage {
+    -fx-cursor: hand;
+    -fx-padding: 10px;
+}
+
+/* Title Text */
+.title-text {
+    -fx-font-size: 36px;
+    -fx-fill: #333;
+}
+
+/* Subtitle Text */
+.subtitle-text {
+    -fx-font-size: 24px;
+    -fx-fill: #666;
+}
+
+/* Description Text */
+.description-text {
+    -fx-font-size: 16px;
+    -fx-fill: #999;
+    -fx-padding: 10px;
+
+}

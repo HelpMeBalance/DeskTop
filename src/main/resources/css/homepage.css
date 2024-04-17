@@ -1,18 +1,3 @@
-/* Top Menu Bar */
-.top-menu {
-    -fx-background-color: #f4f4f4;
-    -fx-padding: 10px;
-}
-
-.top-menu-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #333;
-}
-
-.top-menu-button:hover {
-    -fx-background-color: #ececec;
-}
-
 /* Logo */
 #logoImage {
     -fx-cursor: hand;

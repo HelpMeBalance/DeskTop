@@ -1,0 +1,20 @@
+.footer {
+    -fx-background-color: #f0f0f0; /* Adjust the color to match your design */
+    -fx-padding: 20px;
+}
+
+.footer .text {
+    -fx-fill: #666; /* Gray text color */
+    -fx-font-size: 12px; /* Smaller font size for footer text */
+}
+
+.footer .hyperlink {
+    -fx-text-fill: #333; /* Darker color for links for readability */
+    -fx-underline: false; /* No underline by default */
+}
+
+.footer .hyperlink:hover {
+    -fx-underline: true; /* Underline on hover */
+}
+
+/* You may want to add additional styling depending on your design requirements */

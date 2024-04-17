@@ -1,0 +1,26 @@
+.page-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-fill: #333;
+}
+
+/* Sidebar styles */
+.sidebar-section {
+    -fx-background-color: #f9f9f9; /* Light background for sidebar sections */
+    -fx-padding: 10px;
+    -fx-border-color: #e2e2e2; /* Border color for separation */
+    -fx-border-width: 0 0 1 0; /* Bottom border */
+}
+
+.sidebar-section > .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333; /* Dark text color for section titles */
+}
+
+/* Adjustments to TextField for search bar */
+.text-field {
+    -fx-pref-width: 200px; /* Fixed width for search bar */
+    -fx-pref-height: 30px; /* Height for search bar */
+}
+
+/* You can add more styles for buttons, labels, list views, etc. */

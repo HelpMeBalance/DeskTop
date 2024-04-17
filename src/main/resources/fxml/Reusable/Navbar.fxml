@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.Region?>
+
+<HBox styleClass="top-menu" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../../css/navbar.css" fx:controller="org.example.controllers.NavbarController">
+
+    <ImageView fx:id="logoImage" preserveRatio="true" fitHeight="60">
+        <image>
+            <Image url="@../../assets/logo.png" />
+        </image>
+    </ImageView>
+
+    <Region HBox.hgrow="ALWAYS" />
+
+    <Button text="Home" styleClass="top-menu-button" />
+    <Button text="About Us" styleClass="top-menu-button" />
+    <Button fx:id="StoreButton" text="Store" styleClass="top-menu-button" onAction="#handleStore" />
+    <Button text="Our Services" styleClass="top-menu-button" />
+    <Button text="Contact Us" styleClass="top-menu-button" />
+    <Button fx:id="adminButton" text="Admin" styleClass="top-menu-button" onAction="#handleAdmin" />
+
+    <!-- Spacer to push the login button to the left -->
+    <Region HBox.hgrow="ALWAYS" />
+
+    <!-- Login button on the left -->
+    <Button fx:id="loginButton" text="Login" styleClass="action-button" onAction="#handleLogin" />
+</HBox>

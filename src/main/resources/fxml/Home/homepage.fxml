@@ -10,32 +10,7 @@
 
     <!-- Top menu bar -->
     <top>
-        <HBox styleClass="top-menu" spacing="10">
-
-            <!-- Logo on the right -->
-            <ImageView fx:id="logoImage" preserveRatio="true" fitHeight="60">
-                <image>
-                    <Image url="@../../assets/logo.png" />
-                </image>
-            </ImageView>
-
-            <!-- Spacer to center the navigation buttons -->
-            <Region HBox.hgrow="ALWAYS" />
-
-            <!-- Navigation buttons centered -->
-            <Button text="Home" styleClass="top-menu-button" />
-            <Button text="About Us" styleClass="top-menu-button" />
-            <Button text="Our Services" styleClass="top-menu-button" />
-            <Button text="Contact Us" styleClass="top-menu-button" />
-            <Button fx:id="adminButton" text="Admin" styleClass="top-menu-button" onAction="#handleAdmin" />
-
-            <!-- Spacer to push the login button to the left -->
-            <Region HBox.hgrow="ALWAYS" />
-
-            <!-- Login button on the left -->
-            <Button fx:id="loginButton" text="Login" styleClass="action-button" onAction="#handleLogin" />
-        </HBox>
-
+        <fx:include source="../Reusable/Navbar.fxml" />
     </top>
 
     <!-- Center content -->
