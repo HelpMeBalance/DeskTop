@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: whte;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="59.0" fitWidth="117.0" layoutX="14.0" layoutY="319.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../assets/logo.png" />
+         </image></ImageView>
+      <ImageView fitHeight="203.0" fitWidth="317.0" layoutX="323.0" layoutY="105.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../assets/formulaire.jpeg" />
+         </image>
+      </ImageView>
+      <Button layoutX="513.0" layoutY="329.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="84.0" style="-fx-background-radius: 32px; -fx-border-radius: 32px; -fx-background-color: #1abd84;" styleClass="-fx-background-rad" text="suvant" />
+      <Label layoutX="144.0" layoutY="14.0" prefHeight="39.0" prefWidth="383.0" text="THAN YOU FOR YOU ANSWER" textFill="#1bdc0a">
+         <font>
+            <Font name="Bodoni MT" size="25.0" />
+         </font>
+      </Label>
+      <TableView layoutX="53.0" layoutY="78.0" prefHeight="230.0" prefWidth="317.0">
+        <columns>
+          <TableColumn prefWidth="147.20001220703125" text="Question" />
+          <TableColumn prefWidth="168.80001220703127" text="Reponse" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
