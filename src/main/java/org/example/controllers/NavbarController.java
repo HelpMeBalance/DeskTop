@@ -65,7 +65,7 @@ public class NavbarController {
     public void handleBookSession() {
         try {
             // Use the Navigation utility class to navigate
-            Navigation.navigateTo("/fxml/Appointment/AppointmentCreation.fxml", HomeButton);
+            Navigation.navigateTo("/fxml/AppointsTypes/appointsTypes.fxml", HomeButton);
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception, possibly with a user alert
         }

@@ -78,6 +78,26 @@ public class RendezVousService implements IService<RendezVous>{
 
     @Override
     public RendezVous selectWhere(int id) throws SQLException {
-        return null;
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM  rendez_vous WHERE id = ?");
+        try (preparedStatement)
+        {
+            preparedStatement.setInt(1, id);
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int idrv = resultSet.getInt("id");
+                    LocalDateTime dateR = resultSet.getTimestamp("date_r").toLocalDateTime();
+                    String nomService = resultSet.getString("nom_service");
+                    boolean statut = resultSet.getBoolean("statut");
+                    boolean certificat = resultSet.getBoolean("certificat");
+                    int psy_id = resultSet.getInt("user_id");
+                    int patient_Id = resultSet.getInt("patient_id");
+
+                    // Assuming you have constructors or setter methods in the RendezVous class
+                    return new RendezVous(idrv, dateR, nomService, statut, certificat, new User(psy_id), new User(patient_Id));
+                }
+            }
+        }
+
+        return null ;
     }
 }
