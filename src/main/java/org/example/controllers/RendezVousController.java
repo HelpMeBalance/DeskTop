@@ -6,23 +6,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
 import org.example.models.RendezVous;
 import org.example.models.User;
 import org.example.service.PersonneService;
 import org.example.service.RendezVousService;
-import org.example.utils.MyDataBase;
 
 import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.Properties;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class RendezVousController implements Initializable {
     private RendezVousService rvs = new RendezVousService();
@@ -30,10 +27,12 @@ public class RendezVousController implements Initializable {
     private DatePicker date;
     @FXML
     private ComboBox<String> service, psy;
+    public static String serviceSelected="";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initServiceAndPsy();
+        service.setValue(serviceSelected);
     }
 
     public void add(ActionEvent actionEvent) {
