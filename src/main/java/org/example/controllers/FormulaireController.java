@@ -1,2 +1,4 @@
-package org.example.controllers;public class FormulaireController {
+package org.example.controllers;
+
+public class FormulaireController {
 }

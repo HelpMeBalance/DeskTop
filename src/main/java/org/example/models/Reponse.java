@@ -13,6 +13,9 @@ public class Reponse {
         this.$question = $question;
     }
 
+    public Reponse() {
+    }
+
     public int getId() {
         return id;
     }

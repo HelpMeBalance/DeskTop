@@ -41,18 +41,18 @@ public class ReponseService implements IService<Reponse>{
 
     @Override
     public List<Reponse> select() throws SQLException {
-        List<Reponse> Reponse = new ArrayList<>();
+        List<Reponse> reponses = new ArrayList<>();
         String sql = "SELECT * FROM reponse";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String reponse  = resultSet.getString(" reponse ");
-                Question question = new QuestionService().selectWhere(resultSet.getInt(" question_id "));
-                Reponse.add(new Reponse (id,reponse,question));
+                String reponse = resultSet.getString("reponse"); // Removed extra spaces
+                Question question = new QuestionService().selectWhere(resultSet.getInt("question_id"));
+                reponses.add(new Reponse(id, reponse, question));
             }
         }
-        return Reponse;
+        return reponses;
     }
 
     @Override

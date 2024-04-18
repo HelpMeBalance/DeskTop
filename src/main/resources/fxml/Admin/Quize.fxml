@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
-
+<AnchorPane prefHeight="475.0" prefWidth="546.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.QuizeControllerAd">
+    <children>
+        <TableView fx:id="questionsTable" layoutX="27.0" layoutY="30.0" prefHeight="400.0" prefWidth="500.0">
+            <columns>
+                <TableColumn fx:id="questionColumn" prefWidth="200.0" text="Question" />
+                <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
+                <TableColumn fx:id="activeColumn" prefWidth="150.0" text="Active" />
+            </columns>
+        </TableView>
+    </children>
 </AnchorPane>
+
+
