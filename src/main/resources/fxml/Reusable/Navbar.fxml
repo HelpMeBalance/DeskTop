@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.MenuItem?>
+
+<?import javafx.scene.control.MenuButton?>
+<HBox alignment="CENTER" style="-fx-background-color: white;" styleClass="top-menu" stylesheets="@../../css/navbar.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="org.example.controllers.NavbarController">
+
+    <ImageView fx:id="logoImage" fitHeight="60" preserveRatio="true">
+        <image>
+            <Image url="@../../assets/logo.png" />
+        </image>
+    </ImageView>
+
+    <Region HBox.hgrow="ALWAYS" />
+
+    <Button fx:id="HomeButton" contentDisplay="CENTER" styleClass="top-menu-button" text="Home"  onAction="#handleHome"/>
+    <Button contentDisplay="CENTER" styleClass="top-menu-button" text="About Us" />
+    <Button fx:id="StoreButton" contentDisplay="CENTER" onAction="#handleStore" styleClass="top-menu-button" text="Store" />
+    <MenuButton text="Our Services" styleClass="top-menu-button">
+        <items>
+            <MenuItem text="Book a Session" onAction="#handleBookSession" />
+            <MenuItem text="Brave Chat" onAction="#handleBraveChat" />
+        </items>
+    </MenuButton>
+    <Button contentDisplay="CENTER" styleClass="top-menu-button" text="Contact Us" />
+    <Button fx:id="adminButton" contentDisplay="CENTER" onAction="#handleAdmin" styleClass="top-menu-button" text="Admin" />
+
+    <!-- Spacer to push the login button to the left -->
+    <Region HBox.hgrow="ALWAYS" />
+
+    <!-- Login button on the left -->
+    <Button fx:id="loginButton" onAction="#handleLogin" styleClass="action-button" text="Login" />
+    <!-- Profile MenuButton on the left -->
+    <MenuButton fx:id="profileButton" styleClass="action-button" text="Profile" visible="false">
+        <items>
+            <MenuItem text="Edit Profile" onAction="#handleViewProfile" />
+            <MenuItem text="Logout" onAction="#handleLogout" />
+            <MenuItem text="Edit Password" onAction="#handleEditPassword" />
+            <!-- Add other profile related menu items here -->
+        </items>
+    </MenuButton>
+
+</HBox>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.RendezVousController">
+   <!-- Top menu bar -->
+   <top>
+      <fx:include source="../Reusable/Navbar.fxml" />
+   </top>
+
+   <center>
+      <VBox>
+      <VBox alignment="CENTER" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #f4fcfa;" styleClass="form-container" BorderPane.alignment="CENTER">
+         <Label styleClass="header-label" text="Get your first free online consultation" />
+         <HBox alignment="CENTER" prefHeight="62.0" prefWidth="579.0" spacing="15">
+            <VBox spacing="10">
+               <Label styleClass="combo-label" text="Psychiatrist" />
+               <ComboBox fx:id="psy" promptText="Psychiatrist" styleClass="combo-box" />
+            </VBox>
+            <VBox spacing="10">
+               <Label styleClass="combo-label" text="Service" />
+               <ComboBox fx:id="service" promptText="Service" styleClass="combo-box" />
+            </VBox>
+         </HBox>
+         <HBox alignment="CENTER" spacing="15">
+            <Label styleClass="combo-label" text="Date" />
+            <DatePicker fx:id="date" styleClass="date-picker" />
+         </HBox>
+         <Button fx:id="addButton" onAction="#add" styleClass="save-button" text="Save" />
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+            <VBox.margin>
+               <Insets bottom="50.0" left="100.0" right="100.0" top="50.0" />
+            </VBox.margin>
+            <padding>
+               <Insets bottom="10.0" top="10.0" />
+            </padding>
+      </VBox>
+      </VBox>
+   </center>
+
+   <bottom>
+      <fx:include source="../Reusable/Footer.fxml" />
+   </bottom>
+</BorderPane>

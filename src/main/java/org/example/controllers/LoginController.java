@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.models.User;
+import org.example.service.UserService;
 import org.example.utils.MyDataBase;
 import org.example.utils.PasswordUtil;
 
@@ -17,49 +19,61 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.io.IOException;
+import org.example.utils.Navigation; // Import the Navigation class
+import org.example.utils.Session;
 
 public class LoginController {
 
     @FXML
-    private TextField usernameField;
+    private TextField emailField;
 
     @FXML
     private PasswordField passwordField;
 
     @FXML
     private Button loginButton;
+    private UserService userService = new UserService();
 
     @FXML
     private void handleLogin() {
-        String username = usernameField.getText();
+        String email = emailField.getText();
         String password = passwordField.getText();
 
-        try (Connection conn = MyDataBase.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT password FROM user WHERE email = ?")) {
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
+        UserService userService = new UserService();
 
-            if (rs.next()) {
-                String storedPassword = rs.getString("password");
-                if (PasswordUtil.checkPassword(password, storedPassword)) {
-                    System.out.println("Login successful!");
-                } else {
-                    System.out.println("Invalid username or password.");
+        try {
+            User user = userService.selectWhere(email, password);
+
+            if (user != null) {
+                // Login successful
+                // Navigate to the next screen or update the UI accordingly
+                // For example, if using the `Navigation` class:
+                Session.getInstance().setLoggedIn(true, user);
+                try
+                {
+                    Navigation.navigateTo("/fxml/Home/homepage.fxml", emailField);
+                } catch (IOException e) {
+                    e.printStackTrace(); // Handle the exception, possibly with a user alert
                 }
             } else {
-                System.out.println("User not found.");
+                // Login failed
+                System.out.println("Login failed");
             }
         } catch (SQLException e) {
-            System.err.println("Error when attempting login: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("An error occurred while logging in");
         }
+
     }
 
 
     @FXML
-    private void handleRegisterAction(ActionEvent event) throws IOException {
-        Parent registerRoot = FXMLLoader.load(getClass().getResource("/fxml/Auth/Register.fxml"));
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(registerRoot, 1200, 700));
-        stage.show();
+    private void handleRegisterAction() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Auth/Register.fxml", loginButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 }

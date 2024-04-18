@@ -195,6 +195,34 @@ public class UserService implements IService <User>{
         }
         return users;
     }
+    public boolean changePassword(User user, String currentPassword, String newPassword) throws SQLException {
+        // Verify the current password
+        String sql = "SELECT password FROM user WHERE id = ?";
+        try (PreparedStatement stmt = connect.prepareStatement(sql)) {
+            stmt.setInt(1, user.getId());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String storedPassword = rs.getString("password");
+                if (new BCryptPasswordEncoder().matches(currentPassword, storedPassword)) {
+                    // If the current password is correct, update to new password
+                    return updatePasswordInDatabase(user.getId(), newPassword);
+                }
+            }
+        }
+        return false; // Return false if current password is incorrect or user not found
+    }
+    private boolean updatePasswordInDatabase(int userId, String newPassword) throws SQLException {
+        String sql = "UPDATE user SET password = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, new BCryptPasswordEncoder().encode(newPassword));
+            preparedStatement.setInt(2, userId);
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0; // Return true if the update was successful
+        }
+    }
+
+
+
     public void updatePassword(User user) throws SQLException {
         String sql = "UPDATE user SET password = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
