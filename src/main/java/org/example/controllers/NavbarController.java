@@ -84,7 +84,13 @@ public class NavbarController {
         }
     }
 
-    public void handleViewProfile(ActionEvent actionEvent) {
+    public void handleViewProfile() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Profile/profile.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 
     public void initialize() {
@@ -105,12 +111,23 @@ public class NavbarController {
 
     @FXML
     private void handleLogout() {
-        // ... logout logic ...
-
-
         // Clear the session and update the navbar state
         Session.getInstance().setLoggedIn(false, null);
         updateLoginState();
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Home/homepage.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
     }
 
+    public void handleEditPassword() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Profile/EditPassword.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 }
