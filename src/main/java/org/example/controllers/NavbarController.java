@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import org.example.utils.Navigation; // Import the Navigation class
 import org.example.utils.Session;
@@ -17,14 +18,13 @@ public class NavbarController {
     @FXML
     private Button loginButton;
     @FXML
-    private Button adminButton;
-    @FXML
     private Button StoreButton;
     @FXML
     private Button HomeButton; // Add this button for the home navigation
     @FXML
     private MenuButton profileButton;
-
+    @FXML
+    private MenuItem AdminPage;
     @FXML
     private void handleLogin() {
         try {
@@ -34,17 +34,7 @@ public class NavbarController {
         e.printStackTrace(); // Handle the exception, possibly with a user alert
         }
     }
-    @FXML
-    private void handleAdmin() {
-        try {
-            // Use the Navigation utility class to navigate
-            Navigation.navigateTo("/fxml/Admin/Users.fxml", adminButton);
-        } catch (IOException e) {
-            e.printStackTrace(); // Handle the exception, possibly with a user alert
 
-        }
-        // Use the Navigation utility class to navigate
-    }
 
     @FXML
     private void handleStore() {
@@ -103,10 +93,16 @@ public class NavbarController {
         loginButton.setVisible(!isLoggedIn);
         profileButton.setVisible(isLoggedIn);
 
+        boolean isAdmin = isLoggedIn && Session.getInstance().getUser().getRoles().contains("ROLE_ADMIN");
+        AdminPage.setVisible(isAdmin);
+
         if (isLoggedIn) {
             // Set the text of the profile button or configure it as needed
             profileButton.setText(Session.getInstance().getUser().getFirstname()); // Or any other user property
         }
+
+
+
     }
 
     @FXML
@@ -126,6 +122,15 @@ public class NavbarController {
         try {
             // Use the Navigation utility class to navigate
             Navigation.navigateTo("/fxml/Profile/EditPassword.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
+
+    public void handleAdminPage() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Admin/Users.fxml", HomeButton);
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception, possibly with a user alert
         }

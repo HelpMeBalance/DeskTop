@@ -43,13 +43,15 @@ public class UserService implements IService <User>{
 
     @Override
     public void update(User user) throws SQLException {
-        String sql = "UPDATE user SET firstname = ?, lastname = ?, profile_picture = ?  , roles = ? WHERE id = ?";
+        String sql = "UPDATE user SET firstname = ?, lastname = ?, profile_picture = ?  , roles = ? , is_banned = ? , ban_expires_at = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
             preparedStatement.setString(1,user.getFirstname());
             preparedStatement.setString(2, user.getLastname());
             preparedStatement.setString(3,user.getProfile_picture());
             preparedStatement.setString(4,getRolesjson(user.getRoles()));
-            preparedStatement.setInt(5, user.getId());
+            preparedStatement.setBoolean(5, user.getIs_banned());
+            preparedStatement.setObject(6, user.getBan_expires_at());
+            preparedStatement.setInt(7, user.getId());
             preparedStatement.executeUpdate();
         }
     }

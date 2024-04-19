@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -12,7 +9,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 
     <VBox id="drawer-content" fx:id="drawerContent" prefHeight="492.0" prefWidth="221.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AdminSidebarController">
-        <HBox alignment="CENTER_LEFT" prefHeight="56.0" prefWidth="109.0" spacing="10.0" style="-fx-border-color: -light-gray-2; -fx-border-width: 0 0 1 0;">
+        <HBox fx:id="HomeIcon" alignment="CENTER_LEFT" prefHeight="56.0" prefWidth="109.0" spacing="10.0" style="-fx-border-color: -light-gray-2; -fx-border-width: 0 0 1 0; -fx-cursor: hand;" onMouseClicked="#handleGoHome">
             <padding>
                 <Insets bottom="10.0" />
             </padding>
@@ -39,7 +36,7 @@
                         <FontAwesomeIcon glyphName="DASHBOARD" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton fx:id="usersButton" alignment="CENTER_LEFT" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleUsers" selected="true" styleClass="drawer-item" text="Users">
+                <ToggleButton fx:id="usersButton" alignment="CENTER_LEFT" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleUsers" selected="false" styleClass="drawer-item" text="Users">
                     <graphic>
                         <FontAwesomeIcon glyphName="USERS" />
                     </graphic>
@@ -49,12 +46,12 @@
                         <FontAwesomeIcon glyphName="QUESTION_CIRCLE" />
                     </graphic>
                 </ToggleButton>
-                <TitledPane alignment="CENTER_RIGHT" contentDisplay="RIGHT" ellipsisString="" expanded="true" nodeOrientation="RIGHT_TO_LEFT" styleClass="drawer-menu" text="Blog " textOverrun="CLIP">
+                <TitledPane alignment="CENTER_RIGHT" contentDisplay="RIGHT" ellipsisString="" expanded="false" nodeOrientation="RIGHT_TO_LEFT" styleClass="drawer-menu" text="Blog " textOverrun="CLIP">
                     <graphic>
                         <FontAwesomeIcon glyphName="COMMENTS" />
                     </graphic>
                     <VBox id="drawer-content" minHeight="0.0" minWidth="0.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="292.0" spacing="5.0">
-                        <ToggleButton fx:id="publicationsButton" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handlePublications" selected="true" styleClass="drawer-item" text="Publications" />
+                        <ToggleButton fx:id="publicationsButton" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handlePublications" selected="false" styleClass="drawer-item" text="Publications" />
                         <ToggleButton alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Categories" />
                     </VBox>
                 </TitledPane>
