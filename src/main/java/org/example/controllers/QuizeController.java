@@ -10,6 +10,7 @@ import org.example.models.Formulaire;
 import org.example.models.Question;
 import org.example.models.Reponse;
 import org.example.service.FormulaireService;
+import org.example.service.FormulairejService;
 import org.example.service.QuestionService;
 import org.example.service.ReponseService;
 
@@ -24,6 +25,7 @@ public class QuizeController implements Initializable {
 
     private QuestionService questionService;
     private FormulaireService formulaireService = new FormulaireService();
+    private FormulairejService formulairejService = new FormulairejService();
     private ReponseService reponseService;
 
     @FXML
@@ -79,7 +81,6 @@ public class QuizeController implements Initializable {
             for (Reponse reponse : reponsess) {
                 if ( (Objects.equals(reponse.getReponse(), selectedResponse))) {
                     idr=reponse.getId();
-
                 }
 
             }
@@ -88,7 +89,6 @@ public class QuizeController implements Initializable {
  return idr;   }
     private void loadNextQuestion() throws SQLException {
         currentQuestionIndex++;
-
         reponsess.clear();
         combo.getItems().clear();
         if (currentQuestionIndex < questions.size()) {
@@ -115,11 +115,17 @@ public class QuizeController implements Initializable {
 
             System.out.println(idr);
             int idqu = nextQuestion.getId();
+            String qj= nextQuestion.getQuestion();
+            String rj="";
+            for (Reponse reponse : reponsess) {
+                if ( reponse.getId()==idr ) {
+                    rj=reponse.getReponse();
+                }}
             System.out.println(idqu);
             formulaireService.add1(formulaire, idqu, idr);
+            formulairejService.add1(formulaire.getId(),qj,rj);
         }
         else
-
         {
             // No more questions
             idq.setText("End of Quiz");
