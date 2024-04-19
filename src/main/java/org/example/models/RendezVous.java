@@ -28,6 +28,15 @@ public class RendezVous {
         this.patient = patient;
     }
 
+    public void update(LocalDateTime dateR, String nomService, boolean statut, boolean certificat, User psy, User patient) {
+        this.dateR = dateR;
+        this.nomService = nomService;
+        this.statut = statut;
+        this.certificat = certificat;
+        this.psy = psy;
+        this.patient = patient;
+    }
+
     public int getId() {
         return id;
     }
