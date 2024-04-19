@@ -60,6 +60,7 @@ public class Publication {
         date_m = LocalDateTime.now();
         this.vues = 0;
         this.titre = titre;
+        this.image="default.png";
     }
     public int getId() {
         return id;

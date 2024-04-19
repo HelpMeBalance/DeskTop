@@ -167,6 +167,20 @@ public class CommentaireService implements IService <Commentaire> {
         }
         return commentaires;
     }
+    public List<Commentaire> select(int pubId) throws SQLException {
+        List<Commentaire> commentaires = new ArrayList<>();
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire  WHERE publication_id = ? ORDER BY date_m DESC");
+        try (preparedStatement)
+        {
+            preparedStatement.setInt(1, pubId);
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    commentaires.add(createCommentaire(resultSet));
+                }
+            }
+        }
+        return commentaires;
+    }
     public List<Commentaire> select(String sortField, String sortOrder,int pageNumber, int pageSize) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
 

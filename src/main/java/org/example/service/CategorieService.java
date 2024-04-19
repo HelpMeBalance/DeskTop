@@ -46,6 +46,24 @@ public class CategorieService {
 
         return categories;
     }
+    public List<Categorie> selectCategoriesWithSubcategories() throws SQLException {
+        List<Categorie> categoriesWithSubcategories = new ArrayList<>();
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT DISTINCT categorie.* FROM categorie INNER JOIN sous_categorie ON categorie.id = sous_categorie.categorie_id");
+        try (preparedStatement) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    categoriesWithSubcategories.add(new Categorie(
+                            resultSet.getInt("id"),
+                            resultSet.getString("nom"),
+                            resultSet.getString("description")
+                    ));
+                }
+            }
+        }
+
+        return categoriesWithSubcategories;
+    }
+
     public Categorie selectWhere(int id) throws SQLException{
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM categorie WHERE id = ?");
         try (preparedStatement)

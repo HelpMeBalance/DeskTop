@@ -93,7 +93,7 @@ public class PublicationService implements IService <Publication>{
     @Override
     public List<Publication> select() throws SQLException{
         List<Publication> publications = new ArrayList<>();
-        String sql = "SELECT * FROM publication";
+        String sql = "SELECT * FROM publication ORDER BY date_m DESC";
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
