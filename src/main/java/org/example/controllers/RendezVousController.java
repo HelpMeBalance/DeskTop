@@ -8,12 +8,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import org.example.models.RendezVous;
 import org.example.models.User;
-import org.example.service.PersonneService;
 import org.example.service.RendezVousService;
+import org.example.service.UserService;
+import org.example.utils.Navigation;
+import org.example.utils.UserStringConverter;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -26,7 +29,9 @@ public class RendezVousController implements Initializable {
     @FXML
     private DatePicker date;
     @FXML
-    private ComboBox<String> service, psy;
+    private ComboBox<String> service;
+    @FXML
+    private ComboBox<User> psy;
     public static String serviceSelected="";
 
     @Override
@@ -38,7 +43,7 @@ public class RendezVousController implements Initializable {
     public void add(ActionEvent actionEvent) {
         try{
             LocalDateTime selectedDateTime = date.getValue().atStartOfDay();
-            rvs.add(new RendezVous(selectedDateTime, service.getValue(), false,false, new User(1), new User(1)));
+            rvs.add(new RendezVous(selectedDateTime, service.getValue(), false,false, psy.getValue(), new UserService().selectWhere(1)));
 
             // test MAILER
             Properties props = new Properties();
@@ -65,7 +70,11 @@ public class RendezVousController implements Initializable {
             Transport.send(message);
             // end test
 
+            Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", psy);
+
         }catch (SQLException | MessagingException e){
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -73,18 +82,17 @@ public class RendezVousController implements Initializable {
         service.setItems(FXCollections.observableArrayList("Individual","Couple","Child"));
 
         // Start test
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         try{
-            PersonneService ps = new PersonneService();
-            for(var p : ps.select()){
-                names.add(p.getNom());
-            }
+            UserService ps = new UserService();
+            users = new ArrayList<>(ps.select());
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
         // End test
 
-        psy.setItems(FXCollections.observableArrayList(names));
+        psy.setItems(FXCollections.observableArrayList(users));
+        psy.setConverter(new UserStringConverter());
 //        service.getItems().add("String");
     }
 }
