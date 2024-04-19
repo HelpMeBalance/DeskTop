@@ -16,6 +16,7 @@
                            <image>
                               <Image url="@../../assets/logo.png" />
                            </image>
+
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
