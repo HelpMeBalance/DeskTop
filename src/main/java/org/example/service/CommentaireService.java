@@ -96,11 +96,11 @@ public class CommentaireService implements IService <Commentaire> {
         }
         return commentaires;
     }
-    public List<Commentaire> search(String searchTerm) throws SQLException {
+    public List<Commentaire> search(String searchTerm,int pubId) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
-        String sql = "SELECT * FROM commentaire";
+        String sql = "SELECT * FROM commentaire ";
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql += " WHERE contenu LIKE ?";
+            sql += " WHERE contenu LIKE ? AND  publication_id = ?";
         }
         PreparedStatement preparedStatement = connect.prepareStatement(sql);
         try (preparedStatement)
@@ -108,6 +108,32 @@ public class CommentaireService implements IService <Commentaire> {
             if (searchTerm != null && !searchTerm.isEmpty()) {
                 String likePattern = searchTerm + "%";
                 preparedStatement.setString(1, likePattern);
+                preparedStatement.setInt(2, pubId);
+            }
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    commentaires.add(createCommentaire(resultSet));
+                }
+            }
+        }
+        return commentaires;
+    }
+    public List<Commentaire> search(String searchTerm,int pubId,int pageNumber, int pageSize) throws SQLException {
+        List<Commentaire> commentaires = new ArrayList<>();
+        int offset = (pageNumber) * pageSize;
+        String sql = "SELECT * FROM commentaire ";
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            sql += " WHERE contenu LIKE ? AND  publication_id = ?  ORDER BY date_m DESC LIMIT ? OFFSET ?";
+        }
+        PreparedStatement preparedStatement = connect.prepareStatement(sql);
+        try (preparedStatement)
+        {
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                String likePattern = searchTerm + "%";
+                preparedStatement.setString(1, likePattern);
+                preparedStatement.setInt(2, pubId);
+                preparedStatement.setInt(3, pageSize);
+                preparedStatement.setInt(4, offset);
             }
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -119,7 +145,7 @@ public class CommentaireService implements IService <Commentaire> {
     }
     public List<Commentaire> select(int pageNumber, int pageSize) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
-        int offset = (pageNumber - 1) * pageSize;
+        int offset = (pageNumber) * pageSize;
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire ORDER BY date_m DESC LIMIT ? OFFSET ?");
         try (preparedStatement)
         {
@@ -150,13 +176,30 @@ public class CommentaireService implements IService <Commentaire> {
         }
         return commentaires;
     }
-    public List<Commentaire> select(Publication publication,int pageNumber, int pageSize) throws SQLException {
+    public List<Commentaire> select(int pubId,int pageNumber, int pageSize) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
-        int offset = (pageNumber - 1) * pageSize;
+        int offset = (pageNumber) * pageSize;
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire  WHERE publication_id = ? AND valide = true ORDER BY date_m DESC LIMIT ? OFFSET ?");
         try (preparedStatement)
         {
-            preparedStatement.setInt(1, publication.getId());
+            preparedStatement.setInt(1, pubId);
+            preparedStatement.setInt(2, pageSize);
+            preparedStatement.setInt(3, offset);
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    commentaires.add(createCommentaire(resultSet));
+                }
+            }
+        }
+        return commentaires;
+    }
+    public List<Commentaire> selectAdmin(int pubId,int pageNumber, int pageSize) throws SQLException {
+        List<Commentaire> commentaires = new ArrayList<>();
+        int offset = (pageNumber) * pageSize;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire  WHERE publication_id = ?  ORDER BY date_m DESC LIMIT ? OFFSET ?");
+        try (preparedStatement)
+        {
+            preparedStatement.setInt(1, pubId);
             preparedStatement.setInt(2, pageSize);
             preparedStatement.setInt(3, offset);
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
