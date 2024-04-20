@@ -44,13 +44,14 @@ public class PublicationService implements IService <Publication>{
     }
     @Override
     public void update(Publication publication)throws SQLException {
-        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE publication SET titre = ?, contenu = ?, com_ouvert = ?, anonyme = ?,date_m=? WHERE id = ?");
+        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE publication SET titre = ?, contenu = ?, com_ouvert = ?, anonyme = ?,date_m=?,image=? WHERE id = ?");
         preparedStatement.setString(1, publication.getTitre());
         preparedStatement.setString(2, publication.getContenu());
         preparedStatement.setBoolean(3, publication.getCom_ouvert());
         preparedStatement.setBoolean(4, publication.getAnonyme());
         preparedStatement.setObject(5, LocalDateTime.now());
-        preparedStatement.setInt(6, publication.getId());
+        preparedStatement.setString(6, publication.getImage());
+        preparedStatement.setInt(7, publication.getId());
         preparedStatement.executeUpdate();
     }
     @Override

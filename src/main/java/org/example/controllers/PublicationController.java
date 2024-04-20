@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -15,12 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.example.models.Categorie;
 import org.example.models.Publication;
 import org.example.models.SousCategorie;
+import org.example.models.User;
 import org.example.service.CategorieService;
 import org.example.service.CommentaireService;
 import org.example.service.PublicationService;
@@ -28,23 +28,26 @@ import org.example.service.SousCategorieService;
 import org.example.utils.Navigation;
 import org.example.utils.Session;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class PublicationController implements Initializable {
     public TextField SearchPublication;
     public Hyperlink hlFirst;
     public Pagination pagination;
     public Hyperlink hlLast;
-    // Define the page size
+
     private static final int PAGE_SIZE = 3;
+    private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
     public Label paginationLegend;
     private PublicationService pS=new PublicationService();
     private CommentaireService cS=new CommentaireService();
@@ -82,7 +85,8 @@ public class PublicationController implements Initializable {
     private TableColumn<Publication, Void> actions;
     ObservableList<Publication> publicationsList=FXCollections.observableArrayList();
     String searchText=null;
-
+    private File selectedFile;
+    private ImageView imageView;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPublications();
@@ -117,16 +121,11 @@ public class PublicationController implements Initializable {
     }
 
     public void initPublications() {
-        // Start test
 
         try
         {
 
             pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
-            ///publicationsList = FXCollections.observableArrayList(pS.selectAdmin(pagination.getCurrentPageIndex(),PAGE_SIZE));
-            //Publications.setItems(publicationsList);
-            //text="Showing 1 to 10 of 57 entries."
-            //updatePaginationLegend(pageIndex,PAGE_SIZE,pS.countPublications());
             loadPublications(pagination.getCurrentPageIndex());
             Publications.setItems(publicationsList);
             title.setCellValueFactory(new PropertyValueFactory<>("titre"));
@@ -137,7 +136,6 @@ public class PublicationController implements Initializable {
 
             comments.setCellValueFactory(cellData -> {
                 try {
-                    //Navigation.navigateTo("/fxml/Admin/commentaire.fxml");
                     int count = cS.countComments(cellData.getValue());
                     String res = null;
                     if(cellData.getValue().getCom_ouvert())
@@ -150,7 +148,6 @@ public class PublicationController implements Initializable {
                         if(count>0)res="\uD83D\uDD12 " +count;
                         else res = "\uD83D\uDD12 comments";
                     }
-                    //🔒
                     return new SimpleStringProperty(res);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -165,7 +162,6 @@ public class PublicationController implements Initializable {
                     viewButton.setStyle("-fx-background-color: transparent;");
                     viewButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
-                        // Handle view action here using publication.getId() or other relevant data
                         try {
                             if(cS.countComments(publication)==0 && !publication.getCom_ouvert())
                                 showemptycommentsDialog();
@@ -215,13 +211,11 @@ public class PublicationController implements Initializable {
 
                     viewButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
-                        // Handle view action here using publication.getId() or other relevant data
                         showPublicationDetails(publication);
                     });
 
                     updateButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
-                        // Handle view action here using publication.getId() or other relevant data
                         showUpdatePublicationDialog(publication);
                     });
 
@@ -276,26 +270,36 @@ public class PublicationController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
     }
     private void showPublicationDetails(Publication publication) {
-        // Create a new Dialog
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
 
-        // Create a label for the title
         Label titleLabel = new Label("Publication Details");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
-
-        ImageView imageView = new ImageView();
+        imageView = new ImageView();
         try {
-            String imageFile = "file:///C:/Users/HP/Desktop/PiDev HelpMeBalance/Web_2/public/uploads/pub_pictures/" + publication.getImage();
-            Image image = new Image(imageFile);
-            imageView.setImage(image);
-            imageView.setFitWidth(200);
-            imageView.setFitHeight(200);
+            String imagePath = UPLOAD_ROOT +"/"+ publication.getImage();
+           File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                try (InputStream inputStream = new FileInputStream(imageFile)) {
+                    Image image = new Image(inputStream);
+                    imageView.setImage(image);
+                    imageView.setImage(image);
+                    double imageWidth = image.getWidth();
+                    double imageHeight = image.getHeight();
+                    double proportionalWidth = (200.0 / imageHeight) * imageWidth;
+                    imageView.setFitWidth(proportionalWidth);
+                    imageView.setFitHeight(200);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.err.println("Image file does not exist: " + imagePath);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Set the content text with publication details
         Label contentLabel = new Label(
                 "Categorie : "+publication.getCategorie().getNom() + "\n" +
                         "Sub-Categorie : "+publication.getSous_categorie().getNom() + "\n" +
@@ -303,66 +307,76 @@ public class PublicationController implements Initializable {
                         "Content: \n" + publication.getContenu() + "\n"
         );
 
-        // Create an HBox to hold the title and image, and center them
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel, imageView);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
 
-        // Create a VBox to hold the content
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox, contentLabel);
-        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         String val=(publication.getValide())?"Invalidate":"Validate";
-        // Create a button for validating the publication
+
                 Button validateButton = new Button(val);
                 HBox buttonBox = new HBox();
                 buttonBox.getChildren().add(validateButton);
                 buttonBox.setAlignment(Pos.CENTER);
-        // Create an action for the validate button
+
                 validateButton.setOnAction(event -> {
                     try {
-                        pS.validate(publication.getId()); // Call the validate function
+                        pS.validate(publication.getId());
                         publicationsList.replaceAll(pub -> {
                             if (pub.getId() == publication.getId()) {
-                                // Update the publication that was validated
-                                pub.setValide(!pub.getValide()); // Assuming there's a property for validation status
+
+                                pub.setValide(!pub.getValide());
                             }
                             return pub;
                         });
                         Publications.refresh();
-                        dialog.close(); // Close the dialog after validation
+                        dialog.close();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
 
                 });
-        // Set the content of the dialog
+
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
+
                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
+
         dialog.showAndWait();
     }
 
     private void showUpdatePublicationDialog(Publication publication) {
-        // Create a new Dialog
+
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
 
-        // Create a label for the title
         Label titleLabel = new Label("Edit Publication");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
 
-        ImageView imageView = new ImageView();
+        imageView = new ImageView();
         try {
-            String imageFile = "file:///C:/Users/HP/Desktop/PiDev HelpMeBalance/Web_2/public/uploads/pub_pictures/" + publication.getImage();
-            Image image = new Image(imageFile);
-            imageView.setImage(image);
-            imageView.setFitWidth(200);
-            imageView.setFitHeight(200);
+            String imagePath = UPLOAD_ROOT +"/"+ publication.getImage();
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                try (InputStream inputStream = new FileInputStream(imageFile)) {
+                    Image image = new Image(inputStream);
+                    imageView.setImage(image);
+                    imageView.setImage(image);
+                    double imageWidth = image.getWidth();
+                    double imageHeight = image.getHeight();
+                    double proportionalWidth = (200.0 / imageHeight) * imageWidth;
+                    imageView.setFitWidth(proportionalWidth);
+                    imageView.setFitHeight(200);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.err.println("Image file does not exist: " + imagePath);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -377,27 +391,28 @@ public class PublicationController implements Initializable {
         CheckBox anonyme = new CheckBox("Post as Anonyme");
         anonyme.setSelected(publication.getAnonyme());
         anonyme.setDisable(true);
-        // Create an HBox to hold the title and image, and center them
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel, imageView);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
-
-        // Create a VBox to hold the content
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox,UpdatePictureButton,titlepublicationLabel,title,contentLabel,content,allowcoms,anonyme);
-        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button updateButton = new Button("Update Publication");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().add(updateButton);
         buttonBox.setAlignment(Pos.CENTER);
-        // Create an action for the validate button
+        UpdatePictureButton.setOnAction(event -> {
+            selectImageFile();
+        });
+
         updateButton.setOnAction(event -> {
             try {
                 publication.setTitre(title.getText());
                 publication.setContenu(content.getText());
                 publication.setCom_ouvert(allowcoms.isSelected());
+                if(selectedFile != null) publication.setImage(saveImageFile(selectedFile,UPLOAD_ROOT));
                 pS.update(publication);
                 publicationsList.replaceAll(pub -> {
                     if (pub.getId() == publication.getId()) {
@@ -406,77 +421,55 @@ public class PublicationController implements Initializable {
                     return pub;
                 });
                 Publications.refresh();
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
         });
-        // Set the content of the dialog
+
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
 
+    public void addpublication()  {
 
-    public void action()
-    {
-        try {
-            // Load the new FXML file
-            System.out.println("Action");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addpublication(ActionEvent actionEvent)  {
-        // Create a new Dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
 
-        // Create a label for the title
         Label titleLabel = new Label("Add Publication");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+        imageView = new ImageView();
         Button AddPictureButton = new Button("Add Picture");
         Label titlepublicationLabel = new Label("Title");
         Label contentLabel = new Label("Publication");
         TextField title = new TextField();
         TextArea content = new TextArea();
         CheckBox allowcoms = new CheckBox("Allow Comments");
-
-        // Create an HBox to hold the title and image, and center them
         VBox titleImageBox = new VBox();
-        titleImageBox.getChildren().addAll(titleLabel);
+        titleImageBox.getChildren().addAll(titleLabel,imageView);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> subcategoryComboBox = new ComboBox<>();
 
         try {
-            // Populate category ComboBox with names from categories
             List<Categorie> categories = catS.selectCategoriesWithSubcategories();
 
             for (Categorie categorie : categories) {
                 categoryComboBox.getItems().add(categorie.getNom());
             }
-
-            // Add listener to category ComboBox to populate subcategory ComboBox
             categoryComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && categories != null) {
                         try {
-                            // Fetch selected category object
                             Categorie selectedCategory = categories.stream()
                                     .filter(c -> c.getNom().equals(newValue))
                                     .findFirst()
                                     .orElse(null);
-
-                            // Populate subcategory ComboBox with names from selected category's subcategories
                             if (selectedCategory != null) {
                                 List<SousCategorie> subcategories = souscatS.select(selectedCategory);
                                 subcategoryComboBox.getItems().clear();
@@ -490,7 +483,7 @@ public class PublicationController implements Initializable {
                                 }
                             }
                         } catch (SQLException e) {
-                            e.printStackTrace(); // Handle the exception appropriately
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -499,41 +492,43 @@ public class PublicationController implements Initializable {
                 categoryComboBox.getSelectionModel().selectFirst();
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            e.printStackTrace();
         }
-        // Create a VBox to hold the content
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox,AddPictureButton,titlepublicationLabel,title,contentLabel,content,allowcoms,categoryComboBox,subcategoryComboBox);
-        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button addButton = new Button("Add Publication");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().add(addButton);
         buttonBox.setAlignment(Pos.CENTER);
-        // Create an action for the validate button
+        AddPictureButton.setOnAction(event -> {
+            selectImageFile();
+        });
         addButton.setOnAction(event -> {
             try {
-                Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false);
+                String fileName = "default.png";
+                if(selectedFile != null) fileName = saveImageFile(selectedFile,UPLOAD_ROOT);
+                System.out.println("filename : "+fileName);
+
+                Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false,fileName);
                 pS.add(publication);
                 pagination.setCurrentPageIndex(0);
                 loadPublications(0);
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
         });
-        // Set the content of the dialog
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
 
     public void handleSearch() throws SQLException {
-         searchText = SearchPublication.getText().toLowerCase(); // Get the text from the TextField
+         searchText = SearchPublication.getText().toLowerCase();
         pagination.setCurrentPageIndex(0);
         loadPublications(0);
     }
@@ -544,5 +539,53 @@ public class PublicationController implements Initializable {
 
     public void handleLastPage() {
         pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
+    }
+    private void selectImageFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Image File");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.jpg, *.jpeg, *.png)", "*.jpg", "*.jpeg", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+         selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            String imageUrl = selectedFile.toURI().toString();
+            System.out.println("image url"+imageUrl);
+            displaySelectedImage();
+        }
+    }
+    private void displaySelectedImage() {
+        if (selectedFile != null) {
+            Image image = new Image(selectedFile.toURI().toString());
+
+            try {
+                imageView.setImage(image);
+                double imageWidth = image.getWidth();
+                double imageHeight = image.getHeight();
+                double proportionalWidth = (200.0 / imageHeight) * imageWidth;
+                imageView.setFitWidth(proportionalWidth);
+                imageView.setFitHeight(200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public String saveImageFile(File selectedFile, String targetDirectory) {
+        String fileName = null;
+        if (selectedFile != null && selectedFile.exists()) {
+            try {
+                String originalFileName = selectedFile.getName();
+                String uniqueFileName = System.currentTimeMillis() + "_" + originalFileName;
+                Path targetDirPath = Path.of(targetDirectory);
+                if (!Files.exists(targetDirPath)) {
+                    Files.createDirectories(targetDirPath);
+                }
+                Path targetFilePath = targetDirPath.resolve(uniqueFileName);
+                Files.copy(selectedFile.toPath(), targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+                fileName = uniqueFileName;
+                System.out.println("File saved: " + fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return fileName;
     }
 }
