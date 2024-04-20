@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.*?>
 <?import java.net.*?>
 <StackPane prefHeight="712.0" prefWidth="1424.0" style="-fx-background-color: #edf0f2; -fx-border-color: -light-gray-2; -fx-border-width: 0 1 0 0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.PublicationController">
     <padding>
@@ -28,6 +27,22 @@
                       </graphic>
                   </Button>
               </HBox>
+              <HBox alignment="CENTER_LEFT">
+                  <children>
+                      <TextField fx:id="SearchPublication" promptText="Search (starts with)..." onKeyReleased="#handleSearch">
+                          <styleClass>
+                              <String fx:value="field-outlined" />
+                              <String fx:value="clearable-field" />
+                          </styleClass>
+                          <padding>
+                              <Insets left="15.0" />
+                          </padding>
+                          <HBox.margin>
+                              <Insets bottom="10.0" />
+                          </HBox.margin>
+                      </TextField>
+                  </children>
+              </HBox>
                     <TableView fx:id="Publications" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
                         <columns>
                             <TableColumn fx:id="title" text="Title" />
@@ -48,7 +63,63 @@
                               <Insets />
                            </VBox.margin>
                     </TableView>
-
+              <GridPane fx:id="gridLegend" minHeight="-Infinity">
+                  <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                      <Label fx:id="paginationLegend" text="Showing 1 to 10 of 57 entries.">
+                          <styleClass>
+                              <String fx:value="col-xs-12" />
+                              <String fx:value="col-sm-6" />
+                              <String fx:value="col-md-6" />
+                              <String fx:value="col-lg-6" />
+                              <String fx:value="col-xl-6" />
+                              <String fx:value="align-xs-center" />
+                              <String fx:value="align-center-left" />
+                          </styleClass>
+                      </Label>
+                      <HBox alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="377.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                          <children>
+                              <Hyperlink fx:id="hlFirst" alignment="CENTER" prefHeight="21.0" prefWidth="56.0" text="First" onAction="#handleFirstPage" >
+                                  <padding>
+                                      <Insets bottom="15.0" />
+                                  </padding>
+                              </Hyperlink>
+                              <Pagination fx:id="pagination"  prefHeight="53.0" style="-fx-alignment: baseline_right;"  />
+                              <Hyperlink fx:id="hlLast" alignment="CENTER" prefHeight="21.0" prefWidth="45.0" text="Last"  onAction="#handleLastPage">
+                                  <padding>
+                                      <Insets bottom="15.0" />
+                                  </padding>
+                              </Hyperlink>
+                          </children>
+                          <styleClass>
+                              <String fx:value="col-xs-12" />
+                              <String fx:value="col-sm-6" />
+                              <String fx:value="col-md-6" />
+                              <String fx:value="col-xl-6" />
+                              <String fx:value="col-lg-6" />
+                              <String fx:value="align-center-right" />
+                              <String fx:value="align-xs-center" />
+                          </styleClass>
+                      </HBox>
+                  </children>
+                  <VBox.margin>
+                      <Insets left="20.0" right="20.0" />
+                  </VBox.margin>
+                  <styleClass>
+                      <String fx:value="col-xs-6" />
+                      <String fx:value="col-sm-6" />
+                      <String fx:value="col-md-6" />
+                      <String fx:value="col-lg-6" />
+                      <String fx:value="col-xl-6" />
+                  </styleClass>
+              </GridPane>
          </children>
       </VBox>
         </HBox>

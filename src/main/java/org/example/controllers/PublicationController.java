@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.models.Categorie;
@@ -32,11 +33,19 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PublicationController implements Initializable {
+    public TextField SearchPublication;
+    public Hyperlink hlFirst;
+    public Pagination pagination;
+    public Hyperlink hlLast;
+    // Define the page size
+    private static final int PAGE_SIZE = 3;
+    public Label paginationLegend;
     private PublicationService pS=new PublicationService();
     private CommentaireService cS=new CommentaireService();
     private CategorieService catS=new CategorieService();
@@ -71,18 +80,54 @@ public class PublicationController implements Initializable {
     private TableColumn<Publication, String> updatedAt;
     @FXML
     private TableColumn<Publication, Void> actions;
-    ObservableList<Publication> publicationsList;
+    ObservableList<Publication> publicationsList=FXCollections.observableArrayList();
+    String searchText=null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPublications();
+        pagination.currentPageIndexProperty().addListener((obs, oldPageIndex, newPageIndex) -> {
+            try {
+                loadPublications(newPageIndex.intValue());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
+
+    private void loadPublications(int pageIndex) throws SQLException {
+        List<Publication> publications=new ArrayList<>();
+        int totalpub=pS.countPublications();
+        if(searchText != null && !searchText.isEmpty()) {
+             publications = pS.search(searchText, pagination.getCurrentPageIndex(), PAGE_SIZE);
+            totalpub=pS.search(searchText).size();
+            pagination.setPageCount((totalpub + PAGE_SIZE - 1) / PAGE_SIZE);
+        }else {
+            pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
+            publications = pS.selectAdmin(pagination.getCurrentPageIndex(), PAGE_SIZE);
+
+        }
+        publicationsList.setAll(publications);
+        updatePaginationLegend(pageIndex,PAGE_SIZE,totalpub);
+    }
+    private void updatePaginationLegend(int pageIndex, int pageSize, int totalPublications) {
+        int start = pageIndex * pageSize + 1;
+        int end = Math.min(start + pageSize - 1, totalPublications);
+        paginationLegend.setText("Showing " + start + " to " + end + " of " + totalPublications + " publications");
+    }
+
     public void initPublications() {
         // Start test
 
         try
         {
-            publicationsList = FXCollections.observableArrayList(pS.select());
+
+            pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
+            ///publicationsList = FXCollections.observableArrayList(pS.selectAdmin(pagination.getCurrentPageIndex(),PAGE_SIZE));
+            //Publications.setItems(publicationsList);
+            //text="Showing 1 to 10 of 57 entries."
+            //updatePaginationLegend(pageIndex,PAGE_SIZE,pS.countPublications());
+            loadPublications(pagination.getCurrentPageIndex());
             Publications.setItems(publicationsList);
             title.setCellValueFactory(new PropertyValueFactory<>("titre"));
             content.setCellValueFactory(new PropertyValueFactory<>("contenu"));
@@ -219,8 +264,9 @@ public class PublicationController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
             pS.delete(publication.getId());
-            publicationsList.remove(publication);
-            Publications.refresh();
+            pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
+            pagination.setCurrentPageIndex(0);
+            loadPublications(0);
         }
     }
     private void showemptycommentsDialog() throws SQLException {
@@ -469,8 +515,8 @@ public class PublicationController implements Initializable {
             try {
                 Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false);
                 pS.add(publication);
-                publicationsList=FXCollections.observableArrayList(pS.select());
-                Publications.setItems(publicationsList);
+                pagination.setCurrentPageIndex(0);
+                loadPublications(0);
                 dialog.close(); // Close the dialog after validation
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -484,5 +530,19 @@ public class PublicationController implements Initializable {
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
         // Show the dialog
         dialog.showAndWait();
+    }
+
+    public void handleSearch() throws SQLException {
+         searchText = SearchPublication.getText().toLowerCase(); // Get the text from the TextField
+        pagination.setCurrentPageIndex(0);
+        loadPublications(0);
+    }
+
+    public void handleFirstPage() {
+        pagination.setCurrentPageIndex(0);
+    }
+
+    public void handleLastPage() {
+        pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
     }
 }
