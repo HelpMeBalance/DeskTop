@@ -11,13 +11,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.models.Commentaire;
 import org.example.models.Publication;
-import org.example.models.User;
 import org.example.service.CommentaireService;
 import org.example.service.PublicationService;
 import org.example.utils.Navigation;
@@ -28,10 +25,20 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CommentaireController implements Initializable {
+    public TextField SearchComment;
+    public Hyperlink hlFirst;
+    public Pagination pagination;
+    public Hyperlink hlLast;
+    // Define the page size
+    private static final int PAGE_SIZE = 3;
+    public Label paginationLegend;
+    public TableColumn <Commentaire, String>  pubtitle;
     private CommentaireService cS=new CommentaireService();
     private PublicationService pS=new PublicationService();
     @FXML
@@ -64,22 +71,47 @@ public class CommentaireController implements Initializable {
 
     @FXML
     private Button addcomment;
-    ObservableList<Commentaire> commentsList;
+    ObservableList<Commentaire> commentsList=FXCollections.observableArrayList();
     private int publicationId;
     private Publication pub;
+    String searchText=null;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
+    private void loadComments(int pageIndex) throws SQLException {
+        List<Commentaire> commentaires=new ArrayList<>();
+        int totalcoms=cS.countComments(pub);
+        if(searchText != null && !searchText.isEmpty()) {
+            commentaires = cS.search(searchText,publicationId, pagination.getCurrentPageIndex(), PAGE_SIZE);
+            totalcoms=cS.search(searchText,publicationId).size();
+            pagination.setPageCount((totalcoms + PAGE_SIZE - 1) / PAGE_SIZE);
+        }else {
+            pagination.setPageCount((cS.countComments(pub) + PAGE_SIZE - 1) / PAGE_SIZE);
+            commentaires = cS.selectAdmin(publicationId,pagination.getCurrentPageIndex(), PAGE_SIZE);
 
+        }
+        commentsList.setAll(commentaires);
+        updatePaginationLegend(pageIndex,PAGE_SIZE,totalcoms);
+    }
+    private void updatePaginationLegend(int pageIndex, int pageSize, int totalPublications) {
+        int start = pageIndex * pageSize + 1;
+        int end = Math.min(start + pageSize - 1, totalPublications);
+        paginationLegend.setText("Showing " + start + " to " + end + " of " + totalPublications + " publications");
+    }
     private void initComments() {
         try
         {
            pub=pS.selectWhere(publicationId);
             publicationtitle.setText(pub.getTitre());
             addcomment.setVisible(pub.getCom_ouvert());
-            commentsList = FXCollections.observableArrayList(cS.select(publicationId));
+            pagination.setPageCount((cS.countComments(pub) + PAGE_SIZE - 1) / PAGE_SIZE);
+
+            //commentsList = FXCollections.observableArrayList(cS.select(publicationId));
+            //Comments.setItems(commentsList);
+            loadComments(pagination.getCurrentPageIndex());
             Comments.setItems(commentsList);
             content.setCellValueFactory(new PropertyValueFactory<>("contenu"));
+            pubtitle.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPublication().getTitre()));
             userName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getLastname()+" "+cellData.getValue().getUser().getFirstname()));
             state.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValide() ? "Approved" : "Under Review"));
             postedAt.setCellValueFactory(cellData -> {
@@ -245,8 +277,9 @@ public class CommentaireController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
             cS.delete(comment.getId());
-            commentsList.remove(comment);
-            Comments.refresh();
+            pagination.setPageCount((cS.countComments(pub) + PAGE_SIZE - 1) / PAGE_SIZE);
+            pagination.setCurrentPageIndex(0);
+            loadComments(0);
         }
     }
     public int getPublicationId() {
@@ -256,6 +289,13 @@ public class CommentaireController implements Initializable {
     public void setPublicationId(int publicationId) {
         this.publicationId = publicationId;
         initComments();
+        pagination.currentPageIndexProperty().addListener((obs, oldPageIndex, newPageIndex) -> {
+            try {
+                loadComments(newPageIndex.intValue());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void goback(ActionEvent actionEvent) throws IOException {
@@ -292,8 +332,8 @@ public class CommentaireController implements Initializable {
             try {
                 Commentaire commentaire =new Commentaire(Session.getInstance().getUser(),pub,content.getText(),false);
                 cS.add(commentaire);
-                commentsList = FXCollections.observableArrayList(cS.select(publicationId));
-                Comments.setItems(commentsList);
+                pagination.setCurrentPageIndex(0);
+                loadComments(0);
                 dialog.close(); // Close the dialog after validation
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -307,5 +347,17 @@ public class CommentaireController implements Initializable {
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
         // Show the dialog
         dialog.showAndWait();
+    }
+
+    public void handleSearch() throws SQLException {
+        searchText = SearchComment.getText().toLowerCase(); // Get the text from the TextField
+        pagination.setCurrentPageIndex(0);
+        loadComments(0);
+    }
+    public void handleFirstPage() {
+        pagination.setCurrentPageIndex(0);
+    }
+    public void handleLastPage() {
+        pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
     }
 }
