@@ -103,6 +103,7 @@ public class QuizeController implements Initializable {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            re.clear();
             for (Reponse reponse : reponsess) {
                 if (reponse.get$question().getId() == questions.get(currentQuestionIndex).getId()) {
                     re.add(reponse.getReponse());

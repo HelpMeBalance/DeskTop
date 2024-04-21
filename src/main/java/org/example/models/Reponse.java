@@ -13,6 +13,11 @@ public class Reponse {
         this.$question = $question;
     }
 
+    public Reponse(String reponse, Question $question) {
+        this.reponse = reponse;
+        this.$question = $question;
+    }
+
     public Reponse() {
     }
 
