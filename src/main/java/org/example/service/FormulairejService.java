@@ -74,6 +74,30 @@ public class FormulairejService implements IService<Formulairej> {
             preparedStatement.setInt(1, idf);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
                     String question = resultSet.getString("question");
                     String reponse = resultSet.getString("reponse");
                     return new Formulairej(idf, question, reponse);
