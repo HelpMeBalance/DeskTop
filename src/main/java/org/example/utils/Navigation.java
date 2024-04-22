@@ -1,6 +1,7 @@
 package org.example.utils; // Adjust the package name to fit your project structure
 
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ public class Navigation {
         // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
     }
+
     public static void navigateTo(String fxmlFile, Node currentNode, int publicationId) throws IOException {
         // Load the new FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(Navigation.class.getResource(fxmlFile));
@@ -40,5 +42,4 @@ public class Navigation {
         // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
     }
-
 }

@@ -31,13 +31,8 @@
                   <TableView fx:id="form">
                      <columns>
                         <TableColumn fx:id="quc" prefWidth="160.7999946475029" text="Question" />
-                        <TableColumn fx:id="rec" prefWidth="161.59994506835938" text="reponse" />
+                        <TableColumn fx:id="rec" prefWidth="162.3999786376953" text="reponse" />
                      </columns>
-                  </TableView>
-                  <TableView fx:id="forme" prefHeight="331.0" prefWidth="143.0">
-                    <columns>
-                      <TableColumn fx:id="recc" prefWidth="247.20000916719437" text="reponse" />
-                    </columns>
                   </TableView>
                </children>
             </HBox>
