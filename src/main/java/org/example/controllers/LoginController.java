@@ -36,6 +36,9 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
+        if (!areFieldsValid()) {
+            return;
+        }
         String email = emailField.getText();
         String password = passwordField.getText();
 
@@ -75,5 +78,27 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception, possibly with a user alert
         }
+    }
+
+    private boolean areFieldsValid() {
+        boolean isValid = true;
+        StringBuilder errors = new StringBuilder();
+
+        if (emailField.getText().trim().isEmpty()) {
+            errors.append("Email must be filled.\n");
+            isValid = false;
+        }
+
+        if (passwordField.getText().trim().isEmpty()) {
+            errors.append("Password must be filled.\n");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            // Show the error message
+            System.out.println(errors.toString());
+        }
+
+        return isValid;
     }
 }

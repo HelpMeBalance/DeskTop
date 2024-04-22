@@ -87,13 +87,23 @@ public class RegisterController {
 
         // Use UserService to add the new user
         UserService userService = new UserService();
+
         try {
             userService.add(newUser);
-            dialog.setContentText("User registered successfully.");
+            showAlert("Registration Successful", "User registered successfully.", Alert.AlertType.INFORMATION);
+            try {
+                // Use the Navigation utility class to navigate
+                Navigation.navigateTo("/fxml/Auth/Login.fxml", signInLink);
+            }
+            catch (IOException e) {
+                e.printStackTrace(); // Handle the exception, possibly with a user alert
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            errorMessage.setText("An error occurred while registering the user.");
+            showAlert("Registration Failed", "An error occurred while registering the user.", Alert.AlertType.ERROR);
+            return;
         }
+
 
     }
 
@@ -125,7 +135,22 @@ public class RegisterController {
         StringBuilder errors = new StringBuilder();
 
         if (firstnameField.getText().trim().isEmpty() || lastnameField.getText().trim().isEmpty() || emailField.getText().trim().isEmpty()) {
-            errors.append("All fields must be filled.\n");
+            errors.append("First Name must be filled.\n");
+            isValid = false;
+        }
+
+        if (emailField.getText().trim().isEmpty()) {
+            errors.append("Email must be filled.\n");
+            isValid = false;
+        }
+
+        if (passwordField.getText().trim().isEmpty()) {
+            errors.append("Password must be filled.\n");
+            isValid = false;
+        }
+
+        if (lastnameField.getText().trim().isEmpty()) {
+            errors.append("Last Name must be filled.\n");
             isValid = false;
         }
 
@@ -144,8 +169,42 @@ public class RegisterController {
             isValid = false;
         }
 
+        // add length validation for password
+        if (passwordField.getText().length() < 8) {
+            errors.append("Password must be at least 8 characters long.\n");
+            isValid = false;
+        }
+
+        // add length validation for email
+        if (emailField.getText().length() < 5) {
+            errors.append("Email must be at least 5 characters long.\n");
+            isValid = false;
+        }
+
+        // add length validation for first name
+        if (firstnameField.getText().length() < 2) {
+            errors.append("First Name must be at least 2 characters long.\n");
+            isValid = false;
+        }
+
+        // add length validation for last name
+        if (lastnameField.getText().length() < 2) {
+            errors.append("Last Name must be at least 2 characters long.\n");
+            isValid = false;
+        }
+
+
         errorMessage.setText(errors.toString());
         return isValid;
     }
+
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
 }

@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.image.ImageView?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.ProfileController" xmlns="http://javafx.com/javafx/8">
     <top>
         <fx:include source="../Reusable/Navbar.fxml"/>
@@ -17,6 +18,8 @@
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
             <Label text="Update Profile"/>
+            <ImageView fx:id="profileImageView" fitHeight="100" fitWidth="100" preserveRatio="true"/>
+            <Button fx:id="uploadButton" text="Upload Picture" onAction="#handleUploadPicture"/>
             <Label text="First Name:"/>
             <TextField fx:id="firstNameField" promptText="Enter First Name"/>
             <Label text="Last Name:"/>

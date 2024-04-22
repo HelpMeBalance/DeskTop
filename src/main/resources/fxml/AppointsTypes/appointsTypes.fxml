@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.NavbarController">
+<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AppointsTypesController">
     <!-- Top menu bar -->
     <top>
         <fx:include source="../Reusable/Navbar.fxml" />
@@ -50,7 +50,7 @@
                            <Font size="10.0" />
                         </font>
                      </Label>
-                     <Hyperlink alignment="BOTTOM_CENTER" text="Start Your Healing Journey" textAlignment="CENTER" />
+                     <Hyperlink fx:id="Individual" alignment="BOTTOM_CENTER" onAction="#handleClicks" text="Start Your Healing Journey" textAlignment="CENTER" />
                   </children>
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -72,7 +72,7 @@
                            <Font size="10.0" />
                         </font>
                      </Label>
-                     <Hyperlink text="Rekindle Your Connection" textAlignment="CENTER" />
+                     <Hyperlink fx:id="Couple" onAction="#handleClicks" text="Rekindle Your Connection" textAlignment="CENTER" />
                   </children>
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -94,7 +94,7 @@
                            <Font size="10.0" />
                         </font>
                      </Label>
-                     <Hyperlink text="Support Your Child's Growth" textAlignment="CENTER" />
+                     <Hyperlink fx:id="Child" onAction="#handleClicks" text="Support Your Child's Growth" textAlignment="CENTER" />
                   </children>
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

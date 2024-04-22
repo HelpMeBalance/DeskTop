@@ -6,8 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-//import org.example.controllers.QuizeControllerAd;
-import org.example.models.Question;
+import org.example.controllers.CommentaireController;
 
 import java.io.IOException;
 
@@ -24,15 +23,17 @@ public class Navigation {
         // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
     }
-    public static int navigateToAndReturnId(String fxmlFile, Node currentNode) throws IOException {
-        // Load the new FXML file
-        FXMLLoader loader = new FXMLLoader(Navigation.class.getResource(fxmlFile));
-        Parent newContent = loader.load();
 
-        // Get the controller associated with the loaded FXML file
-        Object controller = loader.getController();
-        if (controller instanceof Initializable) {
-            ((Initializable) controller).initialize(null, null); // Initialize the controller if it implements Initializable
+    public static void navigateTo(String fxmlFile, Node currentNode, int publicationId) throws IOException {
+        // Load the new FXML file
+        FXMLLoader fxmlLoader = new FXMLLoader(Navigation.class.getResource(fxmlFile));
+        Parent newContent = fxmlLoader.load();
+
+        // Get the controller associated with the loaded FXML
+        Object controller = fxmlLoader.getController();
+        if (controller instanceof CommentaireController) {
+            CommentaireController commentaireController = (CommentaireController) controller;
+            commentaireController.setPublicationId(publicationId); // Set the publication ID in the controller
         }
 
         // Get the current stage using the node from the current scene
@@ -40,10 +41,5 @@ public class Navigation {
 
         // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
-
-        // Return the ID of the loaded FXML file
-        return loader.<Question>getController().getId(); // Replace YourControllerClass with the actual name of your controller class
     }
-
-
 }

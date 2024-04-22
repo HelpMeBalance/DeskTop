@@ -44,13 +44,14 @@ public class PublicationService implements IService <Publication>{
     }
     @Override
     public void update(Publication publication)throws SQLException {
-        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE publication SET titre = ?, contenu = ?, com_ouvert = ?, anonyme = ?,date_m=? WHERE id = ?");
+        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE publication SET titre = ?, contenu = ?, com_ouvert = ?, anonyme = ?,date_m=?,image=? WHERE id = ?");
         preparedStatement.setString(1, publication.getTitre());
         preparedStatement.setString(2, publication.getContenu());
         preparedStatement.setBoolean(3, publication.getCom_ouvert());
         preparedStatement.setBoolean(4, publication.getAnonyme());
         preparedStatement.setObject(5, LocalDateTime.now());
-        preparedStatement.setInt(6, publication.getId());
+        preparedStatement.setString(6, publication.getImage());
+        preparedStatement.setInt(7, publication.getId());
         preparedStatement.executeUpdate();
     }
     @Override
@@ -93,7 +94,7 @@ public class PublicationService implements IService <Publication>{
     @Override
     public List<Publication> select() throws SQLException{
         List<Publication> publications = new ArrayList<>();
-        String sql = "SELECT * FROM publication";
+        String sql = "SELECT * FROM publication ORDER BY date_m DESC";
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -102,11 +103,23 @@ public class PublicationService implements IService <Publication>{
         }
         return publications;
     }
+    public int countPublications() throws SQLException {
+        int count = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM publication");
+        try (preparedStatement) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        }
+        return count;
+    }
     public List<Publication> search(String searchTerm) throws SQLException{
         List<Publication> publications = new ArrayList<>();
         String sql = "SELECT * FROM publication";
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            sql += " WHERE contenu LIKE ? OR vues LIKE ? OR titre LIKE ?";
+            sql += " WHERE contenu LIKE ? OR vues LIKE ? OR titre LIKE ? ORDER BY date_m DESC";
         }
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql))
         {
@@ -124,6 +137,33 @@ public class PublicationService implements IService <Publication>{
         }
         return publications;
     }
+    public List<Publication> search(String searchTerm,int pageNumber, int pageSize) throws SQLException{
+        List<Publication> publications = new ArrayList<>();
+        int offset = (pageNumber) * pageSize;
+        String sql = "SELECT * FROM publication";
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            sql += " WHERE contenu LIKE ? OR vues LIKE ? OR titre LIKE ? ORDER BY date_m DESC LIMIT ? OFFSET ?";
+        }
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql))
+        {
+
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                String likePattern = searchTerm + "%";
+                preparedStatement.setString(1, likePattern);
+                preparedStatement.setString(2, likePattern);
+                preparedStatement.setString(3, likePattern);
+                preparedStatement.setInt(4, pageSize);
+                preparedStatement.setInt(5, offset);
+            }
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    publications.add(createPublication(resultSet));
+                }
+            }
+        }
+        return publications;
+    }
     public List<Publication> select(int pageNumber, int pageSize) throws SQLException{
         List<Publication> publications = new ArrayList<>();
         int offset = (pageNumber - 1) * pageSize;
@@ -137,6 +177,22 @@ public class PublicationService implements IService <Publication>{
                 publications.add(createPublication(resultSet));
             }
         }
+        }
+        return publications;
+    }
+    public List<Publication> selectAdmin(int pageNumber, int pageSize) throws SQLException{
+        List<Publication> publications = new ArrayList<>();
+        int offset = (pageNumber) * pageSize;
+        String sql = "SELECT * FROM publication ORDER BY date_m DESC LIMIT ? OFFSET ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql))
+        {
+            preparedStatement.setInt(1, pageSize);
+            preparedStatement.setInt(2, offset);
+            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    publications.add(createPublication(resultSet));
+                }
+            }
         }
         return publications;
     }

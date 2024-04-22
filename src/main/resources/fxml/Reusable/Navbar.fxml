@@ -28,7 +28,6 @@
         </items>
     </MenuButton>
     <Button contentDisplay="CENTER" styleClass="top-menu-button" text="Contact Us" />
-    <Button fx:id="adminButton" contentDisplay="CENTER" onAction="#handleAdmin" styleClass="top-menu-button" text="Admin" />
 
     <!-- Spacer to push the login button to the left -->
     <Region HBox.hgrow="ALWAYS" />
@@ -41,7 +40,7 @@
             <MenuItem text="Edit Profile" onAction="#handleViewProfile" />
             <MenuItem text="Logout" onAction="#handleLogout" />
             <MenuItem text="Edit Password" onAction="#handleEditPassword" />
-            <!-- Add other profile related menu items here -->
+            <MenuItem fx:id="AdminPage" text="Admin Dashboard" onAction="#handleAdminPage" />
         </items>
     </MenuButton>
 
