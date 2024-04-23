@@ -62,12 +62,12 @@ public class AdminUsersController {
         colCreated_at.setCellValueFactory(new PropertyValueFactory<>("created_at"));
         setupActionsColumn();
         loadUsers();
-        setupSearchFilter();
         setupTable();
+        setupSearchFilter();
     }
 
     private void setupTable() {
-        loadUsers();
+        loadUsers(); // Now call loadUsers() after pagination initialization
     }
 
     private void setupActionsColumn() {
