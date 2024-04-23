@@ -33,6 +33,16 @@ public class SousCategorieService {
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
     }
+    public void update(SousCategorie sousCategorie) throws SQLException {
+        String sql = "UPDATE sous_categorie SET nom = ?, description = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, sousCategorie.getNom());
+            preparedStatement.setString(2, sousCategorie.getDescription());
+            preparedStatement.setInt(3, sousCategorie.getId());
+            preparedStatement.executeUpdate();
+        }
+    }
     public List<SousCategorie> select() throws SQLException {
         List<SousCategorie> categories = new ArrayList<>();
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  sous_categorie");
@@ -105,6 +115,20 @@ public class SousCategorieService {
         }
 
         return null ;
+    }
+
+    public int countSubcategories(Categorie categorie) throws SQLException {
+        int count = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM sous_categorie WHERE categorie_id = ?");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, categorie.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        }
+        return count;
     }
 
 }

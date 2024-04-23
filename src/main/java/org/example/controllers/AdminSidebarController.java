@@ -55,4 +55,7 @@ public class AdminSidebarController {
     }
 
 
+    public void handleCategories() {
+        navigate("/fxml/Admin/Categorie.fxml");
+    }
 }
