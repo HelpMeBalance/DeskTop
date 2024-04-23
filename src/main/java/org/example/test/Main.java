@@ -18,9 +18,10 @@ import java.util.Objects;
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Admin/Appointment.fxml"));
 
-            primaryStage.setTitle("HelpMeBalance");
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/home/homepage.fxml"));
+
+        primaryStage.setTitle("HelpMeBalance");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true); // Ensures the stage is maximized
