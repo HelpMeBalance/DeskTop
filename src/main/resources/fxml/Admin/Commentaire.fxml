@@ -49,7 +49,6 @@
             </HBox>
             <TableView fx:id="Comments" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
                 <columns>
-                    <TableColumn fx:id="pubtitle" text="Publication Title" />
                     <TableColumn fx:id="content" text="Content" />
                     <TableColumn fx:id="userName" text="Posted By" />
                     <TableColumn fx:id="state" text="State" />

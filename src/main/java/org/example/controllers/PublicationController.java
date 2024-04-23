@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,22 +10,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.example.models.Categorie;
 import org.example.models.Publication;
 import org.example.models.SousCategorie;
-import org.example.models.User;
-import org.example.service.CategorieService;
-import org.example.service.CommentaireService;
-import org.example.service.PublicationService;
-import org.example.service.SousCategorieService;
+import org.example.service.*;
 import org.example.utils.Navigation;
 import org.example.utils.Session;
 
@@ -38,8 +41,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 public class PublicationController implements Initializable {
     public TextField SearchPublication;
     public Hyperlink hlFirst;
@@ -49,9 +54,12 @@ public class PublicationController implements Initializable {
     private static final int PAGE_SIZE = 3;
     private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
     public Label paginationLegend;
+    public AnchorPane chartContainer;
+    public TableColumn <Publication, Integer> likes;
     private PublicationService pS=new PublicationService();
     private CommentaireService cS=new CommentaireService();
     private CategorieService catS=new CategorieService();
+    private LikeService lS=new LikeService();
     private SousCategorieService souscatS=new SousCategorieService();
     @FXML
     private TableView Publications;
@@ -87,6 +95,7 @@ public class PublicationController implements Initializable {
     String searchText=null;
     private File selectedFile;
     private ImageView imageView;
+    BarChart<String, Number> barChart;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPublications();
@@ -97,6 +106,50 @@ public class PublicationController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+    private void CreateChart() throws SQLException {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        barChart = new BarChart<>(xAxis, yAxis);
+        barChart.setTitle("Publication Metrics");
+        xAxis.setLabel("Publication");
+        yAxis.setLabel("Value");
+        chartContainer.getChildren().add(barChart);
+        AnchorPane.setTopAnchor(barChart, 0.0);
+        AnchorPane.setBottomAnchor(barChart, 0.0);
+        AnchorPane.setLeftAnchor(barChart, 0.0);
+        AnchorPane.setRightAnchor(barChart, 0.0);
+        XYChart.Series<String, Number> viewsSeries = new XYChart.Series<>();
+        viewsSeries.setName("Views");
+        XYChart.Series<String, Number> likesSeries = new XYChart.Series<>();
+        likesSeries.setName("Likes");
+        XYChart.Series<String, Number> commentsSeries = new XYChart.Series<>();
+        commentsSeries.setName("Comments");
+        // Iterate over the publications list and add data to the series
+        for (Publication publication : publicationsList) {
+            viewsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), publication.getVues()));
+            likesSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), lS.countLikes(publication)));
+            commentsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), cS.countComments(publication)));
+        }
+        barChart.getData().clear();
+        barChart.getData().addAll(viewsSeries, likesSeries, commentsSeries);
+        for (XYChart.Series<String, Number> series : barChart.getData()) {
+            for (XYChart.Data<String, Number> data : series.getData()) {
+                Tooltip tooltip = new Tooltip(data.getXValue().substring(data.getXValue().indexOf(":") + 2) +"\n"+series.getName() + " : "+ data.getYValue().intValue());
+                Tooltip.install(data.getNode(), tooltip);
+                data.getNode().setOnMouseEntered(event -> {
+                    data.getNode().setStyle("-fx-background-color:#b4c5d3;");
+                    Point2D point = data.getNode().localToScreen(data.getNode().getBoundsInLocal().getMinX(), data.getNode().getBoundsInLocal().getMinY());
+                    double adjustedY = point.getY() - tooltip.getHeight() - 5; // Adjusted y-coordinate to position above the data point
+                    tooltip.show(data.getNode(), point.getX(), adjustedY);
+                });
+                data.getNode().setOnMouseExited(event -> {
+
+                    data.getNode().setStyle("");
+                    tooltip.hide();
+                });
+            }
+        }
     }
 
     private void loadPublications(int pageIndex) throws SQLException {
@@ -113,6 +166,8 @@ public class PublicationController implements Initializable {
         }
         publicationsList.setAll(publications);
         updatePaginationLegend(pageIndex,PAGE_SIZE,totalpub);
+        chartContainer.getChildren().clear();
+        CreateChart();
     }
     private void updatePaginationLegend(int pageIndex, int pageSize, int totalPublications) {
         int start = pageIndex * pageSize + 1;
@@ -128,12 +183,22 @@ public class PublicationController implements Initializable {
             pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
             loadPublications(pagination.getCurrentPageIndex());
             Publications.setItems(publicationsList);
+            CreateChart();
             title.setCellValueFactory(new PropertyValueFactory<>("titre"));
             content.setCellValueFactory(new PropertyValueFactory<>("contenu"));
             userName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getLastname()+" "+cellData.getValue().getUser().getFirstname()));
             state.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValide() ? "Approved" : "Under Review"));
             views.setCellValueFactory(new PropertyValueFactory<>("vues"));
-
+            likes.setCellValueFactory(cellData -> {
+                try {
+                    int likeCount = lS.countLikes(cellData.getValue());
+                    return new SimpleIntegerProperty(likeCount).asObject();
+                } catch (SQLException e) {
+                    // Handle the SQL exception properly, e.g., log the error or show an error message
+                    e.printStackTrace();
+                    return new SimpleIntegerProperty(0).asObject(); // Return a default value or handle the error case as needed
+                }
+            });
             comments.setCellValueFactory(cellData -> {
                 try {
                     int count = cS.countComments(cellData.getValue());
@@ -421,6 +486,7 @@ public class PublicationController implements Initializable {
                     return pub;
                 });
                 Publications.refresh();
+                loadPublications(pagination.getCurrentPageIndex());
                 dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);

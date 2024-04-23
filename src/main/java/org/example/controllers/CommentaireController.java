@@ -38,7 +38,6 @@ public class CommentaireController implements Initializable {
     // Define the page size
     private static final int PAGE_SIZE = 3;
     public Label paginationLegend;
-    public TableColumn <Commentaire, String>  pubtitle;
     private CommentaireService cS=new CommentaireService();
     private PublicationService pS=new PublicationService();
     @FXML
@@ -93,10 +92,10 @@ public class CommentaireController implements Initializable {
         commentsList.setAll(commentaires);
         updatePaginationLegend(pageIndex,PAGE_SIZE,totalcoms);
     }
-    private void updatePaginationLegend(int pageIndex, int pageSize, int totalPublications) {
+    private void updatePaginationLegend(int pageIndex, int pageSize, int totalcoms) {
         int start = pageIndex * pageSize + 1;
-        int end = Math.min(start + pageSize - 1, totalPublications);
-        paginationLegend.setText("Showing " + start + " to " + end + " of " + totalPublications + " publications");
+        int end = Math.min(start + pageSize - 1, totalcoms);
+        paginationLegend.setText("Showing " + start + " to " + end + " of " + totalcoms + " comments");
     }
     private void initComments() {
         try
@@ -111,7 +110,6 @@ public class CommentaireController implements Initializable {
             loadComments(pagination.getCurrentPageIndex());
             Comments.setItems(commentsList);
             content.setCellValueFactory(new PropertyValueFactory<>("contenu"));
-            pubtitle.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPublication().getTitre()));
             userName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getLastname()+" "+cellData.getValue().getUser().getFirstname()));
             state.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValide() ? "Approved" : "Under Review"));
             postedAt.setCellValueFactory(cellData -> {
