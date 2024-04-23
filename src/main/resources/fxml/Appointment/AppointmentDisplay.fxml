@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AppointmentManagementController">
+   <!-- Top menu bar -->
+   <top>
+      <fx:include source="../Reusable/Navbar.fxml" />
+   </top>
+
+   <center>
+      <VBox alignment="CENTER">
+      <Label styleClass="header-label" text="Appointment Management" />
+         <Hyperlink text="Create new appointment" />
+         <Label alignment="CENTER" text="user's name and lastname" textAlignment="CENTER">
+            <font>
+               <Font size="9.0" />
+            </font>
+         </Label>
+         <HBox fx:id="displayHBox" alignment="CENTER" prefHeight="120.0">
+            <children>
+               <VBox alignment="CENTER" style="-fx-background-color: #f4fcfa;" styleClass="form-container" BorderPane.alignment="CENTER">
+                  <children>
+                     <HBox alignment="TOP_CENTER">
+                        <children>
+                           <ImageView fitHeight="48.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@../../assets/appointDisplay.png" />
+                              </image>
+                           </ImageView>
+                           <VBox prefHeight="200.0" prefWidth="100.0">
+                              <children>
+                                 <Label minWidth="-Infinity" text="2024-xx-xx hh:mm" />
+                                 <Label minWidth="-Infinity" text="Confirmed/Not Confirmed" />
+                              </children>
+                              <padding>
+                                 <Insets left="5.0" top="10.0" />
+                              </padding>
+                           </VBox>
+                           <Label text="*****">
+                              <padding>
+                                 <Insets left="20.0" top="25.0" />
+                              </padding>
+                           </Label>
+                        </children>
+                        <padding>
+                           <Insets left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                     </HBox>
+                     <Label text="Service Name">
+                        <padding>
+                           <Insets bottom="10.0" />
+                        </padding></Label>
+                  </children>
+               </VBox>
+            </children>
+            <padding>
+               <Insets bottom="10.0" top="10.0" />
+            </padding>
+         </HBox>
+      </VBox>
+   </center>
+
+   <bottom>
+      <fx:include source="../Reusable/Footer.fxml" />
+   </bottom>
+</BorderPane>
