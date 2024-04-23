@@ -18,7 +18,7 @@ import java.util.Objects;
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Admin/Publication.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Admin/Appointment.fxml"));
 
             primaryStage.setTitle("HelpMeBalance");
         Scene scene = new Scene(root);

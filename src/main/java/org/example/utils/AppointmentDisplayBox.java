@@ -3,6 +3,7 @@ package org.example.utils;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -79,7 +80,7 @@ public class AppointmentDisplayBox {
         editIcon.setOnMouseClicked(e -> {
             System.out.println("Edit Icon Clicked!");
 
-            showUpdateDialog(app);
+            showUpdateDialog(app, vBox, "/fxml/Appointment/AppointmentDisplay.fxml");
         });
 
         // Add icons to HBox
@@ -102,15 +103,15 @@ public class AppointmentDisplayBox {
         vBox.getChildren().addAll(hBox, serviceNameLabel);
         return vBox;
     }
-    private void showUpdateDialog(RendezVous app) {
+    public void showUpdateDialog(RendezVous app, Node node, String fxml) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-        dialog.getDialogPane().setContent(createForm(app, dialog));
+        dialog.getDialogPane().setContent(createForm(app, dialog, node, fxml));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
         dialog.showAndWait();
     }
-    public VBox createForm(RendezVous app, Dialog dialog) {
+    public VBox createForm(RendezVous app, Dialog dialog, Node node,String fxml) {
         System.out.println(app);
         try{
             System.out.println(new UserService().select());
@@ -187,7 +188,7 @@ public class AppointmentDisplayBox {
                 rs.update(app);
 
                 dialog.close();
-                Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", vBox);
+                Navigation.navigateTo(fxml, node);
             }catch (SQLException ex){
                 System.out.println(ex.getMessage());
             } catch (IOException ex) {
