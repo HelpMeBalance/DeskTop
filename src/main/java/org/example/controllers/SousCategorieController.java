@@ -17,7 +17,6 @@ import org.example.models.SousCategorie;
 import org.example.service.CategorieService;
 import org.example.service.SousCategorieService;
 import org.example.utils.Navigation;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class SousCategorieController implements Initializable {
-
     @FXML
     public TableView SubCategories;
     @FXML
@@ -39,6 +37,7 @@ public class SousCategorieController implements Initializable {
     public TableColumn <SousCategorie,Void>  actions;
     @FXML
     private Button goback;
+    @FXML
     public Label souscategorietitle;
 
     private CategorieService cS=new CategorieService();
@@ -66,19 +65,15 @@ public class SousCategorieController implements Initializable {
                 FontAwesomeIcon updateIcon = new FontAwesomeIcon();
                 updateIcon.setIcon(FontAwesomeIcons.PENCIL);
                 updateButton.setGraphic(updateIcon);
-
                 FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
                 deleteIcon.setIcon(FontAwesomeIcons.TRASH);
                 deleteButton.setGraphic(deleteIcon);
-
                 updateButton.setStyle("-fx-background-color: transparent;");
                 deleteButton.setStyle("-fx-background-color: transparent;");
-
                 updateButton.setOnAction(event -> {
                     SousCategorie sousCategorie = getTableView().getItems().get(getIndex());
                     showUpdatesouscategorieDialog(sousCategorie);
                 });
-
                 deleteButton.setOnAction(event -> {
                     SousCategorie sousCategorie = getTableView().getItems().get(getIndex());
                     try {
@@ -101,7 +96,6 @@ public class SousCategorieController implements Initializable {
             }
         });
     }
-
     private void showDeleteConfirmationDialog(SousCategorie sousCategorie)  throws SQLException{
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Confirm Deletion");
@@ -110,20 +104,15 @@ public class SousCategorieController implements Initializable {
         ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(confirmButton, cancelButton);
-
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
             scS.delete(sousCategorie.getId());
             initSubCategories();
         }
     }
-
     private void showUpdatesouscategorieDialog(SousCategorie sousCategorie)  {
-        // Create a new Dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
-        // Create a label for the title
         Label titleLabel = new Label("Edit Sub-Category");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         VBox titleBox = new VBox();
@@ -134,7 +123,6 @@ public class SousCategorieController implements Initializable {
         TextField nom = new TextField(sousCategorie.getNom());
         Label contentLabel = new Label("Description");
         TextField content = new TextField(sousCategorie.getDescription());
-
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleBox,nomLabel,nom,contentLabel,content);
         contentBox.setSpacing(10);
@@ -144,7 +132,6 @@ public class SousCategorieController implements Initializable {
         buttonBox.getChildren().add(updateButton);
         buttonBox.setAlignment(Pos.CENTER);
         VBox.setMargin(buttonBox, new Insets(20, 0, 0, 0));
-        // Create an action for the validate button
         updateButton.setOnAction(event -> {
             try {
                 sousCategorie.setNom(nom.getText());
@@ -157,27 +144,20 @@ public class SousCategorieController implements Initializable {
                     return souscat;
                 });
                 SubCategories.refresh();
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         });
-        // Set the content of the dialog
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
 
     public void addsouscategorie() {
-        // Create a new Dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
-        // Create a label for the title
         Label titleLabel = new Label("Add Sub-Category");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         VBox titleBox = new VBox();
@@ -188,7 +168,6 @@ public class SousCategorieController implements Initializable {
         TextField nom = new TextField();
         Label contentLabel = new Label("Description");
         TextField content = new TextField();
-
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleBox,nomLabel,nom,contentLabel,content);
         contentBox.setSpacing(10);
@@ -198,30 +177,21 @@ public class SousCategorieController implements Initializable {
         buttonBox.getChildren().add(updateButton);
         buttonBox.setAlignment(Pos.CENTER);
         VBox.setMargin(buttonBox, new Insets(20, 0, 0, 0));
-        // Create an action for the validate button
         updateButton.setOnAction(event -> {
             try {
                 SousCategorie sousCategorie = new SousCategorie(cat,nom.getText(),content.getText());
                 scS.add(sousCategorie);
                 initSubCategories();
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         });
-        // Set the content of the dialog
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
-    public int getCategorieId() {
-        return categorieId;
-    }
-
     public void setCategorieId(int categorieId) {
        this.categorieId=categorieId;
         try {
@@ -230,7 +200,6 @@ public class SousCategorieController implements Initializable {
             throw new RuntimeException(e);
         }
     }
-
     public void goback() throws IOException {
         Navigation.navigateTo("/fxml/Admin/Categorie.fxml",goback);
     }

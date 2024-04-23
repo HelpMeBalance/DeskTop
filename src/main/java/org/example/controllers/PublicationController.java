@@ -30,7 +30,6 @@ import org.example.models.SousCategorie;
 import org.example.service.*;
 import org.example.utils.Navigation;
 import org.example.utils.Session;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,26 +40,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 public class PublicationController implements Initializable {
-    public TextField SearchPublication;
-    public Hyperlink hlFirst;
-    public Pagination pagination;
-    public Hyperlink hlLast;
 
-    private static final int PAGE_SIZE = 3;
-    private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
-    public Label paginationLegend;
-    public AnchorPane chartContainer;
-    public TableColumn <Publication, Integer> likes;
-    private PublicationService pS=new PublicationService();
-    private CommentaireService cS=new CommentaireService();
-    private CategorieService catS=new CategorieService();
-    private LikeService lS=new LikeService();
-    private SousCategorieService souscatS=new SousCategorieService();
     @FXML
     private TableView Publications;
     @FXML
@@ -91,11 +75,33 @@ public class PublicationController implements Initializable {
     private TableColumn<Publication, String> updatedAt;
     @FXML
     private TableColumn<Publication, Void> actions;
+    @FXML
+    public TextField SearchPublication;
+    @FXML
+    public Hyperlink hlFirst;
+    @FXML
+    public Pagination pagination;
+    @FXML
+    public Hyperlink hlLast;
+    @FXML
+    public Label paginationLegend;
+    @FXML
+    public AnchorPane chartContainer;
+    @FXML
+    public TableColumn <Publication, Integer> likes;
+    private static final int PAGE_SIZE = 3;
+    private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
+    private PublicationService pS=new PublicationService();
+    private CommentaireService cS=new CommentaireService();
+    private CategorieService catS=new CategorieService();
+    private LikeService lS=new LikeService();
+    private SousCategorieService souscatS=new SousCategorieService();
     ObservableList<Publication> publicationsList=FXCollections.observableArrayList();
     String searchText=null;
     private File selectedFile;
     private ImageView imageView;
     BarChart<String, Number> barChart;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPublications();
@@ -125,7 +131,6 @@ public class PublicationController implements Initializable {
         likesSeries.setName("Likes");
         XYChart.Series<String, Number> commentsSeries = new XYChart.Series<>();
         commentsSeries.setName("Comments");
-        // Iterate over the publications list and add data to the series
         for (Publication publication : publicationsList) {
             viewsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), publication.getVues()));
             likesSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), lS.countLikes(publication)));
@@ -140,20 +145,18 @@ public class PublicationController implements Initializable {
                 data.getNode().setOnMouseEntered(event -> {
                     data.getNode().setStyle("-fx-background-color:#b4c5d3;");
                     Point2D point = data.getNode().localToScreen(data.getNode().getBoundsInLocal().getMinX(), data.getNode().getBoundsInLocal().getMinY());
-                    double adjustedY = point.getY() - tooltip.getHeight() - 5; // Adjusted y-coordinate to position above the data point
+                    double adjustedY = point.getY() - tooltip.getHeight() - 5;
                     tooltip.show(data.getNode(), point.getX(), adjustedY);
                 });
                 data.getNode().setOnMouseExited(event -> {
-
                     data.getNode().setStyle("");
                     tooltip.hide();
                 });
             }
         }
     }
-
     private void loadPublications(int pageIndex) throws SQLException {
-        List<Publication> publications=new ArrayList<>();
+        List<Publication> publications;
         int totalpub=pS.countPublications();
         if(searchText != null && !searchText.isEmpty()) {
              publications = pS.search(searchText, pagination.getCurrentPageIndex(), PAGE_SIZE);
@@ -174,12 +177,10 @@ public class PublicationController implements Initializable {
         int end = Math.min(start + pageSize - 1, totalPublications);
         paginationLegend.setText("Showing " + start + " to " + end + " of " + totalPublications + " publications");
     }
-
     public void initPublications() {
 
         try
         {
-
             pagination.setPageCount((pS.countPublications() + PAGE_SIZE - 1) / PAGE_SIZE);
             loadPublications(pagination.getCurrentPageIndex());
             Publications.setItems(publicationsList);
@@ -194,15 +195,14 @@ public class PublicationController implements Initializable {
                     int likeCount = lS.countLikes(cellData.getValue());
                     return new SimpleIntegerProperty(likeCount).asObject();
                 } catch (SQLException e) {
-                    // Handle the SQL exception properly, e.g., log the error or show an error message
                     e.printStackTrace();
-                    return new SimpleIntegerProperty(0).asObject(); // Return a default value or handle the error case as needed
+                    return new SimpleIntegerProperty(0).asObject();
                 }
             });
             comments.setCellValueFactory(cellData -> {
                 try {
                     int count = cS.countComments(cellData.getValue());
-                    String res = null;
+                    String res;
                     if(cellData.getValue().getCom_ouvert())
                     {
                         if(count>0)res="\uD83D\uDCAC " +count; 
@@ -238,7 +238,6 @@ public class PublicationController implements Initializable {
                         }
                     });
                 }
-
                 @Override
                 protected void updateItem(Void item, boolean empty) {
                     super.updateItem(item, empty);
@@ -262,28 +261,23 @@ public class PublicationController implements Initializable {
                     FontAwesomeIcon viewIcon = new FontAwesomeIcon();
                     viewIcon.setIcon(FontAwesomeIcons.EYE);
                     viewButton.setGraphic(viewIcon);
-
                     FontAwesomeIcon updateIcon = new FontAwesomeIcon();
                     updateIcon.setIcon(FontAwesomeIcons.PENCIL);
                     updateButton.setGraphic(updateIcon);
-
                     FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
                     deleteIcon.setIcon(FontAwesomeIcons.TRASH);
                     deleteButton.setGraphic(deleteIcon);
                     viewButton.setStyle("-fx-background-color: transparent;");
                     updateButton.setStyle("-fx-background-color: transparent;");
                     deleteButton.setStyle("-fx-background-color: transparent;");
-
                     viewButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
                         showPublicationDetails(publication);
                     });
-
                     updateButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
                         showUpdatePublicationDialog(publication);
                     });
-
                     deleteButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
                         try {
@@ -293,7 +287,6 @@ public class PublicationController implements Initializable {
                         }
                     });
                 }
-
                 @Override
                 protected void updateItem(Void item, boolean empty) {
                     super.updateItem(item, empty);
@@ -315,11 +308,9 @@ public class PublicationController implements Initializable {
         alert.setTitle("Confirm Deletion");
         alert.setHeaderText("Are you sure you want to delete the publication ?");
         alert.setContentText("Publication Title: " + publication.getTitre() + "\n Posted By : "+publication.getUser().getLastname()+" "+publication.getUser().getFirstname());
-
         ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(confirmButton, cancelButton);
-
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
             pS.delete(publication.getId());
@@ -332,13 +323,11 @@ public class PublicationController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("No Comments Found");
         alert.setHeaderText(" The comments are empty and locked ");
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
     private void showPublicationDetails(Publication publication) {
-
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
         Label titleLabel = new Label("Publication Details");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
@@ -364,36 +353,30 @@ public class PublicationController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         Label contentLabel = new Label(
                 "Categorie : "+publication.getCategorie().getNom() + "\n" +
                         "Sub-Categorie : "+publication.getSous_categorie().getNom() + "\n" +
                         "Title: " + publication.getTitre() + "\n" +
                         "Content: \n" + publication.getContenu() + "\n"
         );
-
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel, imageView);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
-
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox, contentLabel);
         contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         String val=(publication.getValide())?"Invalidate":"Validate";
-
                 Button validateButton = new Button(val);
                 HBox buttonBox = new HBox();
                 buttonBox.getChildren().add(validateButton);
                 buttonBox.setAlignment(Pos.CENTER);
-
                 validateButton.setOnAction(event -> {
                     try {
                         pS.validate(publication.getId());
                         publicationsList.replaceAll(pub -> {
                             if (pub.getId() == publication.getId()) {
-
                                 pub.setValide(!pub.getValide());
                             }
                             return pub;
@@ -403,25 +386,17 @@ public class PublicationController implements Initializable {
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-
                 });
-
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-
-               dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-
         dialog.showAndWait();
     }
-
     private void showUpdatePublicationDialog(Publication publication) {
-
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
         Label titleLabel = new Label("Edit Publication");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
-
         imageView = new ImageView();
         try {
             String imagePath = UPLOAD_ROOT +"/"+ publication.getImage();
@@ -471,7 +446,6 @@ public class PublicationController implements Initializable {
         UpdatePictureButton.setOnAction(event -> {
             selectImageFile();
         });
-
         updateButton.setOnAction(event -> {
             try {
                 publication.setTitre(title.getText());
@@ -493,7 +467,6 @@ public class PublicationController implements Initializable {
             }
 
         });
-
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
@@ -501,10 +474,8 @@ public class PublicationController implements Initializable {
     }
 
     public void addpublication()  {
-
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
         Label titleLabel = new Label("Add Publication");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
@@ -520,10 +491,8 @@ public class PublicationController implements Initializable {
         titleImageBox.setSpacing(10);
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> subcategoryComboBox = new ComboBox<>();
-
         try {
             List<Categorie> categories = catS.selectCategoriesWithSubcategories();
-
             for (Categorie categorie : categories) {
                 categoryComboBox.getItems().add(categorie.getNom());
             }
@@ -575,8 +544,6 @@ public class PublicationController implements Initializable {
             try {
                 String fileName = "default.png";
                 if(selectedFile != null) fileName = saveImageFile(selectedFile,UPLOAD_ROOT);
-                System.out.println("filename : "+fileName);
-
                 Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false,fileName);
                 pS.add(publication);
                 pagination.setCurrentPageIndex(0);
@@ -585,24 +552,20 @@ public class PublicationController implements Initializable {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         });
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
         dialog.showAndWait();
     }
-
     public void handleSearch() throws SQLException {
          searchText = SearchPublication.getText().toLowerCase();
         pagination.setCurrentPageIndex(0);
         loadPublications(0);
     }
-
     public void handleFirstPage() {
         pagination.setCurrentPageIndex(0);
     }
-
     public void handleLastPage() {
         pagination.setCurrentPageIndex(pagination.getPageCount() - 1);
     }
@@ -613,15 +576,12 @@ public class PublicationController implements Initializable {
         fileChooser.getExtensionFilters().add(extFilter);
          selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
-            String imageUrl = selectedFile.toURI().toString();
-            System.out.println("image url"+imageUrl);
             displaySelectedImage();
         }
     }
     private void displaySelectedImage() {
         if (selectedFile != null) {
             Image image = new Image(selectedFile.toURI().toString());
-
             try {
                 imageView.setImage(image);
                 double imageWidth = image.getWidth();
@@ -647,7 +607,6 @@ public class PublicationController implements Initializable {
                 Path targetFilePath = targetDirPath.resolve(uniqueFileName);
                 Files.copy(selectedFile.toPath(), targetFilePath, StandardCopyOption.REPLACE_EXISTING);
                 fileName = uniqueFileName;
-                System.out.println("File saved: " + fileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }

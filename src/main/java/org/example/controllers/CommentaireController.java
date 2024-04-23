@@ -5,7 +5,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -19,66 +18,60 @@ import org.example.service.CommentaireService;
 import org.example.service.PublicationService;
 import org.example.utils.Navigation;
 import org.example.utils.Session;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CommentaireController implements Initializable {
+    @FXML
     public TextField SearchComment;
+    @FXML
     public Hyperlink hlFirst;
+    @FXML
     public Pagination pagination;
+    @FXML
     public Hyperlink hlLast;
-    // Define the page size
-    private static final int PAGE_SIZE = 3;
-    public Label paginationLegend;
-    private CommentaireService cS=new CommentaireService();
-    private PublicationService pS=new PublicationService();
+
     @FXML
     private TableView Comments;
-
     @FXML
     private TableColumn<Commentaire, String> content;
-
     @FXML
     private TableColumn<Commentaire, String> userName;
-
     @FXML
     private TableColumn<Commentaire, String> state;
-
     @FXML
     private TableColumn<Commentaire, String> postedAt;
-
     @FXML
     private TableColumn<Commentaire, String> updatedAt;
     @FXML
     private TableColumn<Commentaire, Void> validate;
-
     @FXML
     private TableColumn<Commentaire, Void> actions;
     @FXML
     private Button goback;
-
     @FXML
     private Label publicationtitle;
-
     @FXML
     private Button addcomment;
     ObservableList<Commentaire> commentsList=FXCollections.observableArrayList();
     private int publicationId;
     private Publication pub;
     String searchText=null;
+    private static final int PAGE_SIZE = 3;
+    public Label paginationLegend;
+    private CommentaireService cS=new CommentaireService();
+    private PublicationService pS=new PublicationService();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
     private void loadComments(int pageIndex) throws SQLException {
-        List<Commentaire> commentaires=new ArrayList<>();
+        List<Commentaire> commentaires;
         int totalcoms=cS.countComments(pub);
         if(searchText != null && !searchText.isEmpty()) {
             commentaires = cS.search(searchText,publicationId, pagination.getCurrentPageIndex(), PAGE_SIZE);
@@ -104,9 +97,6 @@ public class CommentaireController implements Initializable {
             publicationtitle.setText(pub.getTitre());
             addcomment.setVisible(pub.getCom_ouvert());
             pagination.setPageCount((cS.countComments(pub) + PAGE_SIZE - 1) / PAGE_SIZE);
-
-            //commentsList = FXCollections.observableArrayList(cS.select(publicationId));
-            //Comments.setItems(commentsList);
             loadComments(pagination.getCurrentPageIndex());
             Comments.setItems(commentsList);
             content.setCellValueFactory(new PropertyValueFactory<>("contenu"));
@@ -124,26 +114,23 @@ public class CommentaireController implements Initializable {
                 String formattedDateTime = dateTime.format(formatter);
                 return new SimpleStringProperty(formattedDateTime);
             });
-            validate.setCellFactory(param -> new TableCell<Commentaire, Void>() {
+            validate.setCellFactory(param -> new TableCell<>() {
                 Button validateButton = new Button();
-
                 {
                     validateButton.setStyle("-fx-background-color: transparent;");
                 }
-
                 @Override
                 protected void updateItem(Void item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                         setGraphic(null);
                     } else {
-                        Commentaire comment = getTableRow().getItem(); // Retrieve the Commentaire associated with the current row
+                        Commentaire comment = getTableRow().getItem();
                         String stateValue = comment.getValide() ? "Unvalidate" : "Validate";
-                        validateButton.setText(stateValue); // Set the text of the button based on the state value
+                        validateButton.setText(stateValue);
                         validateButton.setOnAction(event -> {
                             if (comment != null) {
                                 try {
-                                    // Proceed with your validation logic
                                     cS.validate(comment.getId());
                                     commentsList.replaceAll(com -> {
                                         if (com.getId() == comment.getId()) {
@@ -161,29 +148,22 @@ public class CommentaireController implements Initializable {
                     }
                 }
             });
-
             actions.setCellFactory(param -> new TableCell<>() {
                 private final Button updateButton = new Button();
                 private final Button deleteButton = new Button();
-
                 {
                     FontAwesomeIcon updateIcon = new FontAwesomeIcon();
                     updateIcon.setIcon(FontAwesomeIcons.PENCIL);
                     updateButton.setGraphic(updateIcon);
-
                     FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
                     deleteIcon.setIcon(FontAwesomeIcons.TRASH);
                     deleteButton.setGraphic(deleteIcon);
-
                     updateButton.setStyle("-fx-background-color: transparent;");
                     deleteButton.setStyle("-fx-background-color: transparent;");
-
                     updateButton.setOnAction(event -> {
                         Commentaire comment = getTableView().getItems().get(getIndex());
-                        // Handle view action here using publication.getId() or other relevant data
                         showUpdatecommentDialog(comment);
                     });
-
                     deleteButton.setOnAction(event -> {
                         Commentaire comment = getTableView().getItems().get(getIndex());
                         try {
@@ -210,31 +190,24 @@ public class CommentaireController implements Initializable {
         }
     }
     private void showUpdatecommentDialog(Commentaire comment) {
-        // Create a new Dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
-        // Create a label for the title
         Label titleLabel = new Label("Edit Comment");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
-
         Label contentLabel = new Label("Content");
         TextField content = new TextField(comment.getContenu());
-        // Create an HBox to hold the title and image, and center them
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
-        // Create a VBox to hold the content
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox,contentLabel,content);
-        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button updateButton = new Button("Update Comment");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().add(updateButton);
         buttonBox.setAlignment(Pos.CENTER);
-        // Create an action for the validate button
         updateButton.setOnAction(event -> {
             try {
                 comment.setContenu(content.getText());
@@ -246,32 +219,24 @@ public class CommentaireController implements Initializable {
                     return com;
                 });
                 Comments.refresh();
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         });
-        // Set the content of the dialog
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
-
-
     private void showDeleteConfirmationDialog(Commentaire comment) throws SQLException {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Confirm Deletion");
         alert.setHeaderText("Are you sure you want to delete the comment ?");
         alert.setContentText(" Posted By : "+comment.getUser().getLastname()+" "+comment.getUser().getFirstname());
-
         ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(confirmButton, cancelButton);
-
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
             cS.delete(comment.getId());
@@ -280,10 +245,6 @@ public class CommentaireController implements Initializable {
             loadComments(0);
         }
     }
-    public int getPublicationId() {
-        return publicationId;
-    }
-
     public void setPublicationId(int publicationId) {
         this.publicationId = publicationId;
         initComments();
@@ -295,60 +256,46 @@ public class CommentaireController implements Initializable {
             }
         });
     }
-
-    public void goback(ActionEvent actionEvent) throws IOException {
+    public void goback() throws IOException {
         Navigation.navigateTo("/fxml/Admin/Publication.fxml",goback);
     }
-
-    public void addcomment(ActionEvent actionEvent) {
-        // Create a new Dialog
+    public void addcomment() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-
-        // Create a label for the title
         Label titleLabel = new Label("Add Comment");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
-
         Label contentLabel = new Label("Content");
         TextField content = new TextField();
-        // Create an HBox to hold the title and image, and center them
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel);
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
-        // Create a VBox to hold the content
         VBox contentBox = new VBox();
         contentBox.getChildren().addAll(titleImageBox,contentLabel,content);
-        contentBox.setSpacing(10); // Adjust spacing as needed
+        contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button addButton = new Button("Post Comment");
         HBox buttonBox = new HBox();
         buttonBox.getChildren().add(addButton);
         buttonBox.setAlignment(Pos.CENTER);
-        // Create an action for the validate button
         addButton.setOnAction(event -> {
             try {
                 Commentaire commentaire =new Commentaire(Session.getInstance().getUser(),pub,content.getText(),false);
                 cS.add(commentaire);
                 pagination.setCurrentPageIndex(0);
                 loadComments(0);
-                dialog.close(); // Close the dialog after validation
+                dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         });
-        // Set the content of the dialog
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
-        // Set the button as the action for the dialog
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        // Show the dialog
         dialog.showAndWait();
     }
-
     public void handleSearch() throws SQLException {
-        searchText = SearchComment.getText().toLowerCase(); // Get the text from the TextField
+        searchText = SearchComment.getText().toLowerCase();
         pagination.setCurrentPageIndex(0);
         loadComments(0);
     }

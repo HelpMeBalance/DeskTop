@@ -24,11 +24,8 @@ public class Navigation {
     }
 
     public static void navigateTo(String fxmlFile, Node currentNode, int Id) throws IOException {
-        // Load the new FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(Navigation.class.getResource(fxmlFile));
         Parent newContent = fxmlLoader.load();
-
-        // Get the controller associated with the loaded FXML
         Object controller = fxmlLoader.getController();
         if (controller instanceof CommentaireController) {
             CommentaireController commentaireController = (CommentaireController) controller;
@@ -38,11 +35,7 @@ public class Navigation {
             SousCategorieController sousCategorieController = (SousCategorieController) controller;
             sousCategorieController.setCategorieId(Id);
         }
-
-        // Get the current stage using the node from the current scene
         Stage stage = (Stage) currentNode.getScene().getWindow();
-
-        // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
     }
 }
