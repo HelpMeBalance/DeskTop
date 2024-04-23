@@ -1,2 +1,4 @@
-package org.example.controllers;public class AppointmentAdminController {
+package org.example.controllers;
+
+public class AppointmentAdminController {
 }

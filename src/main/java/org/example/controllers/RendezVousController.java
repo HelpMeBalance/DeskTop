@@ -33,7 +33,6 @@ public class RendezVousController implements Initializable {
     @FXML
     private ComboBox<User> psy;
     public static String serviceSelected="";
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initServiceAndPsy();
@@ -43,7 +42,7 @@ public class RendezVousController implements Initializable {
     public void add(ActionEvent actionEvent) {
         try{
             LocalDateTime selectedDateTime = date.getValue().atStartOfDay();
-            rvs.add(new RendezVous(selectedDateTime, service.getValue(), false,false, psy.getValue(), new UserService().selectWhere(1)));
+            rvs.add(new RendezVous(selectedDateTime, service.getValue(), false,false, psy.getValue(), org.example.utils.Session.getInstance().getUser()));
 
             // test MAILER
             Properties props = new Properties();
@@ -55,7 +54,7 @@ public class RendezVousController implements Initializable {
             String username = "abdelbakikacem2015@gmail.com";
             String password = "nSbT8QjgaHd5kmhK";
 
-            Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            Session session = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(username, password);
                 }
