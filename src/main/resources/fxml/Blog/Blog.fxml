@@ -1,59 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.SplitPane?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<BorderPane fx:id="mainContainer" style="-fx-background-color: white;" stylesheets="@../../css/store.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.StoreController">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.BlogController">
     <top>
         <fx:include source="../Reusable/Navbar.fxml" />
     </top>
-
     <center>
-        <HBox spacing="20">
-         <ScrollPane prefHeight="200.0" prefWidth="284.0">
-            <content>
-               <VBox prefHeight="195.0" prefWidth="266.0">
-                  <children>
-                     <FlowPane prefHeight="83.0" prefWidth="260.0" />
-                  </children>
-               </VBox>
-            </content>
-         </ScrollPane>
-            <!-- Sidebar for search and other widgets -->
-            <VBox maxWidth="200" minWidth="200" spacing="20">
-                <!-- Search bar -->
-
-                <!-- Categories section -->
-                <VBox spacing="10">
-                    <Label text="Categories" />
-                    <!-- Categories list -->
-                </VBox>
-
-                <!-- Recommended articles -->
-                <VBox spacing="10">
-                    <Label text="Recommended Publictions" />
-                    <!-- Articles list -->
-                </VBox>
-
-                <!-- Popular tags -->
-                <VBox spacing="10">
-                    <Label text="Popular Tags" />
-                    <!-- Tags list -->
-                </VBox>
+        <SplitPane dividerPositions="0.5">
+            <!-- Publications Display -->
+            <VBox fx:id="publicationContainer" spacing="10">
+                <Label text="Publications" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+                <!-- Dynamic content will be added here in the controller -->
             </VBox>
 
-            <!-- Main content area -->
-
-
-        </HBox>
+            <!-- Categories Display -->
+            <VBox fx:id="categoriesContainer" spacing="10">
+                <Label text="Categories" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+                <!-- Categories list will be dynamically added here -->
+            </VBox>
+        </SplitPane>
     </center>
-
     <bottom>
-        <!-- Footer can be added here -->
         <fx:include source="../Reusable/Footer.fxml" />
     </bottom>
 </BorderPane>
