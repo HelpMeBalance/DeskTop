@@ -20,7 +20,7 @@
           <children>
               <HBox alignment="CENTER" >
                   <Label text="Appointment Management" />
-                  <Button  fx:id="addcomment"  style="-fx-background-color: transparent;">
+                  <Button  fx:id="addAppointment" onAction="#handleAddAppointment" style="-fx-background-color: transparent;">
                       <graphic>
                           <FontAwesomeIcon glyphName="PLUS" />
                       </graphic>

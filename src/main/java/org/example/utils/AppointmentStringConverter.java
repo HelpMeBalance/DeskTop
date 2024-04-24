@@ -1,19 +1,20 @@
 package org.example.utils;
 
 import javafx.util.StringConverter;
+import org.example.models.RendezVous;
 import org.example.models.User;
 
-public class UserStringConverter extends StringConverter<User> {
+public class AppointmentStringConverter extends StringConverter<RendezVous> {
     @Override
-    public String toString(User user) {
-        if (user != null) {
-            return user.getFirstname() + " " + user.getLastname();
+    public String toString(RendezVous rv) {
+        if (rv != null) {
+            return rv.getPatient().getFirstname() + " " + rv.getPatient().getLastname() + ": "+ rv.getNomService();
         }
         return null;
     }
 
     @Override
-    public User fromString(String s) {
+    public RendezVous fromString(String s) {
         return null;
     }
 }

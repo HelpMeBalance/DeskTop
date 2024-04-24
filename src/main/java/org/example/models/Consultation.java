@@ -1,40 +1,51 @@
 package org.example.models;
 
-import java.time.LocalDateTime;
-
-public class RendezVous {
+public class Consultation {
     private int id;
-    private LocalDateTime dateR;
-    private String nomService;
-    private boolean statut,certificat;
+    private RendezVous appointment;
+    private Double duration, rating;
+    private boolean recommandation_suivi;
+    private String note;
     private User psy,patient;
 
-    public RendezVous(int id, LocalDateTime dateR, String nomService, boolean statut, boolean certificat, User psy, User patient) {
+    public Consultation(int id, RendezVous appointment, double duration, double rating, boolean recommandation_suivi, String note, User psy, User patient) {
         this.id = id;
-        this.dateR = dateR;
-        this.nomService = nomService;
-        this.statut = statut;
-        this.certificat = certificat;
+        this.appointment = appointment;
+        this.duration = duration;
+        this.rating = rating;
+        this.recommandation_suivi = recommandation_suivi;
+        this.note = note;
         this.psy = psy;
         this.patient = patient;
     }
 
-    public RendezVous(LocalDateTime dateR, String nomService, boolean statut, boolean certificat, User psy, User patient) {
-        this.dateR = dateR;
-        this.nomService = nomService;
-        this.statut = statut;
-        this.certificat = certificat;
+    public Consultation(RendezVous appointment, double duration, double rating, boolean recommandation_suivi, String note, User psy, User patient) {
+        this.appointment = appointment;
+        this.duration = duration;
+        this.rating = rating;
+        this.recommandation_suivi = recommandation_suivi;
+        this.note = note;
         this.psy = psy;
         this.patient = patient;
     }
 
-    public void update(LocalDateTime dateR, String nomService, boolean statut, boolean certificat, User psy, User patient) {
-        this.dateR = dateR;
-        this.nomService = nomService;
-        this.statut = statut;
-        this.certificat = certificat;
+    public Consultation(RendezVous appointment, User psy, User patient) {
+        this.appointment = appointment;
         this.psy = psy;
         this.patient = patient;
+        this.note = "";
+    }
+
+    public Consultation() {
+
+    }
+
+    public void update(RendezVous appointment, User psy, User patient, String note, double rating){
+        this.appointment = appointment;
+        this.psy = psy;
+        this.patient = patient;
+        this.note = note;
+        this.rating = rating;
     }
 
     public int getId() {
@@ -45,36 +56,44 @@ public class RendezVous {
         this.id = id;
     }
 
-    public LocalDateTime getDateR() {
-        return dateR;
+    public RendezVous getAppointment() {
+        return appointment;
     }
 
-    public void setDateR(LocalDateTime dateR) {
-        this.dateR = dateR;
+    public void setAppointment(RendezVous appointment) {
+        this.appointment = appointment;
     }
 
-    public String getNomService() {
-        return nomService;
+    public double getDuration() {
+        return duration;
     }
 
-    public void setNomService(String nomService) {
-        this.nomService = nomService;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
-    public boolean isStatut() {
-        return statut;
+    public Double getRating() {
+        return rating;
     }
 
-    public void setStatut(boolean statut) {
-        this.statut = statut;
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
-    public boolean isCertificat() {
-        return certificat;
+    public boolean isRecommandation_suivi() {
+        return recommandation_suivi;
     }
 
-    public void setCertificat(boolean certificat) {
-        this.certificat = certificat;
+    public void setRecommandation_suivi(boolean recommandation_suivi) {
+        this.recommandation_suivi = recommandation_suivi;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public User getPsy() {
@@ -95,12 +114,13 @@ public class RendezVous {
 
     @Override
     public String toString() {
-        return "RendezVous{" +
+        return "Consultation{" +
                 "id=" + id +
-                ", dateR=" + dateR +
-                ", nomService='" + nomService + '\'' +
-                ", statut=" + statut +
-                ", certificat=" + certificat +
+                ", appointment=" + appointment +
+                ", duration=" + duration +
+                ", rating=" + rating +
+                ", recommandation_suivi=" + recommandation_suivi +
+                ", note='" + note + '\'' +
                 ", psy=" + psy +
                 ", patient=" + patient +
                 '}';

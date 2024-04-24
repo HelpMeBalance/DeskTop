@@ -51,8 +51,20 @@ public class AdminSidebarController {
 
 
 
-    public void handleAppointments(ActionEvent actionEvent) {
+    public void handleAppointments() {
+        try {
+            Navigation.navigateTo("/fxml/Admin/Appointment.fxml", usersButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
+    public void handleConsultations() {
+        try {
+            Navigation.navigateTo("/fxml/Admin/Consultation.fxml", usersButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
