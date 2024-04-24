@@ -58,4 +58,12 @@ public class AdminSidebarController {
     public void handleCategories() {
         navigate("/fxml/Admin/Categorie.fxml");
     }
+
+    public void handleStore() {
+        navigate("/fxml/Admin/Article.fxml");
+    }
+
+    public void handleCategoriesProduit() {
+        navigate("/fxml/Admin/CategorieProduit.fxml");
+    }
 }

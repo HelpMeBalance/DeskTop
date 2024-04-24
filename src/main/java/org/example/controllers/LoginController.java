@@ -33,6 +33,18 @@ public class LoginController {
     @FXML
     private Button loginButton;
     private UserService userService = new UserService();
+    @FXML
+    private Button forgetPasswordButton;
+
+    @FXML
+    public void handleForgetPassword(ActionEvent event) {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/ResetPassword.fxml", forgetPasswordButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 
     @FXML
     private void handleLogin() {

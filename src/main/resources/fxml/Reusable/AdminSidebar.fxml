@@ -66,12 +66,12 @@
                         <FontAwesomeIcon glyphName="STETHOSCOPE" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Articles">
+                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleStore" selected="false" styleClass="drawer-item" text="Articles">
                     <graphic>
                         <FontAwesomeIcon glyphName="SHOPPING_CART" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Categories">
+                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCategoriesProduit" selected="false" styleClass="drawer-item" text="Categories">
                     <graphic>
                         <FontAwesomeIcon glyphName="LIST_ALT" />
                     </graphic>
