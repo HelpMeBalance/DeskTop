@@ -135,4 +135,12 @@ public class NavbarController {
             e.printStackTrace(); // Handle the exception, possibly with a user alert
         }
     }
+    public void handleAppointmentPage() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", HomeButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 }
