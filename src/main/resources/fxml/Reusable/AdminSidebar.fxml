@@ -52,7 +52,7 @@
                     </graphic>
                     <VBox id="drawer-content" minHeight="0.0" minWidth="0.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="292.0" spacing="5.0">
                         <ToggleButton fx:id="publicationsButton" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handlePublications" selected="false" styleClass="drawer-item" text="Publications" />
-                        <ToggleButton alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Categories" />
+                        <ToggleButton alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCategories" selected="false" styleClass="drawer-item" text="Categories" />
                     </VBox>
                 </TitledPane>
                 <ToggleButton fx:id="appointmentsButton" alignment="CENTER_LEFT" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAppointments" selected="false" styleClass="drawer-item" text="Appointments">
@@ -66,12 +66,12 @@
                         <FontAwesomeIcon glyphName="STETHOSCOPE" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Articles">
+                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleStore" selected="false" styleClass="drawer-item" text="Articles">
                     <graphic>
                         <FontAwesomeIcon glyphName="SHOPPING_CART" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Categories">
+                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCategoriesProduit" selected="false" styleClass="drawer-item" text="Categories">
                     <graphic>
                         <FontAwesomeIcon glyphName="LIST_ALT" />
                     </graphic>

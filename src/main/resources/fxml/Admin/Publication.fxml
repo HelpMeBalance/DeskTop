@@ -43,15 +43,16 @@
                       </TextField>
                   </children>
               </HBox>
-                    <TableView fx:id="Publications" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
+                    <TableView fx:id="Publications" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="946.0">
                         <columns>
                             <TableColumn fx:id="title" text="Title" />
                             <TableColumn fx:id="content" text="Content" />
                             <TableColumn fx:id="userName" text="Posted By" />
-                            <TableColumn fx:id="state" text="State" />
-                            <TableColumn fx:id="views" text="Views" />
-                            <TableColumn fx:id="comments" text="Comments" />
-                            <TableColumn fx:id="viewcomments" />
+                            <TableColumn fx:id="state" text="State" prefWidth="50"/>
+                            <TableColumn fx:id="views" text="Views" prefWidth="30"/>
+                            <TableColumn fx:id="likes" text="Likes" prefWidth="30" />
+                            <TableColumn fx:id="comments" text="Comments" prefWidth="50" />
+                            <TableColumn fx:id="viewcomments" prefWidth="20" />
                             <TableColumn fx:id="postedAt" text="Posted At" />
                             <TableColumn fx:id="updatedAt" text="Updated At" />
                             <TableColumn fx:id="actions" text="Actions" />
@@ -120,7 +121,9 @@
                       <String fx:value="col-xl-6" />
                   </styleClass>
               </GridPane>
-         </children>
+              <AnchorPane fx:id="chartContainer"  />
+
+          </children>
       </VBox>
         </HBox>
     </children>

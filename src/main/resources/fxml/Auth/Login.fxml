@@ -39,7 +39,7 @@
                   <HBox alignment="CENTER" spacing="10">
                      <children>
                         <Button fx:id="loginButton" onAction="#handleLogin" styleClass="login-button" text="Login" />
-                        <Button fx:id="forgetPasswordButton" styleClass="forget-password-button" text="Forget password?" />
+                        <Button fx:id="forgetPasswordButton" onAction="#handleForgetPassword" styleClass="forget-password-button" text="Forget password?" />
                      </children>
                   </HBox>
                   <Button fx:id="googleSignInButton" styleClass="google-button" text="Sign in with Google" />

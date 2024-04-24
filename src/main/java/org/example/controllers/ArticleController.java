@@ -1,0 +1,201 @@
+package org.example.controllers;
+
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import org.example.models.Article;
+import org.example.models.CategorieProduit;
+import org.example.service.ArticleService;
+import org.example.service.CategorieProduitService;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+public class ArticleController {
+    @FXML
+    private TableView<Article> articlesTable;
+    @FXML
+    private TableColumn<Article, String> nomColumn;
+    @FXML
+    private TableColumn<Article, String> descriptionColumn;
+    @FXML
+    private TableColumn<Article, Double> prixColumn;
+    @FXML
+    private TableColumn<Article, Integer> quantiteColumn;
+    @FXML
+    private TableColumn<Article, String> categorieColumn;  // Updated type
+    @FXML
+    private TableColumn<Article, Void> actionsColumn;
+
+    private ArticleService articleService = new ArticleService();
+    private CategorieProduitService categorieProduitService = new CategorieProduitService();
+
+    @FXML
+    public void initialize() {
+        initializeTableColumns();
+        loadArticles();
+    }
+
+    private void initializeTableColumns() {
+        nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        prixColumn.setCellValueFactory(new PropertyValueFactory<>("prix"));
+        quantiteColumn.setCellValueFactory(new PropertyValueFactory<>("quantite"));
+        categorieColumn.setCellValueFactory(new PropertyValueFactory<>("categorieId"));  // Assume there's a getCategorieNom() in Article that returns the name of the category
+
+        actionsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button editButton = new Button("Edit");
+            private final Button deleteButton = new Button("Delete");
+            private final HBox container = new HBox(5, editButton, deleteButton);
+
+            {
+                editButton.setOnAction(e -> handleEditArticle(getTableRow().getItem()));
+                deleteButton.setOnAction(e -> handleDeleteArticle(getTableRow().getItem()));
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(container);
+                }
+            }
+        });
+    }
+
+    private void handleEditArticle(Article article) {
+        if (article != null) {
+            TextInputDialog dialog = new TextInputDialog(article.getNom());
+            dialog.setTitle("Edit Article");
+            dialog.setHeaderText("Edit the article details:");
+            dialog.setContentText("Name:");
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(name -> {
+                if (!name.trim().isEmpty()) {
+                    article.setNom(name);
+                    try {
+                        articleService.update(article);
+                        loadArticles();  // Refresh list after update
+                    } catch (SQLException e) {
+                        showAlert("Error", "Failed to update the article: " + e.getMessage(), Alert.AlertType.ERROR);
+                    }
+                }
+            });
+        }
+    }
+
+    private void handleDeleteArticle(Article article) {
+        if (article != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this article?", ButtonType.YES, ButtonType.NO);
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.YES) {
+                try {
+                    articleService.delete(article);
+                    articlesTable.getItems().remove(article);  // Remove from table after deletion
+                } catch (SQLException e) {
+                    showAlert("Error", "Failed to delete the article: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
+            }
+        }
+    }
+
+    private void loadArticles() {
+        try {
+            List<Article> articles = articleService.selectAll();
+            articlesTable.setItems(FXCollections.observableArrayList(articles));
+        } catch (SQLException e) {
+            showAlert("Error Loading Articles", "Could not load articles from the database: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleAddArticle() throws SQLException {
+        Dialog<Article> dialog = new Dialog<>();
+        dialog.setTitle("Add New Article");
+        dialog.setHeaderText("Enter the details of the new article.");
+
+        // Set the button types.
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        // Create the article form fields
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nom = new TextField();
+        nom.setPromptText("Name");
+        TextField description = new TextField();
+        description.setPromptText("Description");
+        TextField prix = new TextField();
+        prix.setPromptText("Price");
+        TextField quantite = new TextField();
+        quantite.setPromptText("Quantity");
+        ComboBox<CategorieProduit> categorie = new ComboBox<>();
+        categorie.setItems(FXCollections.observableArrayList(categorieProduitService.selectAllCategories())); // Load categories
+        categorie.setPromptText("Select Category");
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nom, 1, 0);
+        grid.add(new Label("Description:"), 0, 1);
+        grid.add(description, 1, 1);
+        grid.add(new Label("Price:"), 0, 2);
+        grid.add(prix, 1, 2);
+        grid.add(new Label("Quantity:"), 0, 3);
+        grid.add(quantite, 1, 3);
+        grid.add(new Label("Category:"), 0, 4);
+        grid.add(categorie, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+
+        Platform.runLater(nom::requestFocus);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                if (!nom.getText().isEmpty() && !description.getText().isEmpty() && !prix.getText().isEmpty() && !quantite.getText().isEmpty() && categorie.getValue() != null) {
+                    try {
+                        Article newArticle = new Article();
+                        newArticle.setNom(nom.getText());
+                        newArticle.setDescription(description.getText());
+                        newArticle.setPrix(Double.parseDouble(prix.getText()));
+                        newArticle.setQuantite(Integer.parseInt(quantite.getText()));
+                        newArticle.setCategorie(categorie.getValue().getId());
+                        return newArticle;
+                    } catch (NumberFormatException e) {
+                        showAlert("Input Error", "Please enter valid numbers for price and quantity.", Alert.AlertType.ERROR);
+                    }
+                } else {
+                    showAlert("Input Error", "Please complete all fields.", Alert.AlertType.ERROR);
+                }
+            }
+            return null;
+        });
+
+        Optional<Article> result = dialog.showAndWait();
+        result.ifPresent(article -> {
+            try {
+                articleService.add(article);
+                loadArticles();
+            } catch (SQLException e) {
+                showAlert("Database Error", "Failed to add a new article to the database: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        });
+    }
+
+
+    private void showAlert(String title, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+}
