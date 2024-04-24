@@ -83,6 +83,19 @@ public class LikeService {
 
         return likes;
     }
+    public int countLikes(Publication publication) throws SQLException {
+        int likeCount = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS like_count FROM `like` WHERE publication_id = ?");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, publication.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    likeCount = resultSet.getInt("like_count");
+                }
+            }
+        }
+        return likeCount;
+    }
     public Like selectWhere(int userId, int publicationId) throws SQLException{
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  `like`  WHERE user_id = ? AND publication_id = ?");
         try (preparedStatement)

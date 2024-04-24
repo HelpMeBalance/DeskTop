@@ -1,12 +1,11 @@
 package org.example.utils; // Adjust the package name to fit your project structure
 
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.controllers.CommentaireController;
+import org.example.controllers.SousCategorieController;
 
 import java.io.IOException;
 
@@ -24,22 +23,19 @@ public class Navigation {
         stage.getScene().setRoot(newContent);
     }
 
-    public static void navigateTo(String fxmlFile, Node currentNode, int publicationId) throws IOException {
-        // Load the new FXML file
+    public static void navigateTo(String fxmlFile, Node currentNode, int Id) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Navigation.class.getResource(fxmlFile));
         Parent newContent = fxmlLoader.load();
-
-        // Get the controller associated with the loaded FXML
         Object controller = fxmlLoader.getController();
         if (controller instanceof CommentaireController) {
             CommentaireController commentaireController = (CommentaireController) controller;
-            commentaireController.setPublicationId(publicationId); // Set the publication ID in the controller
+            commentaireController.setPublicationId(Id);
         }
-
-        // Get the current stage using the node from the current scene
+        else if (controller instanceof SousCategorieController) {
+            SousCategorieController sousCategorieController = (SousCategorieController) controller;
+            sousCategorieController.setCategorieId(Id);
+        }
         Stage stage = (Stage) currentNode.getScene().getWindow();
-
-        // Replace the scene's root with the new content
         stage.getScene().setRoot(newContent);
     }
 }
