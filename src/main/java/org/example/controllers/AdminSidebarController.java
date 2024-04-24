@@ -63,6 +63,7 @@ public class AdminSidebarController {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
 
     public void handleCategories() {
         navigate("/fxml/Admin/Categorie.fxml");

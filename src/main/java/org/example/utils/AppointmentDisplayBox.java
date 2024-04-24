@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Scale;
 import org.controlsfx.control.Rating;
+import org.example.models.Consultation;
 import org.example.models.RendezVous;
 import org.example.models.User;
 import org.example.service.ConsultationService;
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
     VBox vBox = new VBox();
-    public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) {
+    ConsultationService conServ = new ConsultationService();
+    public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) throws SQLException {
         // Create VBox
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -54,7 +56,23 @@ public class AppointmentDisplayBox {
         innerVBox.setPadding(new Insets(10, 5, 0, 5));
 
         // Create Rating
+        Consultation con = new Consultation();
+        if (app.isStatut()){
+            for(var c: conServ.select()){
+                if(c.getAppointment().getId() == app.getId() && c.getRating()!=null && c.getRating()>=0){
+                    con = c;
+                }
+            }
+        }
+
         Rating rating = new Rating(5, 0);
+        rating.setDisable(true);
+        rating.setOpacity(1.0);
+        if (con.getRating()!=null) {
+            rating = new Rating(5, con.getRating().intValue());
+            rating.setDisable(true);
+            rating.setOpacity(1.0);
+        }
         rating.getTransforms().add(new Scale(0.5, 0.5));
         rating.setPadding(new Insets(10, 0, 0, 0));
         rating.setMinWidth(10);
@@ -82,7 +100,6 @@ public class AppointmentDisplayBox {
 
         // Set event handler for clicking on the edit icon
         editIcon.setOnMouseClicked(e -> {
-            System.out.println("Edit Icon Clicked!");
             showUpdateDialog(app, vBox, "/fxml/Appointment/AppointmentDisplay.fxml");
         });
 
@@ -95,7 +112,6 @@ public class AppointmentDisplayBox {
             try {
                 for (var c : new ConsultationService().select()){
                     if(c.getAppointment().getId() == app.getId()){
-                        System.out.println(c.getRating());
                         if (c.getRating() < 0){
                             editDeleteVBox.getChildren().add(new Label("add a slider or a popup to add rating"));
                         }
@@ -131,12 +147,6 @@ public class AppointmentDisplayBox {
         dialog.showAndWait();
     }
     public VBox createForm(RendezVous app, Dialog dialog, Node node,String fxml) {
-        System.out.println(app);
-        try{
-            System.out.println(new UserService().select());
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
         VBox vbox = new VBox();
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
         vbox.setSpacing(20.0);
