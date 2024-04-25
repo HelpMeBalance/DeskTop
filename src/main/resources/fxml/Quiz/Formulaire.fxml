@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <BorderPane prefHeight="543.0" prefWidth="771.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.FormulaireController">
    <top>
       <fx:include source="../Reusable/Navbar.fxml" />
@@ -42,12 +43,17 @@
    <right>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="264.0" fitWidth="266.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="189.0" fitWidth="390.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../assets/formulaire.jpeg" />
                </image>
             </ImageView>
-            <Button fx:id="su" mnemonicParsing="false" style="-fx-background-radius: 32px; -fx-border-radius: 32px; -fx-background-color: #1abd84;" styleClass="-fx-background-rad" text="suvant" onAction="#record" />
+            <Button fx:id="goback" onAction="#record" style="-fx-background-color: transparent; -fx-font-size: 24px ; -fx-background-color: green;">
+               <graphic>
+                  <FontAwesomeIcon glyphName="LONG_ARROW_RIGHT" />
+               </graphic>
+            </Button>
+
          </children>
       </VBox>
    </right>

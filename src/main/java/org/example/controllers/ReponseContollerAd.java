@@ -18,7 +18,9 @@ import org.example.models.Question;
 import org.example.models.Reponse;
 import org.example.service.QuestionService;
 import org.example.service.ReponseService;
+import org.example.utils.Navigation;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -35,7 +37,10 @@ public class ReponseContollerAd implements Initializable {
     private TextField questionTextArea;
     @FXML
     private Label errorMessage;
-public static Question qes;
+    @FXML
+    private Button goback;
+
+    public static Question qes;
 
     @FXML
     private TableView<Reponse> questionsTable;
@@ -227,10 +232,13 @@ public static Question qes;
         boolean isValid = true;
         StringBuilder errors = new StringBuilder();
         if ( questionTextArea.getText()=="") {
-            errors.append("queston must be filled in.\n");
+            errors.append("reponse must be filled in.\n");
             isValid = false;
         }
         errorMessage.setText(errors.toString());
         return isValid;
+    }
+    public void goback(ActionEvent actionEvent) throws IOException {
+        Navigation.navigateTo("/fxml/Admin/Quize.fxml",goback);
     }
 }

@@ -58,7 +58,7 @@ public class FormulaireController implements Initializable {
         }
     }
     public void initformulaire() throws SQLException {
-        System.out.println(rv);
+
         List<Formulairej> fetchedData = fs.selectWhere1(rv);
         formulairejList = FXCollections.observableArrayList(fetchedData);
         form.setItems(formulairejList);

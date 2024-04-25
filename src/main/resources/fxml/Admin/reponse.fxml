@@ -28,6 +28,11 @@
     </padding>
 
     <children>
+        <VBox alignment="CENTER" >
+
+
+
+
         <HBox prefHeight="692.0" prefWidth="1383.0" spacing="10">
             <fx:include source="../Reusable/AdminSidebar.fxml" />
             <VBox prefHeight="700.0" prefWidth="1110.0">
@@ -39,6 +44,12 @@
                     <Label fx:id="errorMessage" textFill="#a80b00"/>
                 </HBox>
                 <Button text="Add Reponse" onAction="#addRuestion" />
+                <Button fx:id="goback" onAction="#goback" style="-fx-background-color: transparent;-fx-font-size: 24px ; ">
+                    <graphic>
+                        <FontAwesomeIcon glyphName="LONG_ARROW_LEFT" />
+                    </graphic>
+                </Button>
+
                 <children>
                     <TableView fx:id="questionsTable" layoutX="27.0" layoutY="30.0" prefHeight="400.0" prefWidth="500.0">
                         <columns>
@@ -58,6 +69,7 @@
                 </children>
             </VBox>
         </HBox>
+    </VBox>
     </children>
     <stylesheets>
         <URL value="@../../style/css/colors.css" />

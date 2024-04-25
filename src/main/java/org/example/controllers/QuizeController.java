@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.example.models.Formulaire;
 import org.example.models.Question;
 import org.example.models.RendezVous;
@@ -24,6 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+
+
 
 public class QuizeController implements Initializable {
 
@@ -32,6 +37,10 @@ public class QuizeController implements Initializable {
     private FormulaireService formulaireService = new FormulaireService();
     private FormulairejService formulairejService = new FormulairejService();
     private ReponseService reponseService;
+    @FXML
+    private VBox radioButtonGroup;
+
+    private ToggleGroup toggleGroup;
 
     @FXML
     private ComboBox<String> combo;
@@ -64,17 +73,19 @@ public class QuizeController implements Initializable {
         }
     }
 
+
     private void loadQuestionAndResponses() {
         if (currentQuestionIndex < questions.size()) {
             Question currentQuestion = questions.get(currentQuestionIndex);
             idq.setText(currentQuestion.getQuestion());
-            combo.getItems().clear();
-            reponses = new ArrayList<>();
+            radioButtonGroup.getChildren().clear();
+            toggleGroup = new ToggleGroup();
 
             for (Reponse response : allReponses) {
                 if (response.get$question().getId() == currentQuestion.getId()) {
-                    reponses.add(response);
-                    combo.getItems().add(response.getReponse());
+                    RadioButton radioButton = new RadioButton(response.getReponse());
+                    radioButton.setToggleGroup(toggleGroup);
+                    radioButtonGroup.getChildren().add(radioButton);
                 }
             }
         }
@@ -83,15 +94,15 @@ public class QuizeController implements Initializable {
     @FXML
     private void loadNextQuestion() throws SQLException, IOException {
         if (currentQuestionIndex < questions.size()) {
-            String selectedResponse = combo.getValue();
-            if (selectedResponse == null || selectedResponse.isEmpty()) {
+            RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
+            if (selectedRadioButton == null) {
                 // Show alert if the user skips the question
                 showAlert("Please select an answer before moving to the next question!");
                 return; // Do not proceed further until the user selects an answer
             }
 
             // Proceed to load the next question
-            Question currentQuestion = questions.get(currentQuestionIndex);
+            String selectedResponse = selectedRadioButton.getText();
             selectedAnswers.add(selectedResponse);
 
             currentQuestionIndex++;
@@ -116,8 +127,8 @@ public class QuizeController implements Initializable {
             String selectedAnswer = selectedAnswers.get(i);
             int questionId = question.getId();
             int responseId = findResponseId(questionId, selectedAnswer);
-            System.out.println(rv);
-            formulaireService.add1(formulaire, questionId, responseId);
+
+            formulaireService.add1(formulaire, questionId, responseId,rv);
             formulairejService.add1(formulaire.getId(), question.getQuestion(), selectedAnswer,rv);
         }
         FormulaireController.rv=rv;

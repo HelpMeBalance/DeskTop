@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -10,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.QuizeController">
     <!-- Top menu bar -->
     <top>
@@ -37,8 +37,17 @@
                         </Label>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <Label fx:id="idq" text="que" />
-                              <ComboBox fx:id="combo"  />
+                              <VBox alignment="CENTER" spacing="10.0">
+                                 <children>
+                                    <Label fx:id="idq" text="que" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Arial Bold Italic" size="19.0" />
+                                       </font></Label>
+                                    <VBox fx:id="radioButtonGroup" spacing="5">
+                                       <!-- Radio buttons for responses will be added dynamically -->
+                                    </VBox>
+                                 </children>
+                              </VBox>
                            </children>
                         </HBox>
                      </children>
@@ -47,7 +56,11 @@
             </HBox>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Button fx:id="nextButton" mnemonicParsing="false" onAction="#loadNextQuestion" style="-fx-background-color: #1abd84; -fx-background-radius: 32px; -fx-border-radius: 32px;" text="Button" />
+                  <Button fx:id="goback" onAction="#loadNextQuestion" style="-fx-background-color: transparent; -fx-font-size: 24px ; -fx-background-color: green;">
+                     <graphic>
+                        <FontAwesomeIcon glyphName="LONG_ARROW_RIGHT" />
+                     </graphic>
+                  </Button>
                </children>
             </VBox>
          </children></VBox>

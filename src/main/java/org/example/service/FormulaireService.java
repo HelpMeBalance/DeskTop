@@ -19,9 +19,9 @@ public class FormulaireService implements IService<Formulaire> {
 
 
 
-        public void add1(Formulaire formulaire, int idq, int idr) throws SQLException {
+        public void add1(Formulaire formulaire, int idq, int idr,int rv) throws SQLException {
             // Add the Formulaire object to the database
-            add(formulaire);
+            add(formulaire,rv);
 
             // Retrieve the ID of the newly inserted Formulaire object
             int idf = formulaire.getId();
@@ -54,6 +54,23 @@ public class FormulaireService implements IService<Formulaire> {
         PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(1, 2); // Remplacez par le bon user_id
         preparedStatement.setInt(2, 24); // Remplacez par le bon rendez_vous_id
+        preparedStatement.executeUpdate();
+
+        // Récupérez l'ID généré automatiquement
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            int idf = generatedKeys.getInt(1);
+            formulaire.setId(idf); // Mettez à jour l'ID du formulaire avec l'ID généré
+        } else {
+            throw new SQLException("L'insertion du formulaire a échoué, aucun ID généré.");
+        }
+
+    }
+    public void add(Formulaire formulaire,int rv) throws SQLException {
+        String sql = "INSERT INTO formulaire (user_id, rendez_vous_id) VALUES (?, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, 2); // Remplacez par le bon user_id
+        preparedStatement.setInt(2, rv); // Remplacez par le bon rendez_vous_id
         preparedStatement.executeUpdate();
 
         // Récupérez l'ID généré automatiquement

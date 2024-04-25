@@ -248,11 +248,11 @@ public class QuizeControllerAd implements Initializable {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(updatedQuestion -> {
             // Check if the updated question meets the length requirement
-            if (updatedQuestion.length() < 6 || updatedQuestion.isEmpty()) {
+            if (updatedQuestion.length() < 6 || updatedQuestion.isEmpty()||updatedQuestion.charAt(updatedQuestion.length()-1)!='?') {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setTitle("Error");
                 errorAlert.setHeaderText("Validation Error");
-                errorAlert.setContentText("Question must be longer than 6 characters and not empty.");
+                errorAlert.setContentText("Question must be longer than 6 characters and not empty and end with '?'.");
                 errorAlert.showAndWait();
                 return; // Stop further processing if validation fails
             }
@@ -276,9 +276,6 @@ public class QuizeControllerAd implements Initializable {
             }
         });
     }
-
-
-
 
 
 
@@ -327,6 +324,10 @@ public class QuizeControllerAd implements Initializable {
         }
         if ( questionTextArea.getText()=="") {
             errors.append("queston must be filled in.\n");
+            isValid = false;
+        }
+        if ( questionTextArea.getText().charAt(questionTextArea.getText().length()-1)!='?') {
+            errors.append("queston must end with ?.\n");
             isValid = false;
         }
 
