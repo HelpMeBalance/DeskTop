@@ -25,7 +25,7 @@ public class FormulaireService implements IService<Formulaire> {
 
             // Retrieve the ID of the newly inserted Formulaire object
             int idf = formulaire.getId();
-            System.out.println(idf);
+
 
             // Prepare the SQL statements for inserting into formulaire_question and formulaire_reponse tables
             String sql1 = "INSERT INTO formulaire_question (formulaire_id, question_id) VALUES (?, ?)";

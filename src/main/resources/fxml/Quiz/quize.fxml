@@ -38,7 +38,7 @@
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Label fx:id="idq" text="que" />
-                              <ComboBox fx:id="combo" onAction="#jet" />
+                              <ComboBox fx:id="combo"  />
                            </children>
                         </HBox>
                      </children>
@@ -47,7 +47,7 @@
             </HBox>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleNextButtonClick" style="-fx-background-color: #1abd84; -fx-background-radius: 32px; -fx-border-radius: 32px;" text="Button" />
+                  <Button fx:id="nextButton" mnemonicParsing="false" onAction="#loadNextQuestion" style="-fx-background-color: #1abd84; -fx-background-radius: 32px; -fx-border-radius: 32px;" text="Button" />
                </children>
             </VBox>
          </children></VBox>

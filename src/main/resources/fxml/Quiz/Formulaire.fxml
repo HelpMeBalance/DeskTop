@@ -47,7 +47,7 @@
                   <Image url="@../../assets/formulaire.jpeg" />
                </image>
             </ImageView>
-            <Button mnemonicParsing="false" style="-fx-background-radius: 32px; -fx-border-radius: 32px; -fx-background-color: #1abd84;" styleClass="-fx-background-rad" text="suvant" />
+            <Button fx:id="su" mnemonicParsing="false" style="-fx-background-radius: 32px; -fx-border-radius: 32px; -fx-background-color: #1abd84;" styleClass="-fx-background-rad" text="suvant" onAction="#record" />
          </children>
       </VBox>
    </right>
