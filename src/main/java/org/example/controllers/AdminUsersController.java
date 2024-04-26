@@ -19,7 +19,9 @@ import javafx.scene.layout.VBox;
 import org.example.models.User;
 import org.example.service.UserService;
 import javafx.scene.control.Pagination;
+import org.example.utils.Navigation;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,6 +51,8 @@ public class AdminUsersController {
     private TextField searchField;
     @FXML
     private Pagination pagination;
+    @FXML
+    private Button Register;
 
     private FilteredList<User> filteredData;
     private static final int ROWS_PER_PAGE = 4;
@@ -276,5 +280,15 @@ public class AdminUsersController {
 
 
     public void action(ActionEvent actionEvent) {
+    }
+
+    public void RedirectToSignUp() {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/Auth/Register.fxml", Register);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+
     }
 }
