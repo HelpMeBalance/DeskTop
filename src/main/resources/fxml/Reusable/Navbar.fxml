@@ -42,6 +42,7 @@
             <MenuItem text="Logout" onAction="#handleLogout" />
             <MenuItem text="Edit Password" onAction="#handleEditPassword" />
             <MenuItem fx:id="AdminPage" text="Admin Dashboard" onAction="#handleAdminPage" />
+            <MenuItem fx:id="PsyPage" text="Psy Appointments" onAction="#handlePsyPage" />
         </items>
     </MenuButton>
 

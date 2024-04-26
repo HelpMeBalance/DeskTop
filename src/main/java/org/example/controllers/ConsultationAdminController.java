@@ -31,9 +31,11 @@ import org.example.utils.UserStringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -49,6 +51,11 @@ public class ConsultationAdminController implements Initializable {
     private ObservableList<Consultation> conList;
     private ConsultationService conServ = new ConsultationService();
     private RendezVousService appServ = new RendezVousService();
+    ComboBox<User> psyComboBox, patientComboBox;
+    ComboBox<RendezVous> appComboBox;
+    TextField noteed = new TextField();
+    Rating rating;
+    Label errorMessage = new Label();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -162,11 +169,15 @@ public class ConsultationAdminController implements Initializable {
         vbox1.setSpacing(10);
         Label label1 = new Label("Psychiatrist");
         label1.getStyleClass().add("combo-label");
-        ComboBox<User> psyComboBox = new ComboBox<>();
+        psyComboBox = new ComboBox<>();
         ArrayList<User> users = new ArrayList<>();
         try {
             UserService ps = new UserService();
-            users = new ArrayList<>(ps.select());
+            users = new ArrayList<>();
+            for(var u: ps.select()){
+                if (u.getRoles().contains("psy"))
+                    users.add(u);
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -185,7 +196,7 @@ public class ConsultationAdminController implements Initializable {
         vbox2.setSpacing(10);
         Label label2 = new Label("Patient");
         label2.getStyleClass().add("combo-label");
-        ComboBox<User> patientComboBox = new ComboBox<>();
+        patientComboBox = new ComboBox<>();
         patientComboBox.setItems(FXCollections.observableArrayList(users));
         patientComboBox.setConverter(new UserStringConverter());
         vbox2.getChildren().addAll(label2, patientComboBox);
@@ -206,7 +217,7 @@ public class ConsultationAdminController implements Initializable {
         hbox3.setSpacing(10);
         Label label3 = new Label("Appointment");
         label3.getStyleClass().add("combo-label");
-        ComboBox<RendezVous> appComboBox = new ComboBox<>();
+        appComboBox = new ComboBox<>();
         try {
             ArrayList<RendezVous> appList = new ArrayList<>();
             for(var app: new RendezVousService().select() ){
@@ -240,13 +251,13 @@ public class ConsultationAdminController implements Initializable {
         hbox2.setSpacing(15);
         Label label4 = new Label("Note");
         label4.getStyleClass().add("combo-label");
-        TextField note = new TextField();
-        note.setPrefSize(250,60);
+        noteed = new TextField();
+        noteed.setPrefSize(250,60);
         if(con.getNote() != null){
-            note.setText(con.getNote());
+            noteed.setText(con.getNote());
         }
-        note.getStyleClass().add("date-picker");
-        hbox2.getChildren().addAll(label4, note);
+        noteed.getStyleClass().add("date-picker");
+        hbox2.getChildren().addAll(label4, noteed);
 
         HBox hBox4 = new HBox();
         hBox4.setAlignment(Pos.CENTER);
@@ -254,7 +265,7 @@ public class ConsultationAdminController implements Initializable {
 
         Label label5 = new Label("Rating");
         label4.getStyleClass().add("combo-label");
-        Rating rating = new Rating(5,0);
+        rating = new Rating(5,0);
         if(con.getRating() != null){
             rating = new Rating(5, con.getRating().intValue());
         }
@@ -265,8 +276,10 @@ public class ConsultationAdminController implements Initializable {
         Rating finalRating = rating;
         addButton.setOnMouseClicked(e -> {
             try {
+                if(!areFieldsValid())
+                    return;
                 RendezVous oldApp = con.getAppointment();
-                con.update(appComboBox.getValue(), patientComboBox.getValue(), psyComboBox.getValue(), note.getText(), finalRating.getRating());
+                con.update(appComboBox.getValue(), patientComboBox.getValue(), psyComboBox.getValue(), noteed.getText(), finalRating.getRating());
                 if(node == addConsultation) {
                     conServ.add(con);
                 }
@@ -276,6 +289,8 @@ public class ConsultationAdminController implements Initializable {
                     appServ.update(oldApp);
                 }
                 RendezVous app = con.getAppointment();
+                app.setPsy(con.getPsy());
+                app.setPatient(con.getPatient());
                 app.setStatut(true);
                 appServ.update(app);
                 dialog.close();
@@ -289,7 +304,7 @@ public class ConsultationAdminController implements Initializable {
         addButton.getStyleClass().add("save-button");
 
         vbox.setPadding(new Insets(20.0));
-        vbox.getChildren().addAll(hbox1, hbox3, hbox2, hBox4, addButton);
+        vbox.getChildren().addAll(hbox1, hbox3, hbox2, hBox4, addButton, errorMessage);
 
         return vbox;
     }
@@ -376,5 +391,38 @@ public class ConsultationAdminController implements Initializable {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    private boolean areFieldsValid() {
+        boolean isValid = true;
+        StringBuilder errors = new StringBuilder();
+
+        if (Objects.equals(noteed.getText(), "")) {
+            errors.append("incorrect Note.\n");
+            isValid = false;
+        }
+
+        if (appComboBox.getValue()==null) {
+            errors.append("Appointment must be filled.\n");
+            isValid = false;
+        }
+
+        if (psyComboBox.getValue()==null) {
+            errors.append("psy must be filled.\n");
+            isValid = false;
+        }
+
+        if (patientComboBox.getValue()==null) {
+            errors.append("Patient must be filled.\n");
+            isValid = false;
+        }
+
+        if (rating.getRating()>5 || rating.getRating()<0) {
+            errors.append("rating must be between 1 and 5.\n");
+            isValid = false;
+        }
+
+        errorMessage.setText(errors.toString());
+        return isValid;
     }
 }

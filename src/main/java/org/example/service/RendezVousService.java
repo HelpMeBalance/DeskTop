@@ -44,8 +44,8 @@ public class RendezVousService implements IService<RendezVous>{
         preparedStatement.setString(2, rendezVous.getNomService());
         preparedStatement.setBoolean(3, rendezVous.isStatut());
         preparedStatement.setBoolean(4, rendezVous.isCertificat());
-        preparedStatement.setInt(5, /*rendezVous.getPsy().getId()*/1);
-        preparedStatement.setInt(6, /*rendezVous.getPatient().getId()*/1);
+        preparedStatement.setInt(5, rendezVous.getPsy().getId());
+        preparedStatement.setInt(6, rendezVous.getPatient().getId());
 
         preparedStatement.executeUpdate();
 

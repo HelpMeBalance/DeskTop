@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.PsyAppointmentController">
+   <!-- Top menu bar -->
+   <top>
+      <fx:include source="../Reusable/Navbar.fxml" />
+   </top>
+
+   <center>
+      <VBox alignment="CENTER">
+      <Label styleClass="header-label" text="Appointment Management" />
+         <HBox fx:id="displayHBox" alignment="CENTER">
+            <children>
+
+            </children>
+            <padding>
+               <Insets bottom="10.0" top="10.0" />
+            </padding>
+         </HBox>
+      </VBox>
+   </center>
+
+   <bottom>
+      <fx:include source="../Reusable/Footer.fxml" />
+   </bottom>
+</BorderPane>

@@ -21,10 +21,15 @@ import org.example.service.UserService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
     VBox vBox = new VBox();
+    Label errorMessage = new Label();
+    ComboBox<User> psyComboBox;
+    ComboBox<String> serviceComboBox;
+    DatePicker datePicker;
     ConsultationService conServ = new ConsultationService();
     public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) throws SQLException {
         // Create VBox
@@ -138,6 +143,30 @@ public class AppointmentDisplayBox {
         vBox.getChildren().addAll(hBox, serviceNameLabel);
         return vBox;
     }
+
+    private boolean areFieldsValid() {
+        boolean isValid = true;
+        StringBuilder errors = new StringBuilder();
+
+        if (datePicker.getValue().isBefore(LocalDate.now())) {
+            errors.append("incorrect Date.\n");
+            isValid = false;
+        }
+
+        if (serviceComboBox.getValue()==null) {
+            errors.append("service must be filled.\n");
+            isValid = false;
+        }
+
+        if (psyComboBox.getValue()==null) {
+            errors.append("psy must be filled.\n");
+            isValid = false;
+        }
+
+        errorMessage.setText(errors.toString());
+        return isValid;
+    }
+
     public void showUpdateDialog(RendezVous app, Node node, String fxml) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
@@ -163,11 +192,15 @@ public class AppointmentDisplayBox {
         vbox1.setSpacing(10);
         Label label1 = new Label("Psychiatrist");
         label1.getStyleClass().add("combo-label");
-        ComboBox<User> psyComboBox = new ComboBox<>();
+        psyComboBox = new ComboBox<>();
         ArrayList<User> users = new ArrayList<>();
         try{
             UserService ps = new UserService();
-            users = new ArrayList<>(ps.select());
+            users = new ArrayList<>();
+            for(var u: ps.select()){
+                if (u.getRoles().contains("psy"))
+                    users.add(u);
+            }
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
@@ -190,7 +223,7 @@ public class AppointmentDisplayBox {
         vbox2.setSpacing(10);
         Label label2 = new Label("Service");
         label2.getStyleClass().add("combo-label");
-        ComboBox<String> serviceComboBox = new ComboBox<>();
+        serviceComboBox = new ComboBox<>();
         serviceComboBox.setItems(FXCollections.observableArrayList("Individual","Couple","Child"));
         serviceComboBox.setValue(app.getNomService());
         serviceComboBox.setPromptText("Service");
@@ -204,7 +237,7 @@ public class AppointmentDisplayBox {
         hbox2.setSpacing(15);
         Label label3 = new Label("Date");
         label3.getStyleClass().add("combo-label");
-        DatePicker datePicker = new DatePicker();
+        datePicker = new DatePicker();
         datePicker.setValue(app.getDateR().toLocalDate());
         datePicker.getStyleClass().add("date-picker");
         hbox2.getChildren().addAll(label3, datePicker);
@@ -212,6 +245,8 @@ public class AppointmentDisplayBox {
         Button addButton = new Button("Save");
         addButton.setOnMouseClicked(e -> {
             try{
+                if (!areFieldsValid())
+                    return;
                 RendezVousService rs = new RendezVousService();
                 app.update(datePicker.getValue().atStartOfDay(), serviceComboBox.getValue(), app.isStatut(), app.isCertificat(), psyComboBox.getValue(), app.getPatient());
                 rs.update(app);
@@ -229,7 +264,7 @@ public class AppointmentDisplayBox {
 
         vbox.setPadding(new Insets(20.0));
 
-        vbox.getChildren().addAll(hbox1, hbox2, addButton);
+        vbox.getChildren().addAll(hbox1, hbox2, addButton, errorMessage);
 
         return vbox;
     }
