@@ -89,7 +89,7 @@ public class PublicationController implements Initializable {
     public AnchorPane chartContainer;
     @FXML
     public TableColumn <Publication, Integer> likes;
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 4;
     private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
     private PublicationService pS=new PublicationService();
     private CommentaireService cS=new CommentaireService();
@@ -192,6 +192,7 @@ public class PublicationController implements Initializable {
             views.setCellValueFactory(new PropertyValueFactory<>("vues"));
             likes.setCellValueFactory(cellData -> {
                 try {
+
                     int likeCount = lS.countLikes(cellData.getValue());
                     return new SimpleIntegerProperty(likeCount).asObject();
                 } catch (SQLException e) {
@@ -337,7 +338,6 @@ public class PublicationController implements Initializable {
             if (imageFile.exists()) {
                 try (InputStream inputStream = new FileInputStream(imageFile)) {
                     Image image = new Image(inputStream);
-                    imageView.setImage(image);
                     imageView.setImage(image);
                     double imageWidth = image.getWidth();
                     double imageHeight = image.getHeight();
