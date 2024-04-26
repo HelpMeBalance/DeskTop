@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.SplitPane?>
 
 <?import java.lang.String?>
 <?import java.net.URL?>
@@ -113,9 +117,7 @@
     </children>
     </HBox>
     </center>
-
     <bottom>
-        <!-- Footer can be added here -->
         <fx:include source="../Reusable/Footer.fxml" />
     </bottom>
 </BorderPane>

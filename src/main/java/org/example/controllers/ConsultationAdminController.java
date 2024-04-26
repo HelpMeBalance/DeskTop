@@ -5,21 +5,26 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+import org.controlsfx.control.Rating;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
 import org.example.models.User;
 import org.example.service.ConsultationService;
 import org.example.service.RendezVousService;
 import org.example.service.UserService;
+import org.example.utils.AppointmentStringConverter;
 import org.example.utils.Navigation;
 import org.example.utils.UserStringConverter;
 
@@ -32,26 +37,32 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class AppointmentAdminController implements Initializable {
+public class ConsultationAdminController implements Initializable {
     @FXML
-    private TableView<RendezVous> appointments;
+    public TableView<Consultation> consultations;
     @FXML
-    private TableColumn<RendezVous, String> patient, psychiatrist, datetime, service;
+    private TableColumn<Consultation, String> patient, psychiatrist, note, Recommandation_suivi;
     @FXML
-    private TableColumn<RendezVous, Void> actions;
+    private TableColumn<Consultation, Void> actions;
     @FXML
-    private Button addAppointment;
+    private Button addConsultation;
+    private ObservableList<Consultation> conList;
+    private ConsultationService conServ = new ConsultationService();
     private RendezVousService appServ = new RendezVousService();
-    private ObservableList<RendezVous> appointList;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        AppointInit();
+        try{
+            ConInit();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void AppointInit(){
+    public void ConInit(){
         try {
-            appointList = FXCollections.observableArrayList(appServ.select());
-            appointments.setItems(appointList);
+            conList = FXCollections.observableArrayList(conServ.select());
+            consultations.setItems(conList);
 
             patient.setCellValueFactory(cellData -> {
                 User patient = cellData.getValue().getPatient();
@@ -61,13 +72,13 @@ public class AppointmentAdminController implements Initializable {
                 User psy = cellData.getValue().getPsy();
                 return new SimpleStringProperty(psy.getFirstname());
             });
-            datetime.setCellValueFactory(cellData -> {
-                LocalDateTime dateTime = cellData.getValue().getDateR();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm");
-                String formattedDateTime = dateTime.format(formatter);
-                return new SimpleStringProperty(formattedDateTime);
+            note.setCellValueFactory(cellData -> {
+                String note = cellData.getValue().getNote();
+                return new SimpleStringProperty(note);
             });
-            service.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNomService()));
+            Recommandation_suivi.setCellValueFactory(cellData -> {
+                return new SimpleStringProperty(cellData.getValue().isRecommandation_suivi()? "Recommand":"Do Not Recommand");
+            });
 
             actions.setCellFactory(param -> new TableCell<>() {
 
@@ -90,7 +101,7 @@ public class AppointmentAdminController implements Initializable {
                     deleteButton.setStyle("-fx-background-color: transparent;");
                     viewButton.setOnAction(event -> {
                         try {
-                            showAppointmentDetails(getTableView().getItems().get(getIndex()));
+                            showConsultationDetails(getTableView().getItems().get(getIndex()));
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -103,7 +114,7 @@ public class AppointmentAdminController implements Initializable {
                         }
                     });
                     updateButton.setOnAction(event -> {
-                        showUpdateDialog(getTableView().getItems().get(getIndex()), appointments, "/fxml/Admin/Appointment.fxml");
+                        showUpdateDialog(getTableView().getItems().get(getIndex()), consultations, "/fxml/Admin/Consultation.fxml");
                     });
                 }
 
@@ -125,24 +136,24 @@ public class AppointmentAdminController implements Initializable {
         }
     }
 
-    public void showUpdateDialog(RendezVous app, Node node, String fxml) {
+    public void showUpdateDialog(Consultation con, Node node, String fxml) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
-        dialog.getDialogPane().setContent(createForm(app, dialog, node, fxml));
+        dialog.getDialogPane().setContent(createForm(con, dialog, node, fxml));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
         dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
         dialog.showAndWait();
     }
 
-    public VBox createForm(RendezVous app, Dialog dialog, Node node, String fxml) {
+    public VBox createForm(Consultation con, Dialog dialog, Node node, String fxml) {
         VBox vbox = new VBox();
-        vbox.setAlignment(javafx.geometry.Pos.CENTER);
+        vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20.0);
         vbox.setStyle("-fx-background-color: #f4fcfa;");
         vbox.getStyleClass().add("form-container");
 
         HBox hbox1 = new HBox();
-        hbox1.setAlignment(javafx.geometry.Pos.CENTER);
+        hbox1.setAlignment(Pos.CENTER);
         hbox1.setPrefHeight(62.0);
         hbox1.setPrefWidth(579.0);
         hbox1.setSpacing(15);
@@ -162,9 +173,9 @@ public class AppointmentAdminController implements Initializable {
         psyComboBox.setItems(FXCollections.observableArrayList(users));
         psyComboBox.setConverter(new UserStringConverter());
 
-        if(app.getPsy() != null){
+        if(con.getPsy() != null){
             try {
-                psyComboBox.setValue(new UserService().selectWhere(app.getPsy().getId()));
+                psyComboBox.setValue(new UserService().selectWhere(con.getPsy().getId()));
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -178,9 +189,9 @@ public class AppointmentAdminController implements Initializable {
         patientComboBox.setItems(FXCollections.observableArrayList(users));
         patientComboBox.setConverter(new UserStringConverter());
         vbox2.getChildren().addAll(label2, patientComboBox);
-        if(app.getPatient() != null){
+        if(con.getPatient() != null){
             try {
-                patientComboBox.setValue(new UserService().selectWhere(app.getPatient().getId()));
+                patientComboBox.setValue(new UserService().selectWhere(con.getPatient().getId()));
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -191,80 +202,82 @@ public class AppointmentAdminController implements Initializable {
         vbox1.getChildren().addAll(label1, psyComboBox);
 
         HBox hbox3 = new HBox();
-        hbox3.setAlignment(javafx.geometry.Pos.CENTER);
+        hbox3.setAlignment(Pos.CENTER);
         hbox3.setSpacing(10);
-        Label label3 = new Label("Service");
+        Label label3 = new Label("Appointment");
         label3.getStyleClass().add("combo-label");
-        ComboBox<String> serviceComboBox = new ComboBox<>();
-        serviceComboBox.setItems(FXCollections.observableArrayList("Individual", "Couple", "Child"));
-        serviceComboBox.setValue(app.getNomService());
-        serviceComboBox.setPromptText("Service");
-        serviceComboBox.getStyleClass().add("combo-box");
-        hbox3.getChildren().addAll(label3, serviceComboBox);
+        ComboBox<RendezVous> appComboBox = new ComboBox<>();
+        try {
+            ArrayList<RendezVous> appList = new ArrayList<>();
+            for(var app: new RendezVousService().select() ){
+                if (!app.isStatut())
+                    appList.add(app);
+            }
+            appComboBox.setItems(FXCollections.observableArrayList(appList));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        appComboBox.setConverter(new AppointmentStringConverter());
+        if(con.getPatient() != null){
+            try {
+                patientComboBox.setValue(new UserService().selectWhere(con.getPatient().getId()));
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        appComboBox.setPromptText("Appointment");
+        if(con.getAppointment() != null){
+            appComboBox.setValue(con.getAppointment());
+        }
+        appComboBox.getStyleClass().add("combo-box");
+        hbox3.getChildren().addAll(label3, appComboBox);
 
         hbox1.getChildren().addAll(vbox1, vbox2);
 
         HBox hbox2 = new HBox();
-        hbox2.setAlignment(javafx.geometry.Pos.CENTER);
+        hbox2.setAlignment(Pos.CENTER);
         hbox2.setSpacing(15);
-        Label label4 = new Label("Date");
+        Label label4 = new Label("Note");
         label4.getStyleClass().add("combo-label");
-        DatePicker datePicker = new DatePicker();
-        if(app.getDateR() != null){
-            datePicker.setValue(app.getDateR().toLocalDate());
+        TextField note = new TextField();
+        note.setPrefSize(250,60);
+        if(con.getNote() != null){
+            note.setText(con.getNote());
         }
-        datePicker.getStyleClass().add("date-picker");
-        hbox2.getChildren().addAll(label4, datePicker);
+        note.getStyleClass().add("date-picker");
+        hbox2.getChildren().addAll(label4, note);
 
         HBox hBox4 = new HBox();
-        hBox4.setAlignment(javafx.geometry.Pos.CENTER);
+        hBox4.setAlignment(Pos.CENTER);
         hBox4.setSpacing(50.0);
 
-        // Create the Checkboxes
-        CheckBox statusCheckBox = new CheckBox("Status");
-        statusCheckBox.setSelected(app.isStatut());
-        CheckBox certificatCheckBox = new CheckBox("Certificat");
-        certificatCheckBox.setSelected(app.isCertificat());
+        Label label5 = new Label("Rating");
+        label4.getStyleClass().add("combo-label");
+        Rating rating = new Rating(5,0);
+        if(con.getRating() != null){
+            rating = new Rating(5, con.getRating().intValue());
+        }
 
-        // Add Checkboxes to the HBox
-        hBox4.getChildren().addAll(statusCheckBox, certificatCheckBox);
+        hBox4.getChildren().addAll(label5, rating);
 
         Button addButton = new Button("Save");
+        Rating finalRating = rating;
         addButton.setOnMouseClicked(e -> {
             try {
-                RendezVousService rs = new RendezVousService();
-                ConsultationService cs = new ConsultationService();
-                boolean oldStatus = app.isStatut();
-                app.update(datePicker.getValue().atStartOfDay(), serviceComboBox.getValue(), statusCheckBox.isSelected(), certificatCheckBox.isSelected(), psyComboBox.getValue(), app.getPatient());
-                app.setCertificat(certificatCheckBox.isSelected());
-                if(node == addAppointment) {
-                    try {
-                        System.out.println("appointment to add: "+app);
-                        rs.add(app);
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                RendezVous oldApp = con.getAppointment();
+                con.update(appComboBox.getValue(), patientComboBox.getValue(), psyComboBox.getValue(), note.getText(), finalRating.getRating());
+                if(node == addConsultation) {
+                    conServ.add(con);
                 }
                 else {
-                    if(!oldStatus) {
-                        if (app.isStatut()) {
-                            Consultation c = new Consultation(app, app.getPsy(), app.getPatient());
-                            c.setRating(null);
-                            cs.add(c);
-                        }
-                    }
-                    else{
-                        if (!app.isStatut()){
-                            for(var c: cs.select()){
-                                if(app.getId() == c.getAppointment().getId()){
-                                    cs.delete(c.getId());
-                                }
-                            }
-                        }
-                    }
-                    rs.update(app);
+                    conServ.update(con);
+                    oldApp.setStatut(false);
+                    appServ.update(oldApp);
                 }
-
+                RendezVous app = con.getAppointment();
+                app.setStatut(true);
+                appServ.update(app);
                 dialog.close();
                 Navigation.navigateTo(fxml, node);
             } catch (SQLException ex) {
@@ -272,7 +285,6 @@ public class AppointmentAdminController implements Initializable {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-
         });
         addButton.getStyleClass().add("save-button");
 
@@ -282,7 +294,7 @@ public class AppointmentAdminController implements Initializable {
         return vbox;
     }
 
-    private void showAppointmentDetails(RendezVous app) throws SQLException {
+    private void showConsultationDetails(Consultation con) throws SQLException {
         // Create a new Dialog
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("HelpMeBalance");
@@ -297,9 +309,9 @@ public class AppointmentAdminController implements Initializable {
         // Set header label
         Label headerLabel = new Label("Appointment Details");
         headerLabel.setFont(Font.font("System Bold", 12.0));
-        headerLabel.setAlignment(javafx.geometry.Pos.TOP_CENTER);
-        headerLabel.setContentDisplay(javafx.scene.control.ContentDisplay.CENTER);
-        headerLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        headerLabel.setAlignment(Pos.TOP_CENTER);
+        headerLabel.setContentDisplay(ContentDisplay.CENTER);
+        headerLabel.setTextAlignment(TextAlignment.CENTER);
         dialogPane.setHeader(headerLabel);
 
         // Create VBox for content
@@ -308,14 +320,12 @@ public class AppointmentAdminController implements Initializable {
         contentVBox.setSpacing(5.0);
 
         // Create and add labels for date, service, status, patient, and psychiatrist
-        LocalDateTime dateTime = app.getDateR();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm");
-        String formattedDateTime = dateTime.format(formatter);
-        contentVBox.getChildren().add(new Label("Date: "+ formattedDateTime));
-        contentVBox.getChildren().add(new Label("Service: "+ app.getNomService()));
-        contentVBox.getChildren().add(new Label("Status: "+ (app.isStatut()? "Confirmed":"Not Confirmed")));
-        contentVBox.getChildren().add(new Label("Patient: "+ app.getPatient().getFirstname()+ " " +app.getPatient().getLastname()));
-        contentVBox.getChildren().add(new Label("Psychiatrist: "+ app.getPsy().getFirstname()+ " " +app.getPsy().getLastname()));
+        contentVBox.getChildren().add(new Label("Appointment ID: "+ con.getAppointment().getId()));
+        contentVBox.getChildren().add(new Label("Patient: "+ con.getPatient().getFirstname()+ " " +con.getPatient().getLastname()));
+        contentVBox.getChildren().add(new Label("Psychiatrist: "+ con.getPsy().getFirstname()+ " " +con.getPsy().getLastname()));
+        contentVBox.getChildren().add(new Label("Note: "+ con.getNote()));
+        contentVBox.getChildren().add(new Label("Rating: "+ con.getRating()));
+        contentVBox.getChildren().add(new Label("follow-up: "+ (con.isRecommandation_suivi()? "Need follow-up":"Doesnt need follow-up")));
 
         // Set content to the VBox
         dialogPane.setContent(contentVBox);
@@ -337,10 +347,10 @@ public class AppointmentAdminController implements Initializable {
         dialog.showAndWait();
     }
 
-    private void showDeleteConfirmationDialog(RendezVous app) throws SQLException {
+    private void showDeleteConfirmationDialog(Consultation con) throws SQLException {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to delete this appointment ?");
+        alert.setHeaderText("Are you sure you want to delete this consultation ?");
 
         ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -348,18 +358,21 @@ public class AppointmentAdminController implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
-            appServ.delete(app.getId());
+            conServ.delete(con.getId());
+            RendezVous app = con.getAppointment();
+            app.setStatut(false);
+            appServ.update(app);
             try {
-                Navigation.navigateTo("/fxml/Admin/Appointment.fxml", appointments);
+                Navigation.navigateTo("/fxml/Admin/Consultation.fxml", consultations);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public void handleAddAppointment() {
+    public void handleAddConsultation(ActionEvent actionEvent) {
         try{
-            showUpdateDialog(new RendezVous(), addAppointment, "/fxml/Admin/Appointment.fxml");
+            showUpdateDialog(new Consultation(), addConsultation, "/fxml/Admin/Consultation.fxml");
         }catch (Exception e){
             System.out.println(e.getMessage());
         }

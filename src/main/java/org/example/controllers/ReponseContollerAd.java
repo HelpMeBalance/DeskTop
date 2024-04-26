@@ -18,7 +18,9 @@ import org.example.models.Question;
 import org.example.models.Reponse;
 import org.example.service.QuestionService;
 import org.example.service.ReponseService;
+import org.example.utils.Navigation;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -32,8 +34,13 @@ public class ReponseContollerAd implements Initializable {
     private QuestionService questionService = new QuestionService();
     private ReponseService reponseService = new ReponseService();
     @FXML
-    private TextArea questionTextArea;
-public static Question qes;
+    private TextField questionTextArea;
+    @FXML
+    private Label errorMessage;
+    @FXML
+    private Button goback;
+
+    public static Question qes;
 
     @FXML
     private TableView<Reponse> questionsTable;
@@ -141,36 +148,46 @@ public static Question qes;
     }
 
     private void updateQuestion(Reponse event) {
-        Reponse selectedQuestion = event;
+        Reponse selectedReponse = event;
 
-            // A question is selected, show a dialog to update it
-            TextInputDialog dialog = new TextInputDialog(selectedQuestion.getReponse());
-            dialog.setTitle("Update Reponse");
-            dialog.setHeaderText("Update selected reponse");
-            dialog.setContentText("Enter the updated reponse:");
+        // A response is selected, show a dialog to update it
+        TextInputDialog dialog = new TextInputDialog(selectedReponse.getReponse());
+        dialog.setTitle("Update Response");
+        dialog.setHeaderText("Update selected response");
+        dialog.setContentText("Enter the updated response:");
 
-            Optional<String> result = dialog.showAndWait();
-            result.ifPresent(updatedQuestion -> {
-                // Update the selected question with the new text
-                selectedQuestion.setReponse(updatedQuestion);
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(updatedResponse -> {
+            // Check if the updated response meets the length requirement
+            if ( updatedResponse.isEmpty()) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Validation Error");
+                errorAlert.setContentText("Response must be not empty.");
+                errorAlert.showAndWait();
+                return; // Stop further processing if validation fails
+            }
 
-                // Call the update method in the QuestionService to update the question in the database
-                try {
-                    reponseService.update(selectedQuestion);
-                    // Refresh the TableView to reflect the changes
-                    initQuestions();
-                } catch (SQLException e) {
-                    // Handle database errors
-                    e.printStackTrace();
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("Error");
-                    errorAlert.setHeaderText("Database Error");
-                    errorAlert.setContentText("An error occurred while updating the question.");
-                    errorAlert.showAndWait();
-                }
-            });
+            // Update the selected response with the new text
+            selectedReponse.setReponse(updatedResponse);
 
+            // Call the update method in the ReponseService to update the response in the database
+            try {
+                reponseService.update(selectedReponse);
+                // Refresh the TableView to reflect the changes
+                initQuestions();
+            } catch (SQLException e) {
+                // Handle database errors
+                e.printStackTrace();
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Database Error");
+                errorAlert.setContentText("An error occurred while updating the response.");
+                errorAlert.showAndWait();
+            }
+        });
     }
+
 
 
 
@@ -187,6 +204,9 @@ public static Question qes;
     }
     public void addRuestion(ActionEvent event) {
         String questionText = questionTextArea.getText();
+        if (!areFieldsValid()) {
+            return; // Stop the registration process if validation fails
+        }
 
         if (!questionText.isEmpty()) {
 
@@ -204,12 +224,21 @@ public static Question qes;
                 e.printStackTrace();
                 // Handle database errors
             }
-        } else {
-            // Show an error message if the question text area is empty
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Question cannot be empty");
-            alert.showAndWait();
         }
+
+    }
+    private boolean areFieldsValid() {
+
+        boolean isValid = true;
+        StringBuilder errors = new StringBuilder();
+        if ( questionTextArea.getText()=="") {
+            errors.append("reponse must be filled in.\n");
+            isValid = false;
+        }
+        errorMessage.setText(errors.toString());
+        return isValid;
+    }
+    public void goback(ActionEvent actionEvent) throws IOException {
+        Navigation.navigateTo("/fxml/Admin/Quize.fxml",goback);
     }
 }

@@ -28,6 +28,10 @@ public class RendezVous {
         this.patient = patient;
     }
 
+    public RendezVous() {
+
+    }
+
     public void update(LocalDateTime dateR, String nomService, boolean statut, boolean certificat, User psy, User patient) {
         this.dateR = dateR;
         this.nomService = nomService;

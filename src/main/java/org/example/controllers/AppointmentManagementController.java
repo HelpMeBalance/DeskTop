@@ -2,7 +2,9 @@ package org.example.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
 import javafx.scene.layout.HBox;
+import org.controlsfx.control.Rating;
 import org.example.service.RendezVousService;
 import org.example.utils.AppointmentDisplayBox;
 

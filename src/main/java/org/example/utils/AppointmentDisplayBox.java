@@ -7,17 +7,17 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.example.models.Commentaire;
+import javafx.scene.text.Font;
+import javafx.scene.transform.Scale;
+import org.controlsfx.control.Rating;
+import org.example.models.Consultation;
 import org.example.models.RendezVous;
 import org.example.models.User;
-import org.example.service.PersonneService;
+import org.example.service.ConsultationService;
 import org.example.service.RendezVousService;
 import org.example.service.UserService;
-import org.example.utils.Navigation;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -25,9 +25,10 @@ import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
     VBox vBox = new VBox();
-    public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) {
+    ConsultationService conServ = new ConsultationService();
+    public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) throws SQLException {
         // Create VBox
-
+        VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle("-fx-background-color: #f4fcfa;");
         vBox.getStyleClass().add("form-container");
@@ -48,14 +49,35 @@ public class AppointmentDisplayBox {
 
         // Create Labels inside inner VBox
         Label dateLabel = new Label(date);
+        dateLabel.setFont(new Font(dateLabel.getFont().getSize() * 1.3)); // 20% bigger
         Label confirmationLabel = new Label(confirmation);
+        confirmationLabel.setFont(new Font(confirmationLabel.getFont().getSize() * 1.3)); // 20% bigger
         innerVBox.getChildren().addAll(dateLabel, confirmationLabel);
         innerVBox.setPadding(new Insets(10, 5, 0, 5));
 
-        //Creating the raitng and the delete and remove
-        // Create Label outside inner VBox
-        Label starLabel = new Label("*****");
-        starLabel.setPadding(new Insets(5, 0, 0, 0));
+        // Create Rating
+        Consultation con = new Consultation();
+        if (app.isStatut()){
+            for(var c: conServ.select()){
+                if(c.getAppointment().getId() == app.getId() && c.getRating()!=null && c.getRating()>=0){
+                    con = c;
+                }
+            }
+        }
+
+        Rating rating = new Rating(5, 0);
+        rating.setDisable(true);
+        rating.setOpacity(1.0);
+        if (con.getRating()!=null) {
+            rating = new Rating(5, con.getRating().intValue());
+            rating.setDisable(true);
+            rating.setOpacity(1.0);
+        }
+        rating.getTransforms().add(new Scale(0.5, 0.5));
+        rating.setPadding(new Insets(10, 0, 0, 0));
+        rating.setMinWidth(10);
+        rating.setMaxWidth(10);
+
         //the edit and delete button icons
         ImageView deleteIcon = new ImageView(new Image("assets/bin.png"));
         deleteIcon.setFitWidth(20);
@@ -78,8 +100,6 @@ public class AppointmentDisplayBox {
 
         // Set event handler for clicking on the edit icon
         editIcon.setOnMouseClicked(e -> {
-            System.out.println("Edit Icon Clicked!");
-
             showUpdateDialog(app, vBox, "/fxml/Appointment/AppointmentDisplay.fxml");
         });
 
@@ -87,8 +107,22 @@ public class AppointmentDisplayBox {
         HBox editDeleteHBox = new HBox(editIcon, deleteIcon);
         editDeleteHBox.setAlignment(Pos.TOP_CENTER);
 
-        VBox editDeleteVBox = new VBox(editDeleteHBox, starLabel);
-        editDeleteVBox.setPadding(new Insets(10, 0, 0, 0));
+        VBox editDeleteVBox = new VBox(editDeleteHBox);
+        if(app.isStatut())
+            try {
+                for (var c : new ConsultationService().select()){
+                    if(c.getAppointment().getId() == app.getId()){
+                        if (c.getRating() < 0){
+                            editDeleteVBox.getChildren().add(new Label("add a slider or a popup to add rating"));
+                        }
+                        else
+                            editDeleteVBox.getChildren().add(rating);
+                    }
+                }
+            }catch(SQLException e){
+                System.out.println(e.getMessage());
+            }
+        editDeleteVBox.setPadding(new Insets(10, 30, 0, 30));
         editDeleteVBox.setAlignment(Pos.TOP_CENTER);
 
         // Add children to HBox
@@ -98,6 +132,7 @@ public class AppointmentDisplayBox {
         // Create Label outside HBox with custom service name
         Label serviceNameLabel = new Label(serviceName);
         serviceNameLabel.setPadding(new Insets(0, 0, 10, 0));
+        serviceNameLabel.setFont(new Font(serviceNameLabel.getFont().getSize() * 1.3)); // 20% bigger
 
         // Add children to VBox
         vBox.getChildren().addAll(hBox, serviceNameLabel);
@@ -112,12 +147,6 @@ public class AppointmentDisplayBox {
         dialog.showAndWait();
     }
     public VBox createForm(RendezVous app, Dialog dialog, Node node,String fxml) {
-        System.out.println(app);
-        try{
-            System.out.println(new UserService().select());
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
         VBox vbox = new VBox();
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
         vbox.setSpacing(20.0);
