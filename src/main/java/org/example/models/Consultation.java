@@ -48,6 +48,11 @@ public class Consultation {
         this.rating = rating;
     }
 
+    public void update(String note, boolean followUp){
+        this.note = note;
+        this.recommandation_suivi = followUp;
+    }
+
     public int getId() {
         return id;
     }

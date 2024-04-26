@@ -1,14 +1,9 @@
 package org.example.controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.stage.Stage;
 import org.example.utils.Navigation; // Import the Navigation class
 import org.example.utils.Session;
 
@@ -24,7 +19,7 @@ public class NavbarController {
     @FXML
     private MenuButton profileButton;
     @FXML
-    private MenuItem AdminPage;
+    private MenuItem AdminPage, PsyPage;
     @FXML
     private void handleLogin() {
         try {
@@ -59,7 +54,7 @@ public class NavbarController {
     public void handleBookSession() {
         try {
             // Use the Navigation utility class to navigate
-            Navigation.navigateTo("/fxml/AppointsTypes/appointsTypes.fxml", HomeButton);
+            Navigation.navigateTo("/fxml/Appointment/appointsTypes.fxml", HomeButton);
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception, possibly with a user alert
         }
@@ -94,7 +89,9 @@ public class NavbarController {
         profileButton.setVisible(isLoggedIn);
 
         boolean isAdmin = isLoggedIn && Session.getInstance().getUser().getRoles().contains("ROLE_ADMIN");
+        boolean isPsy = isLoggedIn && Session.getInstance().getUser().getRoles().contains("psy");
         AdminPage.setVisible(isAdmin);
+        PsyPage.setVisible(isPsy);
 
         if (isLoggedIn) {
             // Set the text of the profile button or configure it as needed
@@ -138,6 +135,13 @@ public class NavbarController {
     public void handleAppointmentPage() {
         try {
             Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", HomeButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void handlePsyPage() {
+        try {
+            Navigation.navigateTo("/fxml/Appointment/PsyAppointmentDisplay.fxml", HomeButton);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

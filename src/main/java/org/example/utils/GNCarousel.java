@@ -1,6 +1,5 @@
-package io.github.gleidsonmt.dashboardfx.core.controls;
+package org.example.utils;
 
-import io.github.gleidsonmt.dashboardfx.core.controls.skin.GNCarouselSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;

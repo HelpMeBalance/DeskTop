@@ -1,6 +1,5 @@
-package io.github.gleidsonmt.dashboardfx.core.controls.skin;
+package org.example.utils;
 
-import io.github.gleidsonmt.dashboardfx.core.controls.GNCarousel;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

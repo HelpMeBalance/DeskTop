@@ -17,7 +17,7 @@
  *
  */
 
-package io.github.gleidsonmt.dashboardfx.core.controls;
+package org.example.utils;
 
 import javafx.css.*;
 import javafx.scene.control.Control;
