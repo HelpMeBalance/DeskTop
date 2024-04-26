@@ -16,8 +16,12 @@
                 <Pane layoutX="-2.0" prefHeight="145.0" prefWidth="1062.0" styleClass="head-background" >
                 </Pane>
                 <HBox alignment="CENTER_LEFT" spacing="10">
+
+
                     <Label text="Add Question:" style="-fx-font-weight: bold;" />
-                    <TextArea fx:id="questionTextArea" prefWidth="600.0" prefHeight="100.0" />
+                    <TextField fx:id="questionTextArea" prefWidth="600.0" prefHeight="100.0" />
+                    <Label fx:id="errorMessage" textFill="#a80b00"/>
+
                 </HBox>
                 <Button text="Add Question" onAction="#addQuestion" />
                 <children>

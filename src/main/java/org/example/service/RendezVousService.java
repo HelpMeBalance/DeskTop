@@ -16,6 +16,26 @@ public class RendezVousService implements IService<RendezVous>{
         connection= MyDataBase.getInstance().getConnection();
     }
 
+
+    public int add2(RendezVous rendezVous) throws SQLException {
+        String sql = "INSERT INTO rendez_vous (date_r, nom_service, statut, certificat, user_id, patient_id) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setTimestamp(1, Timestamp.valueOf(rendezVous.getDateR()));
+        preparedStatement.setString(2, rendezVous.getNomService());
+        preparedStatement.setBoolean(3, false);
+        preparedStatement.setBoolean(4, false);
+        preparedStatement.setInt(5, rendezVous.getPsy().getId());
+        preparedStatement.setInt(6, rendezVous.getPatient().getId());
+
+        preparedStatement.executeUpdate();
+
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            return generatedKeys.getInt(1); // Return the generated ID
+        } else {
+            throw new SQLException("Failed to retrieve the generated ID");
+        }
+    }
     @Override
     public void add(RendezVous rendezVous) throws SQLException {
         String sql = "INSERT INTO rendez_vous (date_r, nom_service, statut, certificat, user_id, patient_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -28,8 +48,9 @@ public class RendezVousService implements IService<RendezVous>{
         preparedStatement.setInt(6, rendezVous.getPatient().getId());
 
         preparedStatement.executeUpdate();
-    }
 
+
+    }
     @Override
     public void update(RendezVous rendezVous) throws SQLException {
         String sql = "UPDATE rendez_vous SET date_r = ?, nom_service = ?, statut = ?, certificat = ?, user_id = ?, patient_id = ? WHERE id = ?";

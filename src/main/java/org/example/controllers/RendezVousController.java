@@ -93,6 +93,7 @@ public class RendezVousController implements Initializable {
                 String username = "abdelbakikacem2015@gmail.com";
                 String password = "nSbT8QjgaHd5kmhK";
 
+
                 Session session = Session.getInstance(props, new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
