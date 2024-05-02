@@ -36,14 +36,8 @@
    <bottom>
       <fx:include source="../Reusable/Footer.fxml" />
    </bottom>
-<!--   <stylesheets>-->
-<!--      <URL value="@../../style/css/colors.css" />-->
-<!--      <URL value="@../../style/css/drawer.css" />-->
-<!--      <URL value="@../../style/css/dash.css" />-->
-<!--      <URL value="@../../style/css/skeleton.css" />-->
-<!--      <URL value="@../../style/css/bootstrap.css" />-->
-<!--      <URL value="@../../style/css/immersive_scroll.css" />-->
-<!--      <URL value="@../../style/css/typographic.css" />-->
-<!--      <URL value="@../../style/css/shapes.css" />-->
-<!--   </stylesheets>-->
+   <stylesheets>
+      <URL value="@../../style/css/colors.css" />
+      <URL value="@../../style/css/skeleton.css" />
+   </stylesheets>
 </BorderPane>

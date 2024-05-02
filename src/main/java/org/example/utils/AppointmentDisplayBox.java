@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Scale;
 import org.controlsfx.control.Rating;
+import org.example.controllers.ConsultationDisplay;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
 import org.example.models.User;
@@ -31,6 +32,7 @@ public class AppointmentDisplayBox {
     ComboBox<String> serviceComboBox;
     DatePicker datePicker;
     ConsultationService conServ = new ConsultationService();
+    RendezVousService appServ = new RendezVousService();
     public VBox AppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app) throws SQLException {
         // Create VBox
         VBox vBox = new VBox();
@@ -98,6 +100,17 @@ public class AppointmentDisplayBox {
             }
         });
 
+        //Certificat button
+        ImageView certifIcon = new ImageView(new Image("assets/bin.png"));
+        certifIcon.setFitWidth(20);
+        certifIcon.setFitHeight(20);
+
+        // Set event handler for clicking on the delete icon
+        certifIcon.setOnMouseClicked(e -> {
+            System.out.println("certificat button clicled");
+        });
+
+
         //
         ImageView editIcon = new ImageView(new Image("assets/edit.png"));
         editIcon.setFitWidth(20);
@@ -110,6 +123,9 @@ public class AppointmentDisplayBox {
 
         // Add icons to HBox
         HBox editDeleteHBox = new HBox(editIcon, deleteIcon);
+        if(app.isCertificat())
+            editDeleteHBox.getChildren().add(certifIcon);
+
         editDeleteHBox.setAlignment(Pos.TOP_CENTER);
 
         VBox editDeleteVBox = new VBox(editDeleteHBox);
@@ -267,5 +283,101 @@ public class AppointmentDisplayBox {
         vbox.getChildren().addAll(hbox1, hbox2, addButton, errorMessage);
 
         return vbox;
+    }
+
+    public VBox PsyAppointmentDisplayBox(String date, String confirmation, String serviceName, RendezVous app, Node node) {
+        // Create VBox
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setStyle("-fx-background-color: #f4fcfa;");
+        vBox.getStyleClass().add("form-container");
+
+        // Create HBox
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.TOP_CENTER);
+
+        // Create ImageView
+        ImageView imageView = new ImageView(new Image("assets/appointDisplay.png"));
+        imageView.setFitHeight(50);
+        imageView.setFitWidth(50);
+
+        // Create VBox inside HBox
+        VBox innerVBox = new VBox();
+        innerVBox.setPrefHeight(VBox.USE_COMPUTED_SIZE);
+        innerVBox.setPrefWidth(VBox.USE_COMPUTED_SIZE);
+
+        // Create Labels inside inner VBox
+        Label dateLabel = new Label(date);
+        dateLabel.setFont(new Font(dateLabel.getFont().getSize() * 1.3)); // 20% bigger
+        Label confirmationLabel = new Label(confirmation);
+        confirmationLabel.setFont(new Font(confirmationLabel.getFont().getSize() * 1.3)); // 20% bigger
+        innerVBox.getChildren().addAll(dateLabel, confirmationLabel);
+        innerVBox.setPadding(new Insets(10, 5, 0, 5));
+
+        //
+        ImageView editIcon = new ImageView(new Image("assets/edit.png"));
+        editIcon.setFitWidth(20);
+        editIcon.setFitHeight(20);
+
+        // Set event handler for clicking on the edit icon
+        editIcon.setOnMouseClicked(e -> {
+            try {
+                Navigation.navigateTo("/fxml/Appointment/PsyConsultationDisplay.fxml", node);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        ImageView activateIcon = new ImageView(new Image("assets/consultation.png"));
+        activateIcon.setFitWidth(20);
+        activateIcon.setFitHeight(20);
+        activateIcon.setOnMouseClicked(e -> {
+            try {
+                conServ.add(new Consultation(app, 0, -1, false, "", app.getPsy(), app.getPatient()));
+                app.setStatut(true);
+                appServ.update(app);
+                Navigation.navigateTo("/fxml/Appointment/PsyAppointmentDisplay.fxml", node);
+            } catch (SQLException | IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        // Add icons to HBox
+        HBox editDeleteHBox = new HBox();
+        editDeleteHBox.setAlignment(Pos.TOP_CENTER);
+
+        VBox editDeleteVBox = new VBox(editDeleteHBox);
+        if(app.isStatut()) {
+            try {
+                for (var c : new ConsultationService().select()) {
+                    if (c.getAppointment().getId() == app.getId()) {
+                        ConsultationDisplay.con = c;
+                        if (c.getAppointment().isStatut()) {
+                            editDeleteVBox.getChildren().add(editIcon);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        else{
+            editDeleteVBox.getChildren().add(activateIcon);
+        }
+        editDeleteVBox.setPadding(new Insets(10, 30, 0, 30));
+        editDeleteVBox.setAlignment(Pos.TOP_CENTER);
+
+        // Add children to HBox
+        hBox.getChildren().addAll(imageView, innerVBox, editDeleteVBox);
+        hBox.setPadding(new Insets(10, 10, 10, 10));
+
+        // Create Label outside HBox with custom service name
+        Label serviceNameLabel = new Label(serviceName);
+        serviceNameLabel.setPadding(new Insets(0, 0, 10, 0));
+        serviceNameLabel.setFont(new Font(serviceNameLabel.getFont().getSize() * 1.3)); // 20% bigger
+
+        // Add children to VBox
+        vBox.getChildren().addAll(hBox, serviceNameLabel);
+        return vBox;
     }
 }
