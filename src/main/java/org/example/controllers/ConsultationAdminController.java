@@ -31,13 +31,7 @@ import org.example.utils.UserStringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ConsultationAdminController implements Initializable {
     @FXML
@@ -48,6 +42,10 @@ public class ConsultationAdminController implements Initializable {
     private TableColumn<Consultation, Void> actions;
     @FXML
     private Button addConsultation;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Pagination pagination;
     private ObservableList<Consultation> conList;
     private ConsultationService conServ = new ConsultationService();
     private RendezVousService appServ = new RendezVousService();
@@ -61,6 +59,8 @@ public class ConsultationAdminController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try{
             ConInit();
+            PaginationInit();
+            updateTableData(0);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -197,7 +197,14 @@ public class ConsultationAdminController implements Initializable {
         Label label2 = new Label("Patient");
         label2.getStyleClass().add("combo-label");
         patientComboBox = new ComboBox<>();
-        patientComboBox.setItems(FXCollections.observableArrayList(users));
+        try {
+            List<User> patients = new UserService().select();
+            if(psyComboBox.getValue()!=null)
+                patients.removeIf(p -> p.getId() == psyComboBox.getValue().getId());
+            patientComboBox.setItems(FXCollections.observableArrayList(patients));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         patientComboBox.setConverter(new UserStringConverter());
         vbox2.getChildren().addAll(label2, patientComboBox);
         if(con.getPatient() != null){
@@ -279,7 +286,7 @@ public class ConsultationAdminController implements Initializable {
                 if(!areFieldsValid())
                     return;
                 RendezVous oldApp = con.getAppointment();
-                con.update(appComboBox.getValue(), patientComboBox.getValue(), psyComboBox.getValue(), noteed.getText(), finalRating.getRating());
+                con.update(appComboBox.getValue(), psyComboBox.getValue(), patientComboBox.getValue(),  noteed.getText(), rating.getRating());
                 if(node == addConsultation) {
                     conServ.add(con);
                 }
@@ -424,5 +431,55 @@ public class ConsultationAdminController implements Initializable {
 
         errorMessage.setText(errors.toString());
         return isValid;
+    }
+
+    public void update() {
+        try {
+            // Refresh the appointment list from the database
+            conList = FXCollections.observableArrayList(conServ.select());
+
+            // Filter the appointment list based on the search field text
+            String searchText = searchField.getText().trim().toLowerCase();
+            conList = conList.filtered(con ->
+                    con.getPsy().getFirstname().toLowerCase().contains(searchText) ||
+                    con.getPsy().getLastname().toLowerCase().contains(searchText) ||
+                    con.getPatient().getFirstname().toLowerCase().contains(searchText) ||
+                    con.getPatient().getLastname().toLowerCase().contains(searchText)
+            );
+
+            // Set the filtered list to the table view
+            consultations.setItems(conList);
+
+            // Update the TableView
+            consultations.refresh(); // This line will refresh the TableView to reflect the changes
+
+            PaginationInit();
+            updateTableData(0);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateTableData(int pageIndex) {
+        try {
+            // Fetch data from the database based on pagination parameters
+            int startIndex = pageIndex * 4;
+            int endIndex = Math.min(startIndex + 4, conList.size());
+
+            // Ensure endIndex is within the bounds of the appointList
+            endIndex = Math.min(endIndex, conList.size());
+
+            ObservableList<Consultation> pageData = FXCollections.observableArrayList(conList.subList(startIndex, endIndex));
+
+            // Set the data to the table
+            consultations.setItems(pageData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void PaginationInit() {
+        pagination.setMaxPageIndicatorCount((int) Math.ceil((double) conList.size() / 4));
+        pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> updateTableData(newValue.intValue()));
     }
 }

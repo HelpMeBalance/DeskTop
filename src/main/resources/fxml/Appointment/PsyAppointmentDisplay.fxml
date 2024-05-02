@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import java.net.URL?>
 <BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.PsyAppointmentController">
    <!-- Top menu bar -->
    <top>
@@ -16,18 +17,22 @@
    <center>
       <VBox alignment="CENTER">
       <Label styleClass="header-label" text="Appointment Management" />
-         <HBox fx:id="displayHBox" alignment="CENTER">
+         <VBox fx:id="displayHBox" alignment="CENTER">
             <children>
 
             </children>
             <padding>
                <Insets bottom="10.0" top="10.0" />
             </padding>
-         </HBox>
+         </VBox>
       </VBox>
    </center>
 
    <bottom>
       <fx:include source="../Reusable/Footer.fxml" />
    </bottom>
+   <stylesheets>
+      <URL value="@../../style/css/colors.css" />
+      <URL value="@../../style/css/skeleton.css" />
+   </stylesheets>
 </BorderPane>
