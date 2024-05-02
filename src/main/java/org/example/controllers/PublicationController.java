@@ -480,6 +480,9 @@ public class PublicationController implements Initializable {
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
         Button AddPictureButton = new Button("Add Picture");
+        Label errorMessage=new Label();
+        errorMessage.setStyle("-fx-fill: red;"); // Ensuring text color is white
+
         Label titlepublicationLabel = new Label("Title");
         Label contentLabel = new Label("Publication");
         TextField title = new TextField();
@@ -530,7 +533,7 @@ public class PublicationController implements Initializable {
             e.printStackTrace();
         }
         VBox contentBox = new VBox();
-        contentBox.getChildren().addAll(titleImageBox,AddPictureButton,titlepublicationLabel,title,contentLabel,content,allowcoms,categoryComboBox,subcategoryComboBox);
+        contentBox.getChildren().addAll(titleImageBox,AddPictureButton,errorMessage,titlepublicationLabel,title,contentLabel,content,allowcoms,categoryComboBox,subcategoryComboBox);
         contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button addButton = new Button("Add Publication");
@@ -541,7 +544,29 @@ public class PublicationController implements Initializable {
             selectImageFile();
         });
         addButton.setOnAction(event -> {
-            try {
+            boolean isValid = true;
+            errorMessage.setText("");
+            StringBuilder errors = new StringBuilder();
+
+            if (title.getText().trim().isEmpty()) {
+                errors.append("Title must be filled.\n");
+                isValid = false;
+            }
+            else if (content.getText().trim().isEmpty()) {
+                errors.append("Content must be filled.\n");
+                isValid = false;
+            }
+            else  if (title.getText().length() < 5) {
+                errors.append("Title must be at least 5 characters long.\n");
+                isValid = false;
+            }
+            else  if (content.getText().length() < 10) {
+                errors.append("Content must be at least 10 characters long.\n");
+                isValid = false;
+            }
+            errorMessage.setText(errors.toString());
+            if(isValid)
+            {try {
                 String fileName = "default.png";
                 if(selectedFile != null) fileName = saveImageFile(selectedFile,UPLOAD_ROOT);
                 Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false,fileName);
@@ -551,7 +576,7 @@ public class PublicationController implements Initializable {
                 dialog.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            }
+            }}
         });
         dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
@@ -613,4 +638,5 @@ public class PublicationController implements Initializable {
         }
         return fileName;
     }
+
 }
