@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.service.pdfservice">
+   <!-- Top menu bar -->
+   <top>
+      <fx:include source="../Reusable/Navbar.fxml" />
+   </top>
+   <bottom>
+      <fx:include source="../Reusable/Footer.fxml" />
+   </bottom>
+   <center>
+      <VBox alignment="CENTER" prefHeight="392.0" prefWidth="491.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="72.0" prefWidth="340.0" text="Please select your preferred certificate type: PDF or scan QR code?" textAlignment="CENTER" textFill="#529e71" wrapText="true">
+            <font>
+               <Font name="Algerian" size="18.0" />
+            </font>
+         </Label>
+
+      <Button fx:id="pdf" mnemonicParsing="false" onAction="#exportPdf" prefHeight="26.0" prefWidth="178.0" style="-fx-background-color: #37ff0a; -fx-border-radius: 32px; -fx-background-radius: 32px;" text="pdf" />
+      <Button fx:id="qr" layoutX="36.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleGenerateQRCode" prefHeight="28.0" prefWidth="181.0" style="-fx-background-color: #37ff0a; -fx-background-radius: 32px;" text="QR code" textFill="#202020" />
+      <ImageView fx:id="qrCodeImageView" fitHeight="150.0" fitWidth="200.0" layoutX="424.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true" />
+
+      </VBox>
+</center>
+<right>
+<ImageView fitHeight="184.0" fitWidth="371.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+   <image>
+      <Image url="@../../assets/certf.png" />
+   </image>
+</ImageView>
+</right>
+        </BorderPane>

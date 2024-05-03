@@ -26,7 +26,7 @@ public class Question {
         this.active = active;
     }
 
-    private Boolean active ;
+    private Boolean active=false ;
 
     public Question(int id, String question) {
         this.id = id;
