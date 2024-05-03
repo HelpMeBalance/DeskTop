@@ -181,4 +181,13 @@ public class ConsultationDisplay implements Initializable {
             System.out.println(e.getMessage());
         }
     }
+
+    public void ActovateCertifcat() {
+        con.getAppointment().setCertificat(true);
+        try {
+            appServ.update(con.getAppointment());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
