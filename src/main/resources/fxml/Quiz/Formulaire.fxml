@@ -22,13 +22,30 @@
    <center>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label text="THAN YOU FOR YOU ANSWER" textFill="#1bdc0a">
+            <Label text="Thank you for your answer. Do you like questions?" textFill="#1bdc0a">
                <font>
                   <Font name="Bodoni MT" size="25.0" />
                </font>
             </Label>
+         <HBox spacing="10" alignment="CENTER">
+         <children>
+            <Button fx:id="yesButton"  onAction="#handleYesButtonClick" style="-fx-background-color: transparent;" >
+               <graphic>
+                  <FontAwesomeIcon glyphName="THUMBS_UP" size="24"  />
+               </graphic>
+            </Button>
+            <Button fx:id="noButton" onAction="#handleNoButtonClick" style="-fx-background-color: transparent;" >
+               <graphic>
+                  <FontAwesomeIcon glyphName= "THUMBS_DOWN" size="24"  />
+               </graphic>
+            </Button>
+         </children>
+         </HBox>
             <HBox alignment="CENTER">
+
                <children>
+
+
                   <TableView fx:id="form">
                      <columns>
                         <TableColumn fx:id="quc" prefWidth="160.7999946475029" text="Question" />

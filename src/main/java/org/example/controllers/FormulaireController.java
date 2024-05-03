@@ -33,6 +33,20 @@ public class FormulaireController implements Initializable {
     private FormulairejService fs=new FormulairejService();
     public static int rv;
     private QuestionService questionService = new QuestionService();
+    private likeeService l=new likeeService();
+
+
+    private boolean like;
+
+
+    @FXML
+    private Label questionLabel;
+
+    @FXML
+    private Button yesButton;
+
+    @FXML
+    private Button noButton;
 
     @FXML
     private TableView form;
@@ -46,6 +60,7 @@ public class FormulaireController implements Initializable {
 
     private ArrayList<Formulaireq> formulaireQuestions;
     private ArrayList<Formulairej> formulairej;
+
 
     ObservableList<Question> questionsList;
     ObservableList<Formulairej> formulairejList;
@@ -64,11 +79,30 @@ public class FormulaireController implements Initializable {
         form.setItems(formulairejList);
         quc.setCellValueFactory(new PropertyValueFactory<>("question"));
         rec.setCellValueFactory(new PropertyValueFactory<>("reponse"));
-    }
 
+    }
+    @FXML
+    private void handleNoButtonClick() throws SQLException {
+        // Logic when "No" is clicked
+        likee li = new likee(); // Example 'likee' instance
+        l.addLikee(li,false); // Adds 'likee' to the database
+        noButton.setDisable(true); // Disable the "No" button after clicking
+        yesButton.setDisable(true); // Optionally, disable the "Yes" button as well
+        questionLabel.setText("Vous n'aimez pas les questions.");
+    }
+    @FXML
+    private void handleYesButtonClick() throws SQLException {
+        // Logic when "Yes" is clicked
+        likee li = new likee(); // Example 'likee' instance
+        l.addLikee(li,true); // Adds 'likee' to the database
+        yesButton.setDisable(true); // Disable the "Yes" button after clicking
+        noButton.setDisable(true); // Optionally, disable the "No" button as well
+        questionLabel.setText("Vous aimez les questions!");
+    }
     @FXML
     private void record() throws IOException {
         Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", form);
     }
+
 
 }

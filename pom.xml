@@ -59,6 +59,27 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.3</version>  <!-- Vérifiez la version la plus récente -->
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
+
     </dependencies>
 
     <build>

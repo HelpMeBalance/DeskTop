@@ -46,36 +46,38 @@ public class RendezVousController implements Initializable {
 
             // Assuming rendezVousService is an instance of your service class
             QuizeController.rv=rvs.add2(rd);
-            // test MAILER
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "smtp-relay.brevo.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-
-            String username = "abdelbakikacem2015@gmail.com";
-            String password = "nSbT8QjgaHd5kmhK";
-
-            Session session = Session.getInstance(props, new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            });
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("HelpMeBalance@org.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("abdelbakikacem2015@gmail.com"));
-            message.setSubject("Appointment creation");
-            message.setText("your appointment has been created");
-
-            Transport.send(message);
+//            // test MAILER
+//            Properties props = new Properties();
+//            props.put("mail.smtp.host", "smtp-relay.brevo.com");
+//            props.put("mail.smtp.port", "587");
+//            props.put("mail.smtp.auth", "true");
+//            props.put("mail.smtp.starttls.enable", "true");
+//
+//            String username = "abdelbakikacem2015@gmail.com";
+//            String password = "nSbT8QjgaHd5kmhK";
+//
+//            Session session = Session.getInstance(props, new Authenticator() {
+//                protected PasswordAuthentication getPasswordAuthentication() {
+//                    return new PasswordAuthentication(username, password);
+//                }
+//            });
+//
+//            Message message = new MimeMessage(session);
+//            message.setFrom(new InternetAddress("HelpMeBalance@org.com"));
+//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("abdelbakikacem2015@gmail.com"));
+//            message.setSubject("Appointment creation");
+//            message.setText("your appointment has been created");
+//
+//            Transport.send(message);
             // end test
             Navigation.navigateTo("/fxml/Quiz/quize.fxml", psy);
 
-        }catch (SQLException | MessagingException e){
-            System.out.println(e.getMessage());
+//        }catch (SQLException | MessagingException e){
+//            System.out.println(e.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     public void initServiceAndPsy() {
