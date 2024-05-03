@@ -1,18 +1,17 @@
 package org.example.service;
 
 
+import org.example.models.PasswordResetToken;
 import org.example.models.User;
 import org.example.utils.MyDataBase;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class UserService implements IService <User>{
     Connection connect;
@@ -164,16 +163,6 @@ public class UserService implements IService <User>{
 
         return null ;
     }
-    public void updateProfil(User user) throws SQLException {
-        String sql = "UPDATE user SET firstname = ?, lastname = ?, profile_picture = ? WHERE id = ?";
-        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
-            preparedStatement.setString(1,user.getFirstname());
-            preparedStatement.setString(2, user.getLastname());
-            preparedStatement.setString(3,user.getProfile_picture());
-            preparedStatement.setInt(4, user.getId());
-            preparedStatement.executeUpdate();
-        }
-    }
     public List<User> search(String searchTerm) throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM user ";
@@ -213,40 +202,7 @@ public class UserService implements IService <User>{
         }
         return false; // Return false if current password is incorrect or user not found
     }
-    private boolean updatePasswordInDatabase(int userId, String newPassword) throws SQLException {
-        String sql = "UPDATE user SET password = ? WHERE id = ?";
-        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
-            preparedStatement.setString(1, new BCryptPasswordEncoder().encode(newPassword));
-            preparedStatement.setInt(2, userId);
-            int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0; // Return true if the update was successful
-        }
-    }
 
-
-
-    public void updatePassword(User user) throws SQLException {
-        String sql = "UPDATE user SET password = ? WHERE id = ?";
-        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
-            preparedStatement.setString(1, new BCryptPasswordEncoder().encode(user.getPassword()));
-            preparedStatement.setInt(2, user.getId());
-            preparedStatement.executeUpdate();
-        }
-    }
-    public void isBanned(int id,int banDuration) throws SQLException {
-        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE user SET is_banned = ? , ban_expires_at = ? WHERE id = ?");
-        preparedStatement.setBoolean(1,!(selectWhere(id).getIs_banned()));
-        preparedStatement.setObject(2,LocalDateTime.now().plusDays(banDuration));
-        preparedStatement.setInt(3,id);
-        preparedStatement.executeUpdate();
-    }
-    public void unBanned(int id) throws SQLException {
-        PreparedStatement preparedStatement = connect.prepareStatement("UPDATE user SET is_banned = ? , ban_expires_at = ? WHERE id = ?");
-        preparedStatement.setBoolean(1,!(selectWhere(id).getIs_banned()));
-        preparedStatement.setObject(2,null);
-        preparedStatement.setInt(3,id);
-        preparedStatement.executeUpdate();
-    }
     private  String getRolesjson (List<String> roles) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[");
@@ -284,4 +240,78 @@ public class UserService implements IService <User>{
         user.setGoogle_id(resultSet.getString("google_id"));
         return user;
     }
+
+
+    private void savePasswordResetToken(PasswordResetToken passwordResetToken) {
+        String sql = "INSERT INTO password_reset_token (user_id, token, expires_at) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setInt(1, passwordResetToken.getUserId());
+            preparedStatement.setString(2, passwordResetToken.getToken());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(passwordResetToken.getExpiresAt()));
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception - maybe log to a file or database
+        }
+    }
+
+    private String generateUniqueToken() {
+        // Generate a random 6-digit code
+        int token = (int) ((Math.random() * 900000) + 100000);
+        return String.valueOf(token);
+    }
+    private boolean updatePasswordInDatabase(int userId, String newPassword) {
+        String sql = "UPDATE user SET password = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, new BCryptPasswordEncoder().encode(newPassword));
+            preparedStatement.setInt(2, userId);
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return false;
+    }
+    public boolean changePassword(User user, String newPassword) {
+        return updatePasswordInDatabase(user.getId(), newPassword);
+    }
+
+    // This method would be used to verify the token from the email link
+    public User getUserByResetToken(String token) {
+        String sql = "SELECT u.* FROM user u JOIN password_reset_token prt ON u.id = prt.user_id WHERE prt.token = ? AND prt.expires_at > ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, token);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return createUser(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return null;
+    }
+
+    public boolean isTokenValid(String token) {
+        String sql = "SELECT COUNT(*) FROM password_reset_token WHERE token = ? AND expires_at > ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, token);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return false;
+    }
+
+
+
 }

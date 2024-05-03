@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.SplitPane?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.*?>
@@ -185,7 +189,6 @@
     </VBox>
 </left>
     <bottom>
-        <!-- Footer can be added here -->
         <fx:include source="../Reusable/Footer.fxml" />
     </bottom>
     <stylesheets>

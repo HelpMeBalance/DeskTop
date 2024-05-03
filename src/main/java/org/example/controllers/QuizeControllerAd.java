@@ -39,7 +39,9 @@ import java.util.ResourceBundle;
 public class QuizeControllerAd implements Initializable {
     private QuestionService questionService = new QuestionService();
     @FXML
-    private TextArea questionTextArea;
+    private TextField questionTextArea;
+    @FXML
+    private Label errorMessage; // Add a label in your FXML to display errors
 
     private ReponseService reponseService = new ReponseService();
     private ArrayList<Reponse> reponseListe ;
@@ -235,40 +237,49 @@ public class QuizeControllerAd implements Initializable {
     private void updateQuestion(Question event) {
         Question selectedQuestion = event;
 
-            // A question is selected, show a dialog to update it
-            TextInputDialog dialog = new TextInputDialog(selectedQuestion.getQuestion());
-            dialog.setTitle("Update Question");
-            dialog.setHeaderText("Update selected question");
-            dialog.setContentText("Enter the updated question:");
 
-            Optional<String> result = dialog.showAndWait();
-            result.ifPresent(updatedQuestion -> {
-                // Update the selected question with the new text
-                selectedQuestion.setQuestion(updatedQuestion);
+        // A question is selected, show a dialog to update it
+        TextInputDialog dialog = new TextInputDialog(selectedQuestion.getQuestion());
 
-                // Call the update method in the QuestionService to update the question in the database
-                try {
-                    questionService.update(selectedQuestion);
-                    // Refresh the TableView to reflect the changes
-                    initQuestions();
-                } catch (SQLException e) {
-                    // Handle database errors
-                    e.printStackTrace();
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("Error");
-                    errorAlert.setHeaderText("Database Error");
-                    errorAlert.setContentText("An error occurred while updating the question.");
-                    errorAlert.showAndWait();
-                }
-            });
+        dialog.setTitle("Update Question");
+        dialog.setHeaderText("Update selected question");
+        dialog.setContentText("Enter the updated question:");
 
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(updatedQuestion -> {
+            // Check if the updated question meets the length requirement
+            if (updatedQuestion.length() < 6 || updatedQuestion.isEmpty()||updatedQuestion.charAt(updatedQuestion.length()-1)!='?') {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Validation Error");
+                errorAlert.setContentText("Question must be longer than 6 characters and not empty and end with '?'.");
+                errorAlert.showAndWait();
+                return; // Stop further processing if validation fails
+            }
+
+            // Update the selected question with the new text
+            selectedQuestion.setQuestion(updatedQuestion);
+
+            // Call the update method in the QuestionService to update the question in the database
+            try {
+                questionService.update(selectedQuestion);
+                // Refresh the TableView to reflect the changes
+                initQuestions();
+            } catch (SQLException e) {
+                // Handle database errors
+                e.printStackTrace();
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Database Error");
+                errorAlert.setContentText("An error occurred while updating the question.");
+                errorAlert.showAndWait();
+            }
+        });
     }
 
 
 
-
-
-        public void action()
+    public void action()
         {
             try
             {
@@ -281,7 +292,10 @@ public class QuizeControllerAd implements Initializable {
         }
     public void addQuestion(ActionEvent event) {
         String questionText = questionTextArea.getText();
-        System.out.println(questionText );
+
+        if (!areFieldsValid()) {
+            return; // Stop the registration process if validation fails
+        }
         if (!questionText.isEmpty()) {
             System.out.println("g,ddbdbb");
             try {
@@ -298,13 +312,29 @@ public class QuizeControllerAd implements Initializable {
                 e.printStackTrace();
                 // Handle database errors
             }
-        } else {
-            // Show an error message if the question text area is empty
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Question cannot be empty");
-            alert.showAndWait();
         }
+    }
+    private boolean areFieldsValid() {
+        boolean isValid = true;
+        StringBuilder errors = new StringBuilder();
+
+        if (questionTextArea.getText().length()<6 || questionTextArea.getText()=="") {
+            errors.append("queston must be longer than 6\n");
+            isValid = false;
+        }
+        if ( questionTextArea.getText()=="") {
+            errors.append("queston must be filled in.\n");
+            isValid = false;
+        }
+        if ( questionTextArea.getText().charAt(questionTextArea.getText().length()-1)!='?') {
+            errors.append("queston must end with ?.\n");
+            isValid = false;
+        }
+
+
+
+        errorMessage.setText(errors.toString());
+        return isValid;
     }
     }
 

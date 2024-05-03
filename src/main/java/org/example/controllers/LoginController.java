@@ -2,9 +2,7 @@ package org.example.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,6 +31,20 @@ public class LoginController {
     @FXML
     private Button loginButton;
     private UserService userService = new UserService();
+    @FXML
+    private Button forgetPasswordButton;
+    @FXML
+    private Label errorMessage; // Add a label in your FXML to display errors
+
+    @FXML
+    public void handleForgetPassword(ActionEvent event) {
+        try {
+            // Use the Navigation utility class to navigate
+            Navigation.navigateTo("/fxml/ResetPassword.fxml", forgetPasswordButton);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception, possibly with a user alert
+        }
+    }
 
     @FXML
     private void handleLogin() {
@@ -61,6 +73,7 @@ public class LoginController {
             } else {
                 // Login failed
                 System.out.println("Login failed");
+                showAlert("Error", "Invalid Credentials.", Alert.AlertType.ERROR);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,11 +107,15 @@ public class LoginController {
             isValid = false;
         }
 
-        if (!isValid) {
-            // Show the error message
-            System.out.println(errors.toString());
-        }
-
+        errorMessage.setText(errors.toString());
         return isValid;
     }
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 }

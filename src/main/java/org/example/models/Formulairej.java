@@ -7,6 +7,7 @@ public class Formulairej {
     private String question ;
     private String reponse ;
 
+
     public Formulairej(int idf, String question, String reponse) {
         this.idf = idf;
         this.question = question;

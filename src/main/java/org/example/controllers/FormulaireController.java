@@ -17,17 +17,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.models.*;
 import org.example.service.*;
+import org.example.utils.Navigation;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FormulaireController implements Initializable {
     private FormulairejService fs=new FormulairejService();
+    public static int rv;
     private QuestionService questionService = new QuestionService();
 
     @FXML
@@ -55,12 +59,16 @@ public class FormulaireController implements Initializable {
     }
     public void initformulaire() throws SQLException {
 
-        formulairejList = FXCollections.observableArrayList(fs.select());
-        form.setItems( formulairejList);
+        List<Formulairej> fetchedData = fs.selectWhere1(rv);
+        formulairejList = FXCollections.observableArrayList(fetchedData);
+        form.setItems(formulairejList);
         quc.setCellValueFactory(new PropertyValueFactory<>("question"));
         rec.setCellValueFactory(new PropertyValueFactory<>("reponse"));
+    }
 
-
+    @FXML
+    private void record() throws IOException {
+        Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", form);
     }
 
 }
