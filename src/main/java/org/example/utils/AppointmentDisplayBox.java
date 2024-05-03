@@ -1,5 +1,7 @@
 package org.example.utils;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +21,7 @@ import org.example.models.User;
 import org.example.service.ConsultationService;
 import org.example.service.RendezVousService;
 import org.example.service.UserService;
+import org.example.service.pdfservice;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,7 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
-    VBox vBox = new VBox();
+    ImageView deleteIcon;
     Label errorMessage = new Label();
     ComboBox<User> psyComboBox;
     ComboBox<String> serviceComboBox;
@@ -86,7 +89,7 @@ public class AppointmentDisplayBox {
         rating.setMaxWidth(10);
 
         //the edit and delete button icons
-        ImageView deleteIcon = new ImageView(new Image("assets/bin.png"));
+        deleteIcon = new ImageView(new Image("assets/bin.png"));
         deleteIcon.setFitWidth(20);
         deleteIcon.setFitHeight(20);
 
@@ -107,7 +110,12 @@ public class AppointmentDisplayBox {
 
         // Set event handler for clicking on the delete icon
         certifIcon.setOnMouseClicked(e -> {
-            System.out.println("certificat button clicled");
+            try {
+                Navigation.navigateTo("/fxml/Admin/pdf.fxml", deleteIcon);
+                pdfservice.rv = app.getId();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
 
@@ -134,7 +142,14 @@ public class AppointmentDisplayBox {
                 for (var c : new ConsultationService().select()){
                     if(c.getAppointment().getId() == app.getId()){
                         if (c.getRating() < 0){
-                            editDeleteVBox.getChildren().add(new Label("add a slider or a popup to add rating"));
+                            FontAwesomeIcon star = new FontAwesomeIcon();
+                            star.setIcon(FontAwesomeIcons.STAR);
+                            Button ratingButton = new Button();
+                            ratingButton.setGraphic(star);
+                            ratingButton.setOnAction(event -> {
+                                showRatingDialog(app,deleteIcon,"/fxml/Appointment/AppointmentDisplay.fxml");
+                            });
+                            editDeleteVBox.getChildren().add(ratingButton);
                         }
                         else
                             editDeleteVBox.getChildren().add(rating);
@@ -181,6 +196,42 @@ public class AppointmentDisplayBox {
 
         errorMessage.setText(errors.toString());
         return isValid;
+    }
+
+    public void showRatingDialog(RendezVous app, Node node, String fxml) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("HelpMeBalance");
+        dialog.getDialogPane().setContent(createRating(app, dialog, node, fxml));
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+        dialog.showAndWait();
+    }
+
+    private Node createRating(RendezVous app, Dialog<Void> dialog, Node node, String fxml) {
+        VBox vbox = new VBox();
+        vbox.setAlignment(javafx.geometry.Pos.CENTER);
+        vbox.setSpacing(20.0);
+        vbox.setStyle("-fx-background-color: #f4fcfa;");
+        vbox.getStyleClass().add("form-container");
+        Rating r = new Rating(5,0);
+        Button submitRating = new Button("Submit");
+        submitRating.setOnAction(event -> {
+            try{
+                for(var c: conServ.select()){
+                    if(c.getAppointment().getId() == app.getId()){
+                        c.setRating(r.getRating());
+                        conServ.update(c);
+                        Navigation.navigateTo(fxml, deleteIcon);
+                    }
+                }
+                dialog.close();
+                Navigation.navigateTo(fxml, node);
+            }catch (SQLException | IOException ex){
+                System.out.println(ex.getMessage());
+            }
+        });
+        vbox.getChildren().addAll(r,submitRating);
+        return vbox;
     }
 
     public void showUpdateDialog(RendezVous app, Node node, String fxml) {

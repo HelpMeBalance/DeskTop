@@ -110,7 +110,7 @@ public class pdfservice {
 
     @FXML
     public void handleGenerateQRCode() {
-        String qrText = "http://192.168.242.1:8000/exportpdf/102"; // Example QR code text
+        String qrText = "http://192.168.242.1:8000/exportpdf/"+rv; // Example QR code text
         int width = 200;
         int height = 200;
 

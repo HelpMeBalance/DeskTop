@@ -112,7 +112,7 @@ public class RendezVousController implements Initializable {
                 Navigation.navigateTo("/fxml/Quiz/quize.fxml", psy);
         } catch (IOException e) {
             System.out.println(e.getMessage());
-        } catch (SQLException e) {
+        } catch (SQLException | MessagingException e) {
             throw new RuntimeException(e);
         }
     }
