@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
 <BorderPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../../css/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.LoginController">
 <top>
     <fx:include source="../Reusable/Navbar.fxml" />
@@ -36,10 +37,11 @@
                   <TextField fx:id="emailField" promptText="E-mail Address" styleClass="text-field" />
                   <PasswordField fx:id="passwordField" promptText="Password" styleClass="text-field" />
                   <CheckBox fx:id="rememberMeCheckbox" styleClass="checkbox" text="Remember me" />
+                  <Label fx:id="errorMessage" textFill="red" />
                   <HBox alignment="CENTER" spacing="10">
                      <children>
                         <Button fx:id="loginButton" onAction="#handleLogin" styleClass="login-button" text="Login" />
-                        <Button fx:id="forgetPasswordButton" styleClass="forget-password-button" text="Forget password?" />
+                        <Button fx:id="forgetPasswordButton" onAction="#handleForgetPassword" styleClass="forget-password-button" text="Forget password?" />
                      </children>
                   </HBox>
                   <Button fx:id="googleSignInButton" styleClass="google-button" text="Sign in with Google" />

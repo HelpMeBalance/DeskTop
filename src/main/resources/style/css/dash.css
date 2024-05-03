@@ -241,17 +241,14 @@ Text, .text, .label {
 }
 
 .block01 {
-    -fx-background-image: url('../img/laptop.jpg');
     -fx-background-size: stretch;
 }
 
 .block02 {
-    -fx-background-image: url('../img/office.jpg');
     -fx-background-size: stretch;
 }
 
 .block03 {
-    -fx-background-image: url('../img/white_office.jpg');
     -fx-background-size: stretch;
 }
 

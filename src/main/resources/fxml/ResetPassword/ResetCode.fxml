@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- ResetCode.fxml -->
+<?import javafx.scene.text.Text?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.controllers.ResetCodeController" alignment="CENTER" spacing="10">
+    <Text text="Password Reset Code"/>
+    <TextField fx:id="resetCodeField" promptText="Enter the 6-digit code"/>
+    <Button text="Verify Code" onAction="#handleVerifyCode"/>
+</VBox>

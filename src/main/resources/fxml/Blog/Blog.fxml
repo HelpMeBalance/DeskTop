@@ -1,59 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.SplitPane?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<BorderPane fx:id="mainContainer" style="-fx-background-color: white;" stylesheets="@../../css/store.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.StoreController">
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<BorderPane fx:id="mainContainer" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.BlogController">
     <top>
         <fx:include source="../Reusable/Navbar.fxml" />
     </top>
 
     <center>
-        <HBox spacing="20">
-         <ScrollPane prefHeight="200.0" prefWidth="284.0">
-            <content>
-               <VBox prefHeight="195.0" prefWidth="266.0">
-                  <children>
-                     <FlowPane prefHeight="83.0" prefWidth="260.0" />
-                  </children>
-               </VBox>
-            </content>
-         </ScrollPane>
-            <!-- Sidebar for search and other widgets -->
-            <VBox maxWidth="200" minWidth="200" spacing="20">
-                <!-- Search bar -->
-
-                <!-- Categories section -->
-                <VBox spacing="10">
-                    <Label text="Categories" />
-                    <!-- Categories list -->
+        <VBox >
+            <children>
+                <VBox alignment="CENTER" style=" -fx-background-color: #f8fbf4;"  >
+                    <children>
+                        <Text fx:id="pagetitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Brave Chats" style="-fx-fill: #b4c5d3;">
+                            <styleClass>
+                                <String fx:value="h1" />
+                                <String fx:value="text-bold" />
+                            </styleClass>
+                        </Text>
+                        <HBox alignment="CENTER" spacing="5">
+                            <children>
+                                <Hyperlink fx:id="hyperlinktitle" text="Home"  styleClass="h3" style="-fx-text-fill: #a9cd71;" />
+                                <Text  text=">" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h3" style="-fx-fill: #b4c5d3;"/>
+                                <Text fx:id="pagesubtitle" text="Brave Chats" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="h3" style="-fx-fill: #b4c5d3;"/>
+                            </children>
+                        </HBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="40.0" top="20.0" />
+                    </VBox.margin>
                 </VBox>
-
-                <!-- Recommended articles -->
-                <VBox spacing="10">
-                    <Label text="Recommended Publictions" />
-                    <!-- Articles list -->
-                </VBox>
-
-                <!-- Popular tags -->
-                <VBox spacing="10">
-                    <Label text="Popular Tags" />
-                    <!-- Tags list -->
-                </VBox>
-            </VBox>
-
-            <!-- Main content area -->
-
-
-        </HBox>
+                <ScrollPane fx:id="pubscrollpane" fitToWidth="true">
+                    <content >
+                        <HBox alignment="CENTER">
+                            <children>
+                            <VBox >
+                            <children>
+                                <VBox fx:id="viewPublication" visible="false" alignment="BOTTOM_CENTER" spacing="20.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="Publications" alignment="BOTTOM_CENTER" spacing="20.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                                <HBox fx:id="paginatorhbox" alignment="CENTER" prefHeight="53.0" prefWidth="377.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                            <children>
+                                                <Hyperlink fx:id="hlFirst" alignment="CENTER" prefHeight="21.0" prefWidth="56.0" text="First" onAction="#handleFirstPage"  style="-fx-text-fill: #a9cd71;">
+                                                    <padding>
+                                                        <Insets bottom="15.0" />
+                                                    </padding>
+                                                </Hyperlink>
+                                                <Pagination fx:id="pagination" prefHeight="53.0" style="-fx-alignment: baseline_right;">
+                                                </Pagination>
+                                                <Hyperlink fx:id="hlLast" alignment="CENTER" prefHeight="21.0" prefWidth="45.0" text="Last"  onAction="#handleLastPage" style="-fx-text-fill: #a9cd71;">
+                                                    <padding>
+                                                        <Insets bottom="15.0" />
+                                                    </padding>
+                                                </Hyperlink>
+                                            </children>
+                                            <styleClass>
+                                                <String fx:value="col-xs-12" />
+                                                <String fx:value="col-sm-6" />
+                                                <String fx:value="col-md-6" />
+                                                <String fx:value="col-xl-6" />
+                                                <String fx:value="col-lg-6" />
+                                                <String fx:value="align-center-right" />
+                                                <String fx:value="align-xs-center" />
+                                            </styleClass>
+                                        </HBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="20.0" right="20.0" />
+                            </VBox.margin>
+                            <styleClass>
+                                <String fx:value="col-xs-6" />
+                                <String fx:value="col-sm-6" />
+                                <String fx:value="col-md-6" />
+                                <String fx:value="col-lg-6" />
+                                <String fx:value="col-xl-6" />
+                            </styleClass>
+                            </VBox>
+                            </children>
+                        </HBox>
+                    </content>
+                </ScrollPane>
+            </children>
+            <VBox.margin>
+                <Insets bottom="40.0" top="20.0" />
+            </VBox.margin>
+        </VBox>
     </center>
-
+<left>
+    <VBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+    <children>
+    <VBox alignment="CENTER" style=" -fx-background-color: #f8fbf4;"  >
+        <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: #b4c5d3;">
+                <styleClass>
+                    <String fx:value="h1" />
+                    <String fx:value="text-bold" />
+                </styleClass>
+            </Text>
+            <HBox alignment="CENTER" spacing="5">
+                <children>
+                    <Hyperlink styleClass="h3" style="-fx-text-fill: #a9cd71;" />
+                </children>
+            </HBox>
+        </children>
+        <VBox.margin>
+            <Insets bottom="40.0" top="20.0" />
+        </VBox.margin>
+    </VBox>
+        <ScrollPane id="drawer-scroll" fitToWidth="true" VBox.vgrow="ALWAYS" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER">
+        <VBox  style="-fx-padding: 10px;" spacing="10">
+            <children>
+                    <Button fx:id="addpublication" style="-fx-background-color: transparent; -fx-border-color: #a9cd71; -fx-border-radius: 27px;" HBox.hgrow="ALWAYS">
+                        <graphic>
+                            <HBox alignment="CENTER_RIGHT">
+                                <children>
+                                    <Text text="Add New Publication "/>
+                                    <FontAwesomeIcon glyphName="PENCIL_SQUARE_ALT" fill="#a9cd71" />
+                                </children>
+                                <padding>
+                                    <Insets right="10.0" /> <!-- Adjust the right padding as needed -->
+                                </padding>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <HBox spacing="10.0">
+                        <ImageView fitHeight="30.0"  pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../../assets/leaf.png" />
+                        </ImageView>
+                    <Text  strokeType="OUTSIDE" strokeWidth="0.0" text="Categories" style="-fx-fill: #b4c5d3;">
+                        <styleClass>
+                            <String fx:value="h3" />
+                            <String fx:value="text-bold" />
+                        </styleClass>
+                    </Text>
+                    </HBox>
+                    <VBox fx:id="Categories">
+                    </VBox>
+                    <HBox spacing="10.0">
+                        <ImageView fitHeight="30.0"  pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../../assets/leaf.png" />
+                        </ImageView>
+                    <Text  strokeType="OUTSIDE" strokeWidth="0.0" text="Explore More" style="-fx-fill: #b4c5d3;">
+                        <styleClass>
+                            <String fx:value="h3" />
+                            <String fx:value="text-bold" />
+                        </styleClass>
+                    </Text>
+                </HBox>
+                    <VBox fx:id="exploremore" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" style="-fx-padding: 10px;" spacing="10">
+                    </VBox>
+                    <HBox spacing="10.0">
+                        <ImageView fitHeight="30.0"  pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../../assets/leaf.png" />
+                        </ImageView>
+                    <Text  strokeType="OUTSIDE" strokeWidth="0.0" text="Explore Related Topics" style="-fx-fill: #b4c5d3;">
+                                <styleClass>
+                                    <String fx:value="h3" />
+                                    <String fx:value="text-bold" />
+                                </styleClass>
+                            </Text>
+                    </HBox>
+                    <VBox fx:id="relatedtopics" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" style="-fx-padding: 10px;" spacing="10">
+                    </VBox>
+            </children>
+        </VBox>
+        </ScrollPane>
+    </children>
+        <VBox.margin>
+            <Insets bottom="40.0" top="20.0" />
+        </VBox.margin>
+    </VBox>
+</left>
     <bottom>
-        <!-- Footer can be added here -->
         <fx:include source="../Reusable/Footer.fxml" />
     </bottom>
+    <stylesheets>
+        <URL value="@../../style/css/colors.css" />
+        <URL value="@../../style/css/drawer.css" />
+        <URL value="@../../style/css/dash.css" />
+        <URL value="@../../style/css/skeleton.css" />
+        <URL value="@../../style/css/bootstrap.css" />
+        <URL value="@../../style/css/immersive_scroll.css" />
+        <URL value="@../../style/css/typographic.css" />
+        <URL value="@../../style/css/shapes.css" />
+    </stylesheets>
 </BorderPane>

@@ -29,6 +29,15 @@ public class CategorieService {
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
     }
+    public void update(Categorie categorie) throws SQLException {
+        String sql = "UPDATE categorie SET nom = ?, description = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, categorie.getNom());
+            preparedStatement.setString(2, categorie.getDescription());
+            preparedStatement.setInt(3, categorie.getId());
+            preparedStatement.executeUpdate();
+        }
+    }
     public List<Categorie> select() throws SQLException {
         List<Categorie> categories = new ArrayList<>();
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  categorie");
@@ -63,7 +72,6 @@ public class CategorieService {
 
         return categoriesWithSubcategories;
     }
-
     public Categorie selectWhere(int id) throws SQLException{
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM categorie WHERE id = ?");
         try (preparedStatement)

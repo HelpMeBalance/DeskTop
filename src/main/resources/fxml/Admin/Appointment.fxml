@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.*?>
-<?import javafx.geometry.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
 <StackPane prefHeight="712.0" prefWidth="1424.0" style="-fx-background-color: #edf0f2; -fx-border-color: -light-gray-2; -fx-border-width: 0 1 0 0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AppointmentAdminController">
@@ -22,24 +20,21 @@
           <children>
               <HBox alignment="CENTER" >
                   <Label text="Appointment Management" />
-                  <Button  fx:id="addcomment" onAction="#addpublication"  style="-fx-background-color: transparent;">
+                  <Button  fx:id="addAppointment" onAction="#handleAddAppointment" style="-fx-background-color: transparent;">
                       <graphic>
                           <FontAwesomeIcon glyphName="PLUS" />
                       </graphic>
                   </Button>
               </HBox>
-                    <TableView fx:id="Publications" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
+              <TextField fx:id="searchField" promptText="Search appointment..." prefWidth="100" onKeyReleased="#update"/>
+                    <TableView fx:id="appointments" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
                         <columns>
-                            <TableColumn fx:id="title" text="Title" />
-                            <TableColumn fx:id="content" text="Content" />
-                            <TableColumn fx:id="userName" text="Posted By" />
-                            <TableColumn fx:id="state" text="State" />
-                            <TableColumn fx:id="views" text="Views" />
-                            <TableColumn fx:id="comments" text="Comments" />
-                            <TableColumn fx:id="viewcomments" />
-                            <TableColumn fx:id="postedAt" text="Posted At" />
-                            <TableColumn fx:id="updatedAt" text="Updated At" />
-                            <TableColumn fx:id="actions" text="Actions" />
+                            <TableColumn fx:id="patient" text="PATIENT" />
+                            <TableColumn fx:id="psychiatrist" text="PSYCHYATRIST" />
+                            <TableColumn fx:id="chart" text="CHART" />
+                            <TableColumn fx:id="datetime" text="DATETIME" />
+                            <TableColumn fx:id="service" text="SERVICE" />
+                            <TableColumn fx:id="actions" text="ACTIONS" />
                         </columns>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -48,7 +43,7 @@
                               <Insets />
                            </VBox.margin>
                     </TableView>
-
+              <Pagination fx:id="pagination"  />
          </children>
       </VBox>
         </HBox>

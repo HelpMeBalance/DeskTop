@@ -42,10 +42,10 @@ public class RendezVousService implements IService<RendezVous>{
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setTimestamp(1, Timestamp.valueOf(rendezVous.getDateR()));
         preparedStatement.setString(2, rendezVous.getNomService());
-        preparedStatement.setBoolean(3, false);
-        preparedStatement.setBoolean(4, false);
-        preparedStatement.setInt(5, /*rendezVous.getPsy().getId()*/1);
-        preparedStatement.setInt(6, /*rendezVous.getPatient().getId()*/1);
+        preparedStatement.setBoolean(3, rendezVous.isStatut());
+        preparedStatement.setBoolean(4, rendezVous.isCertificat());
+        preparedStatement.setInt(5, rendezVous.getPsy().getId());
+        preparedStatement.setInt(6, rendezVous.getPatient().getId());
 
         preparedStatement.executeUpdate();
 
@@ -91,7 +91,7 @@ public class RendezVousService implements IService<RendezVous>{
                 int patient_Id = resultSet.getInt("patient_id");
 
                 // Assuming you have constructors or setter methods in the RendezVous class
-                rendezVousList.add(new RendezVous(id, dateR, nomService, statut, certificat, new User(psy_id), new User(patient_Id)));
+                rendezVousList.add(new RendezVous(id, dateR, nomService, statut, certificat, new UserService().selectWhere(psy_id), new UserService().selectWhere(patient_Id)));
             }
         }
         return rendezVousList;
@@ -114,7 +114,7 @@ public class RendezVousService implements IService<RendezVous>{
                     int patient_Id = resultSet.getInt("patient_id");
 
                     // Assuming you have constructors or setter methods in the RendezVous class
-                    return new RendezVous(idrv, dateR, nomService, statut, certificat, new User(psy_id), new User(patient_Id));
+                    return new RendezVous(idrv, dateR, nomService, statut, certificat, new UserService().selectWhere(psy_id), new UserService().selectWhere(patient_Id));
                 }
             }
         }

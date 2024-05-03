@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="mainContainer" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.ArticleDetailsController">
+
+<center>
+    <HBox spacing="20" style="-fx-background-color: fff;">
+        <children>
+            <Label fx:id="titleLabel" text="Title" />
+            <Label fx:id="descriptionLabel" text="Description" />
+            <Label fx:id="priceLabel" text="Price" />
+            <Label fx:id="quantityLabel" text="Quantity" />
+        </children>
+    </HBox>
+</center>
+
+</BorderPane>

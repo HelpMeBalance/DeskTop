@@ -16,15 +16,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class Main extends Application {
-
     public void start(Stage primaryStage) throws Exception{
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/home/homepage.fxml"));
 
-            primaryStage.setTitle("HelpMeBalance");
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home/homepage.fxml"));
+
+        primaryStage.setTitle("HelpMeBalance");
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true); // Ensures the stage is maximized
-
         Image logoImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/style/img/iconlogo.png")));
         // Set the logo image as the application icon
         primaryStage.getIcons().add(logoImage);

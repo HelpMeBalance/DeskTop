@@ -1,6 +1,9 @@
 package org.example.utils;
 import org.example.models.User;
 
+import javax.mail.Authenticator;
+import java.util.Properties;
+
 public class Session {
     private static Session instance;
     private boolean loggedIn = false;
@@ -8,12 +11,15 @@ public class Session {
 
     private Session() {}
 
-    public static Session getInstance() {
+    // Static method to get the instance of the Session class
+    public static synchronized Session getInstance() {
         if (instance == null) {
             instance = new Session();
         }
         return instance;
     }
+
+
 
     public boolean isLoggedIn() {
         return loggedIn;
