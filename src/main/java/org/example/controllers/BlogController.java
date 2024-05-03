@@ -487,6 +487,7 @@ public class BlogController implements Initializable {
                 }
             } else {
                 System.err.println("Image file does not exist: " + imagePath);
+
             }
         } catch (Exception e) {
             e.printStackTrace();

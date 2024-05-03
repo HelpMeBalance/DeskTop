@@ -49,13 +49,31 @@ public class AdminSidebarController {
     public void handleDashboard(ActionEvent actionEvent) {
     }
 
-
-
-    public void handleAppointments(ActionEvent actionEvent) {
+    public void handleAppointments() {
+        try {
+            Navigation.navigateTo("/fxml/Admin/Appointment.fxml", usersButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
+    public void handleConsultations() {
+        try {
+            Navigation.navigateTo("/fxml/Admin/Consultation.fxml", usersButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void handleCategories() {
         navigate("/fxml/Admin/Categorie.fxml");
+    }
+
+    public void handleStore() {
+        navigate("/fxml/Admin/Article.fxml");
+    }
+
+    public void handleCategoriesProduit() {
+        navigate("/fxml/Admin/CategorieProduit.fxml");
     }
 }

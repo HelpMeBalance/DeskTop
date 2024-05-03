@@ -20,16 +20,18 @@
           <children>
               <HBox alignment="CENTER" >
                   <Label text="Appointment Management" />
-                  <Button  fx:id="addcomment"  style="-fx-background-color: transparent;">
+                  <Button  fx:id="addAppointment" onAction="#handleAddAppointment" style="-fx-background-color: transparent;">
                       <graphic>
                           <FontAwesomeIcon glyphName="PLUS" />
                       </graphic>
                   </Button>
               </HBox>
+              <TextField fx:id="searchField" promptText="Search appointment..." prefWidth="100" onKeyReleased="#update"/>
                     <TableView fx:id="appointments" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
                         <columns>
                             <TableColumn fx:id="patient" text="PATIENT" />
                             <TableColumn fx:id="psychiatrist" text="PSYCHYATRIST" />
+                            <TableColumn fx:id="chart" text="CHART" />
                             <TableColumn fx:id="datetime" text="DATETIME" />
                             <TableColumn fx:id="service" text="SERVICE" />
                             <TableColumn fx:id="actions" text="ACTIONS" />
@@ -41,7 +43,7 @@
                               <Insets />
                            </VBox.margin>
                     </TableView>
-
+              <Pagination fx:id="pagination"  />
          </children>
       </VBox>
         </HBox>

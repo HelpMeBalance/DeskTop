@@ -194,6 +194,7 @@ public class RegisterController {
         }
 
 
+
         errorMessage.setText(errors.toString());
         return isValid;
     }

@@ -15,12 +15,13 @@ public class FormulairejService implements IService<Formulairej> {
     }
 
 
-    public void add1(int idf, String qj, String rj) throws SQLException {
-        String sql = "INSERT INTO formulairej (idf, question, reponse) VALUES (?, ?, ?)";
+    public void add1(int idf, String qj, String rj,int idr) throws SQLException {
+        String sql = "INSERT INTO formulairej (idf, question, reponse,idr) VALUES (?, ?, ?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, idf);
             preparedStatement.setString(2, qj);
             preparedStatement.setString(3, rj);
+            preparedStatement.setInt(4,idr);
             preparedStatement.executeUpdate();
         }
     }
@@ -69,35 +70,11 @@ public class FormulairejService implements IService<Formulairej> {
 
     @Override
     public Formulairej selectWhere(int idf) throws SQLException {
-        String sql = "SELECT * FROM formulairej WHERE idf = ?";
+        String sql = "SELECT * FROM formulairej WHERE idr = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, idf);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
                     String question = resultSet.getString("question");
                     String reponse = resultSet.getString("reponse");
                     return new Formulairej(idf, question, reponse);
@@ -106,6 +83,22 @@ public class FormulairejService implements IService<Formulairej> {
         }
         return null;
     }
+    public List<Formulairej> selectWhere1(int idf) throws SQLException {
+        List<Formulairej> formulairejList = new ArrayList<>();
+        String sql = "SELECT * FROM formulairej WHERE idr = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, idf);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String question = resultSet.getString("question");
+                    String reponse = resultSet.getString("reponse");
+                    formulairejList.add(new Formulairej(idf, question, reponse));
+                }
+            }
+        }
+        return formulairejList;
+    }
+
 
 
 }
