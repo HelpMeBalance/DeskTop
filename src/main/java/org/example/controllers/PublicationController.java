@@ -597,7 +597,7 @@ public class PublicationController implements Initializable {
     private void selectImageFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Image File");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.jpg, *.jpeg, *.png)", "*.jpg", "*.jpeg", "*.png");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files ( *.png)", "*.png");
         fileChooser.getExtensionFilters().add(extFilter);
          selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
