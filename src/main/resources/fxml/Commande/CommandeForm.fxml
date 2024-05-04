@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER_LEFT" fillWidth="false" prefHeight="154.0" prefWidth="219.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.CommandeController">
+    <Label text="Enter Your Address:">
+      <font>
+         <Font name="Arial" size="11.0" />
+      </font></Label>
+    <TextField fx:id="addressField" />
+
+    <Label text="Select Payment Method (CARD or CASH):" />
+    <TextField fx:id="paymentMethodField" />
+
+    <Label text="Enter Sale Code (-20%):" />
+    <TextField fx:id="saleCodeField" />
+
+    <Button onAction="#handleConfirmOrder" text="Confirm Order" />
+</VBox>
