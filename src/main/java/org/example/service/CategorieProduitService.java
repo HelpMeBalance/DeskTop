@@ -30,6 +30,41 @@ public class CategorieProduitService {
         }
         return categories;
     }
+    public List<CategorieProduit> selectAdmin(int pageIndex, int pageSize) throws SQLException {
+        List<CategorieProduit> categories = new ArrayList<>();
+        int offset = pageIndex * pageSize; // Calcule l'offset pour la pagination
+
+        // Requête SQL pour sélectionner les catégories administratives en fonction de la pagination
+        String sql = "SELECT * FROM categorie_produit LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = connect.prepareStatement(sql)) {
+            stmt.setInt(1, pageSize);
+            stmt.setInt(2, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    categories.add(new CategorieProduit(
+                            rs.getInt("id"),
+                            rs.getString("nom")
+                    ));
+                }
+            }
+        }
+
+        return categories;
+    }
+
+    public int countCategories() throws SQLException {
+        String query = "SELECT COUNT(*) FROM categorie_produit";
+        try (PreparedStatement ps = connect.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            } else {
+                return 0;
+            }
+        }
+    }
 
     public List<CategorieProduit> select() throws SQLException {
         List<CategorieProduit> categories = new ArrayList<>();
@@ -104,6 +139,24 @@ public class CategorieProduitService {
                         rs.getString("nom")
                 ));
             }
+        }
+        return categories;
+    }
+    public ObservableList<CategorieProduit> searchCategories(String searchTerm) {
+        ObservableList<CategorieProduit> categories = FXCollections.observableArrayList();
+        String query = "SELECT * FROM categorie_produit WHERE nom LIKE ?";
+        try (PreparedStatement ps = connect.prepareStatement(query)) {
+            ps.setString(1, "%" + searchTerm + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CategorieProduit categorie = new CategorieProduit();
+                    categorie.setId(rs.getInt("id"));
+                    categorie.setNom(rs.getString("nom"));
+                    categories.add(categorie);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return categories;
     }
