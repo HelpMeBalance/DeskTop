@@ -392,5 +392,29 @@ public class UserService implements IService <User>{
             // Handle exception
         }
         return null;
+
+    public User getUserById(int userId) {
+        // Implement logic to retrieve the user from the database using the provided userId
+        // For example:
+        try {
+            Connection connection = MyDataBase.getInstance().getConnection();
+            String query = "SELECT * FROM user WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                // Set other properties of the user...
+                return user;
+            } else {
+                return null; // User not found with the given ID
+            }
+        } catch (SQLException e) {
+            // Handle the SQL exception appropriately
+            e.printStackTrace();
+            return null;
+        }
     }
 }
