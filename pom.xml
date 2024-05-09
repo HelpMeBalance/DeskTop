@@ -88,6 +88,11 @@
         <artifactId>view</artifactId>
         <version>11.12.7</version>
     </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>22</version>
+        </dependency>
     </dependencies>
 
     <build>

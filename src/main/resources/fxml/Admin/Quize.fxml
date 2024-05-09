@@ -42,7 +42,6 @@
                 </HBox>
 
                 <Button text="Add Question" onAction="#addQuestion" />
-                <Button text="Show Stats" onAction="#showStatisticsForfor" /> <!-- Button to trigger stats display -->
 
                 <!-- TableView and Pagination -->
                 <TableView fx:id="questionsTable" prefHeight="400.0" prefWidth="500.0">
