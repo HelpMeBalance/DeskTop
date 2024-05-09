@@ -1,17 +1,25 @@
 package org.example.controllers;
 
+
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+
 import org.example.models.Commande;
 import org.example.models.User;
 import org.example.service.CommandeService;
 import org.example.utils.Session;
 
+
 import java.sql.SQLException;
 
+
 public class CommandeController {
+
+    private final CommandeService commandeService = new CommandeService();
+
+
     @FXML
     private TextField addressField;
     @FXML
@@ -30,11 +38,6 @@ public class CommandeController {
     }
 
     @FXML
-    private void initialize() {
-        // Initialize method, if needed
-    }
-
-    @FXML
     private void handleConfirmOrder() {
         // Get user input from the form fields
         String address = addressField.getText();
@@ -43,6 +46,7 @@ public class CommandeController {
 
         // Retrieve the total price from the session
         double totalPrice = (double) Session.getInstance().getAttribute("totalPrice");
+        String username = Session.getInstance().getUser().getFirstname(); // Get authenticated user's first name
         int userId = Session.getInstance().getUser().getId();
 
         // Validate the payment method
@@ -64,7 +68,7 @@ public class CommandeController {
         }
 
         // Create a Commande object
-        Commande commande = new Commande(userId, getUsername(), address, paymentMethod, totalPrice, saleCode);
+        Commande commande = new Commande(userId, username, address, paymentMethod, totalPrice, saleCode);
 
         // Add the Commande to the database
         CommandeService commandeService = new CommandeService();
@@ -80,6 +84,7 @@ public class CommandeController {
 
         // Reset form fields after confirming order
         clearFormFields();
+
     }
 
 

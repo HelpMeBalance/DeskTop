@@ -39,6 +39,7 @@
         <VBox alignment="BASELINE_RIGHT">
             <HBox>
                 <Button onAction="#handleCommanderButtonClick" text="Commander" />
+                <Button text="Show Command History" onAction="#handleShowCommandHistory" />
             </HBox>
             <Label fx:id="totalPriceLabel" style="-fx-font-weight: bold;">
             <font>

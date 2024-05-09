@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.CommandeHistoryController">
+    <children>
+        <VBox prefHeight="700.0" prefWidth="1000.0">
+            <TableView fx:id="commandeTable" prefHeight="340.0" prefWidth="600.0">
+                <columns>
+                    <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+                    <TableColumn fx:id="addressColumn" prefWidth="150.0" text="Address" />
+                    <TableColumn fx:id="paymentMethodColumn" prefWidth="100.0" text="Payment Method" />
+                    <TableColumn fx:id="totalPriceColumn" prefWidth="100.0" text="Total Price" />
+                    <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status (1:Delivered) (0:Pending)" />
+                </columns>
+            </TableView>
+            <Button text="Generate PDF" onAction="#handleGeneratePDF" />
+        </VBox>
+    </children>
+</AnchorPane>

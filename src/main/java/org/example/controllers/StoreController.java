@@ -213,5 +213,9 @@ public class StoreController {
     private void handleCommanderButtonClick() {
         Navigation.navigateTo("/fxml/Commande/CommandeForm.fxml");
     }
+    @FXML
+    private void handleShowCommandHistory() {
+        Navigation.navigateTo("/fxml/Commande/CommandeHistory.fxml");
+    }
 }
 

@@ -24,6 +24,18 @@ public class Commande {
         this.status = 0; // Set default status to "Pending"
     }
 
+    public Commande(int id, int userId, String username, String address, String paymentMethod, int status, double totalPrice, String saleCode) {
+        this.id = id;
+        this.userId = userId;
+        this.username = username;
+        this.address = address;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.totalPrice = totalPrice;
+        this.saleCode = saleCode;
+    }
+
+
     // Getters and setters
     public int getId() {
         return id;

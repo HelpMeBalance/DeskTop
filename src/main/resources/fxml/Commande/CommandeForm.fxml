@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER_LEFT" fillWidth="false" prefHeight="154.0" prefWidth="219.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.CommandeController">
+<VBox alignment="CENTER_LEFT" fillWidth="false" prefHeight="354.0" prefWidth="419.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.CommandeController">
+
     <Label text="Enter Your Address:">
       <font>
          <Font name="Arial" size="11.0" />

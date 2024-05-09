@@ -76,4 +76,8 @@ public class AdminSidebarController {
     public void handleCategoriesProduit() {
         navigate("/fxml/Admin/CategorieProduit.fxml");
     }
+    public void handleCommande() {
+        navigate("/fxml/Admin/Commande.fxml");
+    }
+
 }
