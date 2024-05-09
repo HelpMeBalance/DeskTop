@@ -27,6 +27,7 @@ import org.example.service.pdfservice;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
@@ -127,6 +128,11 @@ public class AppointmentDisplayBox {
         // Set event handler for clicking on the edit icon
         editIcon.setOnMouseClicked(e -> {
             showUpdateDialog(app, vBox, "/fxml/Appointment/AppointmentDisplay.fxml");
+            try {
+                Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", AppointmentManagementController.hboxNode);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         // Add icons to HBox
@@ -318,15 +324,12 @@ public class AppointmentDisplayBox {
                 if (!areFieldsValid())
                     return;
                 RendezVousService rs = new RendezVousService();
-                app.update(datePicker.getValue().atStartOfDay(), serviceComboBox.getValue(), app.isStatut(), app.isCertificat(), psyComboBox.getValue(), app.getPatient());
+                app.update(datePicker.getValue().atTime(15, 30), serviceComboBox.getValue(), app.isStatut(), app.isCertificat(), psyComboBox.getValue(), app.getPatient());
                 rs.update(app);
 
                 dialog.close();
-                Navigation.navigateTo(fxml, node);
             }catch (SQLException ex){
                 System.out.println(ex.getMessage());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
             }
 
         });
@@ -426,12 +429,17 @@ public class AppointmentDisplayBox {
         hBox.setPadding(new Insets(10, 10, 10, 10));
 
         // Create Label outside HBox with custom service name
+        Label patientLabel = new Label(app.getPatient().getFirstname()+" "+app.getPatient().getLastname());
+        patientLabel.setPadding(new Insets(0, 0, 10, 0));
+        patientLabel.setFont(new Font(patientLabel.getFont().getSize() * 1.3)); // 20% bigger
+
+        // Create Label outside HBox with custom service name
         Label serviceNameLabel = new Label(serviceName);
         serviceNameLabel.setPadding(new Insets(0, 0, 10, 0));
         serviceNameLabel.setFont(new Font(serviceNameLabel.getFont().getSize() * 1.3)); // 20% bigger
 
         // Add children to VBox
-        vBox.getChildren().addAll(hBox, serviceNameLabel);
+        vBox.getChildren().addAll(hBox, patientLabel, serviceNameLabel);
         return vBox;
     }
 }
