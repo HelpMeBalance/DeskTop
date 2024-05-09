@@ -3,11 +3,13 @@ package org.example.utils; // Adjust the package name to fit your project struct
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.controllers.CommentaireController;
 import org.example.controllers.SousCategorieController;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class Navigation {
 
@@ -37,5 +39,22 @@ public class Navigation {
         }
         Stage stage = (Stage) currentNode.getScene().getWindow();
         stage.getScene().setRoot(newContent);
+    }
+
+    public static void navigateTo(String fxmlFilePath) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            URL fxmlUrl = Navigation.class.getResource(fxmlFilePath);
+            loader.setLocation(fxmlUrl);
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage(); // Create a new stage for the new scene
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception if loading the FXML file fails
+        }
     }
 }

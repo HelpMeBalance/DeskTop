@@ -94,6 +94,29 @@ public class ArticleService {
         return articles;
     }
 
+    private Article createArticle(ResultSet resultSet) throws SQLException {
+        Article article = new Article();
+        article.setId(resultSet.getInt("id"));
+        article.setNom(resultSet.getString("nom"));
+        article.setDescription(resultSet.getString("description"));
+        article.setPrix(resultSet.getDouble("prix"));
+        article.setArticlePicture(resultSet.getString("article_picture"));
+        // You can add more attributes as needed
+
+        return article;
+    }
+
+    public Article selectWhere(int id) throws SQLException {
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM article WHERE id = ?");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return createArticle(resultSet); // Create Article object from ResultSet
+                }
+            }
+        }
+        return null;
     public List<Article> searchArticles(String searchTerm, String searchField) throws SQLException {
         List<Article> articles = new ArrayList<>();
         String sql = "SELECT * FROM article WHERE " + searchField + " LIKE ?";        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
