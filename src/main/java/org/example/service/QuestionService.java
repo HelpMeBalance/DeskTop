@@ -32,7 +32,7 @@ public class QuestionService implements IService<Question>{
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, question.getQuestion());
         preparedStatement.setObject(2, LocalDateTime.now());
-        preparedStatement.setBoolean(3, false);
+        preparedStatement.setBoolean(3, question.getActive());
         preparedStatement.setInt(4, question.getId());
         preparedStatement.executeUpdate();
     }
@@ -63,6 +63,22 @@ public class QuestionService implements IService<Question>{
         return question;
     }
 
+    public List<Question> select1() throws SQLException {
+        List<Question > question = new ArrayList<>();
+        String sql = "SELECT * FROM question WHERE active like true";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String questions  = resultSet.getString("question");
+                LocalDateTime date = resultSet.getTimestamp("date").toLocalDateTime();
+                boolean active = resultSet.getBoolean("active");
+                // Assuming you have constructors or setter methods in the RendezVous class
+                question.add(new Question (id,questions,date,active));
+            }
+        }
+        return question;
+    }
     @Override
     public Question selectWhere(int id) throws SQLException {
         Question question = new Question();

@@ -20,6 +20,8 @@
                             <FontAwesomeIcon glyphName="PLUS" size="1em"/>
                         </graphic>
                     </Button>
+                    <Label text="Search:"/>
+                    <TextField fx:id="searchField" maxWidth="200.0"/>
                 </HBox>
                 <TableView fx:id="categoriesTable" VBox.vgrow="ALWAYS">
                     <columns>
@@ -27,6 +29,7 @@
                         <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
                     </columns>
                 </TableView>
+                <Pagination fx:id="pagination"/>
             </VBox>
         </HBox>
     </children>

@@ -72,7 +72,6 @@ public class CategorieService {
 
         return categoriesWithSubcategories;
     }
-
     public Categorie selectWhere(int id) throws SQLException{
         PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM categorie WHERE id = ?");
         try (preparedStatement)

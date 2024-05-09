@@ -11,13 +11,13 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <BorderPane style="-fx-background-color: white;" styleClass="main-borderpane" stylesheets="@../../css/appointment.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.QuizeController">
-    <!-- Top menu bar -->
-    <top>
-        <fx:include source="../Reusable/Navbar.fxml" />
-    </top>
-    <bottom>
-        <fx:include source="../Reusable/Footer.fxml" />
-    </bottom>
+   <!-- Top menu bar -->
+   <top>
+      <fx:include source="../Reusable/Navbar.fxml" />
+   </top>
+   <bottom>
+      <fx:include source="../Reusable/Footer.fxml" />
+   </bottom>
    <center>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>

@@ -26,9 +26,7 @@ import org.example.service.ConsultationService;
 import org.example.service.RendezVousService;
 import org.example.service.UserService;
 import org.example.test.Main;
-import org.example.utils.Navigation;
-import org.example.utils.Session;
-import org.example.utils.UserStringConverter;
+import org.example.utils.*;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -38,6 +36,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,16 +44,36 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PsyAppointmentController implements Initializable {
 
     @FXML
-    private HBox displayHBox;
+    private VBox displayHBox;
 
     RendezVousService appServ = new RendezVousService();
     ConsultationService conServ = new ConsultationService();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            displayAppointments();
             initPsyPage();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void displayAppointments(){
+        try{
+            ArrayList<VBox> list = new ArrayList<>();
+            GNCarousel<VBox> carousel;
+            for(var app: new RendezVousService().select()){
+                if (app.getPsy().getId()==org.example.utils.Session.getInstance().getUser().getId()){
+//                    displayHBox.getChildren().addAll(new AppointmentDisplayBox().AppointmentDisplayBox(app.getDateR().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),app.isStatut() ? "Confirmed" : "Not Confirmed",app.getNomService(), app));
+                    list.add(new AppointmentDisplayBox().PsyAppointmentDisplayBox(app.getDateR().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),app.isStatut() ? "Confirmed" : "Not Confirmed",app.getNomService(), app, displayHBox));
+                }
+            }
+            System.out.println(list);
+            carousel = new GNCarousel<>(FXCollections.observableArrayList(list));
+            carousel.setMinSize(250,100);
+            displayHBox.getChildren().add(carousel);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
         }
     }
 

@@ -28,6 +28,8 @@ import org.example.utils.Session;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import javafx.geometry.Pos;
+
 
 public class StoreController {
     @FXML
@@ -72,16 +74,22 @@ public class StoreController {
     }
 
     private void loadArticles() {
+
         try {
             List<Article> articles = articleService.selectAll();
             articles.forEach(article -> {
                 VBox articleBox = new VBox(5);
+
+                // Apply CSS styles directly
+                articleBox.setStyle("-fx-padding: 10px; -fx-background-color: #f0f0f0; -fx-border-color: #077690; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-border-style: solid;");
+                articleBox.setAlignment(Pos.CENTER);
                 Label titleLabel = new Label(article.getNom());
-                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-font-family: Cambria; -fx-text-fill: black;");
 
                 Label priceLabel = new Label("Price: $" + article.getPrix());
-                Label descriptionLabel = new Label(article.getDescription());
-                descriptionLabel.setWrapText(true);
+                priceLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-font-family: Arial; -fx-text-fill: red;");
+
+
 
                 ImageView imageView = new ImageView();
                 if (article.getArticlePicture() != null && !article.getArticlePicture().isEmpty()) {
@@ -94,10 +102,12 @@ public class StoreController {
                 addToCartButton.setOnAction(e -> addToCart(article));
 
                 Button viewMoreButton = new Button("View More");
+                viewMoreButton.setStyle("-fx-font-weight: bold; -fx-text-fill: #077690;");
                 viewMoreButton.setOnAction(e -> displayArticleDetails(article));
 
                 articleBox.getChildren().addAll(imageView, titleLabel, priceLabel, descriptionLabel, addToCartButton, viewMoreButton);
                 articlesContainer.getChildren().add(articleBox);
+
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,10 +140,15 @@ public class StoreController {
     private void loadCategories() {
         try {
             List<CategorieProduit> categories = categorieProduitService.selectAllCategories();
-            categories.forEach(categorie -> categoryList.getItems().add(categorie.getNom()));
+
+            categories.forEach(categorie -> {
+                categoryList.getItems().add(categorie.getNom());
+                // Appliquer un style CSS à chaque élément de la liste des catégories
+                categoryList.setStyle("-fx-font-size: 14px; -fx-text-fill: black ; -fx-border-color: #077690; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-border-style: solid;"); // Exemple de style CSS
+            });
         } catch (Exception e) {
             e.printStackTrace();
-            // Handle exceptions, perhaps show an alert dialog
+
         }
     }
 

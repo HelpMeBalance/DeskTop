@@ -5,8 +5,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.control.Rating;
 import org.example.service.RendezVousService;
 import org.example.utils.AppointmentDisplayBox;
@@ -24,10 +28,15 @@ public class AppointmentManagementController implements Initializable {
 
     @FXML
     private HBox displayHBox;
+    @FXML
+    private VBox VBOX;
+
+    public static HBox hboxNode;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayAppointments();
+        hboxNode= displayHBox;
     }
     public void displayAppointments(){
         try{

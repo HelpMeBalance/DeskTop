@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -24,14 +25,17 @@ import org.example.service.RendezVousService;
 import org.example.service.UserService;
 import org.example.utils.Navigation;
 import org.example.utils.UserStringConverter;
+import org.w3c.dom.ls.LSOutput;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -41,10 +45,14 @@ public class AppointmentAdminController implements Initializable {
     @FXML
     private TableColumn<RendezVous, String> patient, psychiatrist, datetime, service;
     @FXML
-    private TableColumn<RendezVous, Void> actions;
+    private TableColumn<RendezVous, Void> actions, chart;
     @FXML
     private Button addAppointment;
-    private RendezVousService appServ = new RendezVousService();
+    @FXML
+    private Pagination pagination;
+    @FXML
+    private TextField searchField;
+    private final RendezVousService appServ = new RendezVousService();
     private ObservableList<RendezVous> appointList;
     ComboBox<User> psyComboBox, patientComboBox;
     ComboBox<String> serviceComboBox;
@@ -55,6 +63,8 @@ public class AppointmentAdminController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         AppointInit();
+        PaginationInit();
+        updateTableData(0);
     }
 
     public void AppointInit(){
@@ -64,11 +74,73 @@ public class AppointmentAdminController implements Initializable {
 
             patient.setCellValueFactory(cellData -> {
                 User patient = cellData.getValue().getPatient();
-                return new SimpleStringProperty(patient.getFirstname());
+                return new SimpleStringProperty(patient.getFirstname()+ " " + patient.getLastname());
             });
             psychiatrist.setCellValueFactory(cellData -> {
                 User psy = cellData.getValue().getPsy();
-                return new SimpleStringProperty(psy.getFirstname());
+                return new SimpleStringProperty(psy.getFirstname()+ " " + psy.getLastname());
+            });
+            chart.setCellFactory(param -> new TableCell<>() {
+                final Button chart = new Button();
+                {
+                    FontAwesomeIcon viewIcon = new FontAwesomeIcon();
+                    viewIcon.setIcon(FontAwesomeIcons.PIE_CHART);
+                    chart.setGraphic(viewIcon);
+
+                    chart.setStyle("-fx-background-color: transparent;");
+                    chart.setOnAction(event -> {
+                        try {
+                            ArrayList<Integer> rating = new ArrayList<>(List.of(0,0,0,0,0));
+                            int totale=0;
+                            for(var c: new ConsultationService().select()){
+                                if(c.getPsy().getId() == getTableView().getItems().get(getIndex()).getPsy().getId() && c.getRating()>=0 && c.getRating()!=null){
+                                    rating.set(c.getRating().intValue()-1, rating.get(c.getRating().intValue()-1)+1);
+                                    totale++;
+                                }
+                            }
+                            System.out.println(rating);
+
+                            if(totale!=0){
+
+                                PieChart pieChart = new PieChart();
+                                pieChart.setAnimated(true);
+                                pieChart.setTitle("Rating By Psy");
+
+                                List<PieChart.Data> pieChartData = new ArrayList<>();
+
+                                pieChartData.add(new PieChart.Data("1 STAR: "+String.format("%.1f", (double)100*rating.get(0)/totale)+"%", rating.get(0)));
+                                pieChartData.add(new PieChart.Data("2 STAR: "+String.format("%.1f", (double)100*rating.get(1)/totale)+"%", rating.get(1)));
+                                pieChartData.add(new PieChart.Data("3 STAR: "+String.format("%.1f", (double)100*rating.get(2)/totale)+"%", rating.get(2)));
+                                pieChartData.add(new PieChart.Data("4 STAR: "+String.format("%.1f", (double)100*rating.get(3)/totale)+"%", rating.get(3)));
+                                pieChartData.add(new PieChart.Data("5 STAR: "+String.format("%.1f", (double)100*rating.get(4)/totale)+"%", rating.get(4)));
+
+                                pieChart.getData().addAll(pieChartData);
+
+                                Dialog<Void> dialog = new Dialog<>();
+                                dialog.setTitle("HelpMeBalance");
+                                dialog.getDialogPane().setContent(pieChart);
+                                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+                                dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+                                dialog.showAndWait();
+                            }
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        HBox buttonsBox = new HBox(chart);
+                        buttonsBox.setSpacing(5);
+                        setGraphic(buttonsBox);
+                    }
+                }
+
             });
             datetime.setCellValueFactory(cellData -> {
                 LocalDateTime dateTime = cellData.getValue().getDateR();
@@ -420,5 +492,51 @@ public class AppointmentAdminController implements Initializable {
 
         errorMessage.setText(errors.toString());
         return isValid;
+    }
+
+    public void update() {
+        try {
+            appointList = FXCollections.observableArrayList(appServ.select());
+
+            String searchText = searchField.getText().trim().toLowerCase();
+            appointList = appointList.filtered(app ->
+                    app.getPsy().getFirstname().toLowerCase().contains(searchText) ||
+                            app.getPsy().getLastname().toLowerCase().contains(searchText) ||
+                            app.getPatient().getFirstname().toLowerCase().contains(searchText) ||
+                            app.getPatient().getLastname().toLowerCase().contains(searchText) ||
+                            app.getNomService().toLowerCase().contains(searchText)
+            );
+
+            appointments.setItems(appointList);
+            appointments.refresh();
+
+            PaginationInit();
+            updateTableData(0);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateTableData(int pageIndex) {
+        try {
+            int startIndex = pageIndex * 4;
+            int endIndex = Math.min(startIndex + 4, appointList.size());
+
+            // Ensure endIndex is within the bounds of the appointList
+            endIndex = Math.min(endIndex, appointList.size());
+
+            ObservableList<RendezVous> pageData = FXCollections.observableArrayList(appointList.subList(startIndex, endIndex));
+
+            // Set the data to the table
+            appointments.setItems(pageData);
+            appointments.refresh();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void PaginationInit() {
+        pagination.setMaxPageIndicatorCount((int) Math.ceil((double) appointList.size() / 4));
+        pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> updateTableData(newValue.intValue()));
     }
 }

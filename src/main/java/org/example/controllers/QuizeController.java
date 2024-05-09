@@ -28,8 +28,6 @@ import java.util.ResourceBundle;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
-
-
 public class QuizeController implements Initializable {
 
     private QuestionService questionService;
@@ -55,7 +53,7 @@ public class QuizeController implements Initializable {
     private List<Question> questions;
     private List<Reponse> reponses;
     private List<Reponse> allReponses;
-    private List<String> selectedAnswers; // to store selected answers for each question
+    private List<String> selectedAnswers;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -65,53 +63,65 @@ public class QuizeController implements Initializable {
         selectedAnswers = new ArrayList<>();
 
         try {
-            questions = questionService.select();
+            questions = questionService.select1();
             allReponses = reponseService.select();
-            loadQuestionAndResponses();
+            moveToNextActiveQuestion();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
-    private void loadQuestionAndResponses() {
-        if (currentQuestionIndex < questions.size()) {
+    private void moveToNextActiveQuestion() {
+        while (currentQuestionIndex < questions.size()) {
             Question currentQuestion = questions.get(currentQuestionIndex);
-            idq.setText(currentQuestion.getQuestion());
-            radioButtonGroup.getChildren().clear();
-            toggleGroup = new ToggleGroup();
+            if (currentQuestion.getActive()) {
+                loadQuestion(currentQuestion);
+                return;
+            }
+            currentQuestionIndex++;
+        }
 
-            for (Reponse response : allReponses) {
-                if (response.get$question().getId() == currentQuestion.getId()) {
-                    RadioButton radioButton = new RadioButton(response.getReponse());
-                    radioButton.setToggleGroup(toggleGroup);
-                    radioButtonGroup.getChildren().add(radioButton);
-                }
+        // If no more active questions, navigate or end the quiz
+        try {
+            recordAnswersAndNavigate();
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadQuestion(Question currentQuestion) {
+        idq.setText(currentQuestion.getQuestion());
+        radioButtonGroup.getChildren().clear();
+        toggleGroup = new ToggleGroup();
+
+        for (Reponse response : allReponses) {
+            if (response.get$question().getId() == currentQuestion.getId()) {
+                RadioButton radioButton = new RadioButton(response.getReponse());
+                radioButton.setToggleGroup(toggleGroup);
+                radioButtonGroup.getChildren().add(radioButton);
             }
         }
     }
 
     @FXML
-    private void loadNextQuestion() throws SQLException, IOException {
+    private void loadNextQuestion() {
         if (currentQuestionIndex < questions.size()) {
-            RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
-            if (selectedRadioButton == null) {
-                // Show alert if the user skips the question
-                showAlert("Please select an answer before moving to the next question!");
-                return; // Do not proceed further until the user selects an answer
-            }
+            Question currentQuestion = questions.get(currentQuestionIndex);
+//            if (currentQuestion.getActive()) {
+                RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
+                if (selectedRadioButton == null) {
+                    showAlert("Please select an answer before moving to the next question!");
+                    return;
+                }
 
-            // Proceed to load the next question
-            String selectedResponse = selectedRadioButton.getText();
-            selectedAnswers.add(selectedResponse);
+                selectedAnswers.add(selectedRadioButton.getText());
+
 
             currentQuestionIndex++;
-            loadQuestionAndResponses();
-        } else {
-            // Record answers and navigate
-            recordAnswersAndNavigate();
+            moveToNextActiveQuestion();
         }
     }
+
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Input Validation Error");
@@ -122,14 +132,14 @@ public class QuizeController implements Initializable {
 
     private void recordAnswersAndNavigate() throws SQLException, IOException {
         Formulaire formulaire = new Formulaire();
-        for (int i = 0; i < questions.size(); i++) {
+        for (int i = 0; i < selectedAnswers.size(); i++) {
             Question question = questions.get(i);
             String selectedAnswer = selectedAnswers.get(i);
             int questionId = question.getId();
             int responseId = findResponseId(questionId, selectedAnswer);
 
-            formulaireService.add1(formulaire, questionId, responseId,rv);
-            formulairejService.add1(formulaire.getId(), question.getQuestion(), selectedAnswer,rv);
+            formulaireService.add1(formulaire, questionId, responseId, rv);
+            formulairejService.add1(formulaire.getId(), question.getQuestion(), selectedAnswer, rv);
         }
         FormulaireController.rv=rv;
         Navigation.navigateTo("/fxml/Quiz/Formulaire.fxml", idq);
@@ -141,6 +151,6 @@ public class QuizeController implements Initializable {
                 return response.getId();
             }
         }
-        return -1; // Return -1 if no response found (which should not happen ideally)
+        return -1; // If no response found (shouldn't happen ideally)
     }
 }

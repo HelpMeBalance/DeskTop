@@ -80,9 +80,9 @@ public class RendezVousController implements Initializable {
             LocalDateTime selectedDateTime = localDate.atTime(15, 30);
             if (!areFieldsValid())
                 return;
-
-                rvs.add(new RendezVous(selectedDateTime, service.getValue(), false, false, psy.getValue(), org.example.utils.Session.getInstance().getUser()));
-
+          
+                RendezVous rd = new RendezVous(selectedDateTime, service.getValue(), false, false, psy.getValue(), org.example.utils.Session.getInstance().getUser());
+                QuizeController.rv=rvs.add2(rd);
                 // test MAILER
                 Properties props = new Properties();
                 props.put("mail.smtp.host", "smtp-relay.brevo.com");
@@ -109,13 +109,11 @@ public class RendezVousController implements Initializable {
                 Transport.send(message);
                 // end test
 
-                Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", psy);
-
-
-        }catch (SQLException | MessagingException e){
-            System.out.println(e.getMessage());
+                Navigation.navigateTo("/fxml/Quiz/quize.fxml", psy);
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } catch (SQLException | MessagingException e) {
+            throw new RuntimeException(e);
         }
     }
     public void initServiceAndPsy() {

@@ -4,47 +4,65 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
-<StackPane prefHeight="712.0" prefWidth="1424.0" style="-fx-background-color: #edf0f2; -fx-border-color: -light-gray-2; -fx-border-width: 0 1 0 0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.QuizeControllerAd" >
+
+<StackPane
+        prefHeight="712.0"
+        prefWidth="1424.0"
+        style="-fx-background-color: #edf0f2; -fx-border-color: lightgray; -fx-border-width: 0 1 0 0;"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="org.example.controllers.QuizeControllerAd"
+>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
+
     <children>
         <HBox prefHeight="692.0" prefWidth="1383.0" spacing="10">
+            <!-- Sidebar -->
             <fx:include source="../Reusable/AdminSidebar.fxml" />
 
-            <VBox prefHeight="700.0" prefWidth="1110.0">
-                <Pane layoutX="-2.0" prefHeight="145.0" prefWidth="1062.0" styleClass="head-background" >
-                </Pane>
+            <!-- Main Content -->
+            <VBox prefHeight="700.0" prefWidth="1110.0" spacing="10">
+                <!-- Search Field -->
+                <TextField fx:id="searchField" promptText="Search questions..." prefWidth="200" />
+
+                <!-- PieChart Container -->
+                <VBox fx:id="pieChartContainer" spacing="10">
+                    <!-- Placeholder for PieChart -->
+                </VBox>
+
+                <!-- Section for Adding Questions -->
+                <Pane layoutX="-2.0" prefHeight="145.0" prefWidth="1062.0" styleClass="head-background" />
+
                 <HBox alignment="CENTER_LEFT" spacing="10">
-
-
                     <Label text="Add Question:" style="-fx-font-weight: bold;" />
                     <TextField fx:id="questionTextArea" prefWidth="600.0" prefHeight="100.0" />
-                    <Label fx:id="errorMessage" textFill="#a80b00"/>
-
+                    <Label fx:id="errorMessage" textFill="#a80b00" />
                 </HBox>
+
                 <Button text="Add Question" onAction="#addQuestion" />
-                <children>
-                    <TableView fx:id="questionsTable" layoutX="27.0" layoutY="30.0" prefHeight="400.0" prefWidth="500.0">
-                        <columns>
-                            <TableColumn fx:id="questionColumn" prefWidth="200.0" text="Question" />
-                            <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
-                            <TableColumn fx:id="activeColumn" prefWidth="150.0" text="Active" />
-                            <TableColumn fx:id="actions" text="Actions" />
-                        </columns>
 
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                        </columnResizePolicy>
-                        <VBox.margin>
-                            <Insets />
-                        </VBox.margin>
-                    </TableView>
+                <!-- TableView and Pagination -->
+                <TableView fx:id="questionsTable" prefHeight="400.0" prefWidth="500.0">
+                    <columns>
+                        <TableColumn fx:id="questionColumn" prefWidth="200.0" text="Question" />
+                        <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
+                        <TableColumn fx:id="activeColumn" prefWidth="150.0" text="Active" />
+                        <TableColumn fx:id="actions" text="Actions" />
+                    </columns>
 
-                </children>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+
+                <Pagination fx:id="pagination" />
             </VBox>
         </HBox>
     </children>
+
+    <!-- Stylesheets -->
     <stylesheets>
         <URL value="@../../style/css/colors.css" />
         <URL value="@../../style/css/drawer.css" />

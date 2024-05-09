@@ -28,6 +28,7 @@
         </items>
     </MenuButton>
     <Button contentDisplay="CENTER" styleClass="top-menu-button" text="Contact Us" />
+    <Button fx:id="chatBot" contentDisplay="CENTER" styleClass="top-menu-button" onAction="#ChatBot" text="ChatBot" />
 
     <!-- Spacer to push the login button to the left -->
     <Region HBox.hgrow="ALWAYS" />

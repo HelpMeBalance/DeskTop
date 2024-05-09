@@ -5,46 +5,64 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.example.models.Publication;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import org.example.models.Formulairej;
 import org.example.models.Question;
 import org.example.models.Reponse;
-import org.example.models.User;
+import org.example.models.likee;
+import org.example.service.FormulairejService;
 import org.example.service.QuestionService;
 import org.example.service.ReponseService;
-import org.example.service.UserService;
+import org.example.service.likeeService;
 import org.example.utils.Navigation;
 
-import javax.imageio.IIOParam;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class QuizeControllerAd implements Initializable {
     private QuestionService questionService = new QuestionService();
+    private FormulairejService fo= new FormulairejService();
     @FXML
     private TextField questionTextArea;
+
     @FXML
     private Label errorMessage; // Add a label in your FXML to display errors
 
     private ReponseService reponseService = new ReponseService();
+
+    private likeeService li=new likeeService();
+
+    @FXML
+    private TextField searchField;
     private ArrayList<Reponse> reponseListe ;
+    private List<likee> l ;
+    @FXML
+    private Stage primaryStage;
+
+
+
     List<String> re = new ArrayList<>();
     @FXML
     private TableView<Question> questionsTable;
@@ -62,7 +80,19 @@ public class QuizeControllerAd implements Initializable {
     private TableColumn<Question, Void> actions;
 
     ObservableList<Question> questionsList;
+    @FXML
+    private VBox pieChartContainer;
+
+    private FilteredList<Question> filteredData;
     public List<Reponse> reponsess = new ArrayList<>();
+    public List<Formulairej> form = new ArrayList<>();
+    private static final int ROWS_PER_PAGE = 4;
+    @FXML
+    private Pagination pagination;
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,7 +101,25 @@ public class QuizeControllerAd implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        try {
+            PieChart pieChart = showStatisticsForfor();
+
+            // Ensure the VBox exists and add the PieChart to it
+            if (pieChartContainer != null) {
+                pieChartContainer.getChildren().add(pieChart); // Add the PieChart to the specified VBox
+            } else {
+                System.out.println("pieChartContainer is null, cannot add PieChart.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        loadUsers();
+        setupTable();
+        setupSearchFilter();
     }
+
 
     public void initQuestions() throws SQLException {
 
@@ -91,7 +139,32 @@ public class QuizeControllerAd implements Initializable {
             });
 
             activeColumn.setCellValueFactory(cellData -> {
+                try {
+                    reponsess = reponseService.select();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                re.clear();
+                for (Reponse reponse : reponsess) {
+                    if (reponse.get$question().getId() == cellData.getValue().getId()) {
+                        re.add(reponse.getReponse());
+                        // Add to answer VBox
+                    }
+                }
+                if(re.size()>1)
+                {
+                    cellData.getValue().setActive(true);
+                }
+                else  {cellData.getValue().setActive(false);}
+                System.out.println(re.size());
+
+                try {
+                    questionService.update(cellData.getValue());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 boolean active = cellData.getValue().getActive();
+
                 return new SimpleStringProperty(active ? "Active" : "Inactive");
             });
         actions.setCellFactory(param -> new TableCell<>() {
@@ -114,26 +187,24 @@ public class QuizeControllerAd implements Initializable {
             updateButton.setStyle("-fx-background-color: transparent;");
             deleteButton.setStyle("-fx-background-color: transparent;");
             viewButton.setOnAction(event -> {
-                Question question = getTableView().getItems().get(getIndex());
 
+                Question selectedQuestion = getTableView().getItems().get(getIndex());
                 try {
-                    showQuestionDetails(question);
+                    showQuestionDetails(selectedQuestion);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
             });
-
             updateButton.setOnAction(event -> {
                 Question question = getTableView().getItems().get(getIndex());
                 updateQuestion(question);
             });
-
             deleteButton.setOnAction(event -> {
                 Question question = getTableView().getItems().get(getIndex());
 
                 try {
                     showDeleteConfirmationDialog(question);
-                } catch (SQLException e) {
+                } catch (SQLException | IOException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -154,7 +225,7 @@ public class QuizeControllerAd implements Initializable {
             throw new RuntimeException(e);
         }
     }
-        private void showDeleteConfirmationDialog(Question question) throws SQLException {
+        private void showDeleteConfirmationDialog(Question question) throws SQLException, IOException {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Are you sure you want to delete the question ?");
@@ -169,6 +240,7 @@ public class QuizeControllerAd implements Initializable {
                 questionService.delete(question.getId());
                 questionsList.remove(question);
                 questionsTable.refresh();
+                Navigation.navigateTo("/fxml/Admin/Quize.fxml",questionsTable);
             }
         }
 
@@ -181,59 +253,58 @@ public class QuizeControllerAd implements Initializable {
         // Create a label for the title
         Label titleLabel = new Label("Question Details");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+        titleLabel.setFont(new Font("Arial", 16));
+
         re.clear();
         for (Reponse reponse : reponsess) {
             if (reponse.get$question().getId() == question.getId()) {
                 re.add(reponse.getReponse());
-                // Add to answer VBox
             }
         }
 
-        // Set the content text with publication details
+        // Set the content text with question details
         Label contentLabel = new Label(
-                "question : " + question.getQuestion() + "\n" +
-                        "reponse : " + re + "\n"
+                "Question: " + question.getQuestion() + "\n" +
+                        "Responses: " + re.toString() + "\n"
         );
 
-        // Create a button for validating the publication
-         Button validateButton = new Button("edt");
-        validateButton.setOnAction(event -> {
+        // Create a PieChart to show statistics
+        PieChart pieChart = showStatisticsForQuestion(question);
 
+        // Create a button for editing
+        Button validateButton = new Button("Edit");
+        validateButton.setOnAction(event -> {
             // Get the selected question
             Question selectedQuestion = question;
             ReponseContollerAd.qes=selectedQuestion;
-            // Check if a question is selected
-
-                try {
-                    // Navigate to the ReponseControllerAd and pass the selected question's ID as a parameter
-                     Navigation.navigateTo("/fxml/Admin/reponse.fxml", questionsTable);
-
-                    // Pass the question ID to the ReponseControllerAd
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            // Navigate to a different page or take appropriate action
+            try {
+                Navigation.navigateTo("/fxml/Admin/reponse.fxml", questionsTable);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             dialog.close(); // Close the dialog after validation
         });
+
         // Create an HBox to hold the button
         HBox buttonBox = new HBox(validateButton);
         buttonBox.setAlignment(Pos.CENTER);
 
+        // Add all the components to a VBox
+        VBox dialogContent = new VBox(10, titleLabel, contentLabel, pieChart, buttonBox);
+        dialogContent.setPadding(new Insets(10));
+
         // Set the content of the dialog
-        dialog.getDialogPane().setContent(new VBox(contentLabel, buttonBox));
+        dialog.getDialogPane().setContent(dialogContent);
 
-        // Set the button as the action for the dialog
+        // Add the close button
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
-        dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
-        dialog.getDialogPane().addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (!dialog.getDialogPane().getBoundsInLocal().contains(event.getX(), event.getY())) {
-                dialog.close();
-            }
-        });
 
-        // Show the dialog
+        // Show the dialog and wait for it to close
         dialog.showAndWait();
     }
+
     private void updateQuestion(Question event) {
         Question selectedQuestion = event;
 
@@ -265,6 +336,7 @@ public class QuizeControllerAd implements Initializable {
                 questionService.update(selectedQuestion);
                 // Refresh the TableView to reflect the changes
                 initQuestions();
+                Navigation.navigateTo("/fxml/Admin/Quize.fxml",questionsTable);
             } catch (SQLException e) {
                 // Handle database errors
                 e.printStackTrace();
@@ -273,6 +345,8 @@ public class QuizeControllerAd implements Initializable {
                 errorAlert.setHeaderText("Database Error");
                 errorAlert.setContentText("An error occurred while updating the question.");
                 errorAlert.showAndWait();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
     }
@@ -297,7 +371,7 @@ public class QuizeControllerAd implements Initializable {
             return; // Stop the registration process if validation fails
         }
         if (!questionText.isEmpty()) {
-            System.out.println("g,ddbdbb");
+
             try {
                 // Create a new Question object
                 Question question = new Question();
@@ -308,33 +382,170 @@ public class QuizeControllerAd implements Initializable {
 
                 // Refresh the TableView to display the new question
                 initQuestions();
+                Navigation.navigateTo("/fxml/Admin/Quize.fxml",questionsTable);
             } catch (SQLException e) {
                 e.printStackTrace();
                 // Handle database errors
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
     private boolean areFieldsValid() {
         boolean isValid = true;
         StringBuilder errors = new StringBuilder();
-
-        if (questionTextArea.getText().length()<6 || questionTextArea.getText()=="") {
+        if (questionTextArea.getText().length()<6 ) {
             errors.append("queston must be longer than 6\n");
             isValid = false;
         }
-        if ( questionTextArea.getText()=="") {
-            errors.append("queston must be filled in.\n");
+        if (questionTextArea.getText().equals("")) {
+            errors.append("question must be filled in.\n");
             isValid = false;
         }
-        if ( questionTextArea.getText().charAt(questionTextArea.getText().length()-1)!='?') {
-            errors.append("queston must end with ?.\n");
+        if (!questionTextArea.getText().endsWith("?")) {
+            errors.append("question must end with '?'.\n");
             isValid = false;
         }
-
-
-
         errorMessage.setText(errors.toString());
         return isValid;
     }
+    private void setupSearchFilter() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(user -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return user.getQuestion().toLowerCase().contains(lowerCaseFilter)
+                        ;
+            });
+            updatePagination();
+
+        });
     }
+    private Node createPage(int pageIndex) {
+        int fromIndex = pageIndex * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredData.size());
+        questionsTable.setItems(FXCollections.observableArrayList(filteredData.subList(fromIndex, toIndex)));
+        return new VBox(questionsTable); // Make sure this returns a Node
+    }
+    private void updatePagination() {
+        int totalPageCount = (int) Math.ceil(filteredData.size() / (double) ROWS_PER_PAGE);
+        pagination.setPageCount(totalPageCount);
+        pagination.setCurrentPageIndex(0); // Reset to first page
+        pagination.setPageFactory(this::createPage);
+    }
+    private void loadUsers() {
+        QuestionService userService = new QuestionService();
+        try {
+            ObservableList<Question> users = FXCollections.observableArrayList(userService.select());
+            filteredData = new FilteredList<>(users, p -> true);
+            SortedList<Question> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(questionsTable.comparatorProperty());
+            questionsTable.setItems(sortedData);
+            updatePagination();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setupTable() {
+        loadUsers(); // Now call loadUsers() after pagination initialization
+    }
+
+
+    private PieChart showStatisticsForQuestion(Question question) throws SQLException {
+        re.clear(); // Clear previous responses
+        form = fo.select(); // Fetch form data
+
+        // Create a map to count occurrences of each response
+        Map<String, Integer> responseCounts = new HashMap<>();
+
+        // Initialize the response count map and add unique responses to `re`
+        for (Reponse reponse : reponsess) {
+            if (reponse.get$question().getId() == question.getId()) {
+                String responseText = reponse.getReponse();
+                if (!re.contains(responseText)) {
+                    re.add(responseText);
+                    responseCounts.put(responseText, 0); // Initialize the count
+                }
+            }
+        }
+
+        // Count the occurrences of each response in the form data
+        int totalResponses = 0; // To calculate total count for percentage
+        for (Formulairej entry : form) {
+            String responseText = entry.getReponse();
+            if (responseCounts.containsKey(responseText)) {
+                // Increment the count for the corresponding response
+                int newCount = responseCounts.get(responseText) + 1;
+                responseCounts.put(responseText, newCount);
+                totalResponses++; // Increment the total response count
+            }
+        }
+
+        // Create PieChart data from the response counts with percentages
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+        for (Map.Entry<String, Integer> entry : responseCounts.entrySet()) {
+            String responseText = entry.getKey();
+            int count = entry.getValue();
+
+            // Calculate the percentage
+            double percentage = ((double) count / totalResponses) * 100;
+
+            // Create a label with the response text and percentage
+            String label = String.format("%s (%.1f%%)", responseText, percentage);
+
+            pieChartData.add(new PieChart.Data(label, count)); // Use the count for pie chart
+        }
+
+        // Create the pie chart
+        PieChart pieChart = new PieChart(pieChartData);
+        pieChart.setTitle("Response Distribution");
+
+        return pieChart; // Return the pie chart
+    }
+    @FXML
+    private PieChart showStatisticsForfor() throws SQLException {
+        // Clear previous PieChart data and calculate new statistics
+        List<likee> likeeList = li.getAllLikees();
+
+        int likeCount = 0;
+        int dislikeCount = 0;
+
+        for (likee le : likeeList) {
+            if (le.isLike()) {
+                likeCount++;
+            } else {
+                dislikeCount++;
+            }
+        }
+        System.out.println(likeCount);
+        double percentage1 = ((double) likeCount / likeeList.size()) * 100;
+        double percentage2 = ((double) dislikeCount / likeeList.size()) * 100;
+
+        String label = String.format("%s (%.1f%%)", "Like", percentage1);
+        String label1 = String.format("%s (%.1f%%)", "DisLike",percentage2);
+        // Create PieChart data based on the calculated statistics
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data(label, likeCount),
+                new PieChart.Data(label1, dislikeCount)
+        );
+
+        // Create the PieChart with the computed data
+        PieChart pieChart = new PieChart(pieChartData);
+        pieChart.setTitle("Like/Dislike Statistics");
+
+        // Optional: customize the PieChart's appearance
+        pieChart.setLabelsVisible(true);
+        pieChart.setClockwise(true);
+        pieChart.setStartAngle(90);
+
+        return pieChart; // Return the PieChart for further use
+    }
+
+
+
+
+}
 

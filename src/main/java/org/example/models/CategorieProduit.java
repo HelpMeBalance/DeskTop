@@ -34,6 +34,13 @@ public class CategorieProduit {
 return id;
     }
 
+    @Override
+    public String toString() {
+        return nom;
+
+
+    }
+
     public double getPrix() {
 return 0;
     }

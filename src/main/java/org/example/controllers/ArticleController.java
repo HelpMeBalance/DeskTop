@@ -8,14 +8,23 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import org.example.models.Article;
 import org.example.models.CategorieProduit;
 import org.example.service.ArticleService;
 import org.example.service.CategorieProduitService;
-
+import java.util.HashSet;
+import java.util.Set;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+import javafx.util.Callback;
+import javafx.scene.Node;
+
+
+
 
 public class ArticleController {
     @FXML
@@ -32,14 +41,49 @@ public class ArticleController {
     private TableColumn<Article, String> categorieColumn;  // Updated type
     @FXML
     private TableColumn<Article, Void> actionsColumn;
+    @FXML
+    private TextField searchField;
 
-    private ArticleService articleService = new ArticleService();
-    private CategorieProduitService categorieProduitService = new CategorieProduitService();
+    private static final int ITEMS_PER_PAGE = 4;
+    private List<Article> allArticles;
+
+    private final ArticleService articleService = new ArticleService();
+    private final CategorieProduitService categorieProduitService = new CategorieProduitService();
 
     @FXML
     public void initialize() {
+
         initializeTableColumns();
         loadArticles();
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterArticles(newValue);});
+        try {
+            allArticles = articleService.selectAll();
+        } catch (SQLException e) {
+            showAlert("Error Loading Articles", "Could not load articles from the database: " + e.getMessage(), Alert.AlertType.ERROR);
+            return;
+        }
+
+
+    }
+
+
+    private void filterArticles(String searchTerm) {
+        try {
+            // Recherche par nom
+            List<Article> articlesByNom = articleService.searchArticles(searchTerm, "nom");
+            // Recherche par description
+            List<Article> articlesByDescription = articleService.searchArticles(searchTerm, "description");
+
+            // Fusionner les deux listes sans duplications
+            Set<Article> mergedArticles = new HashSet<>(articlesByNom);
+            mergedArticles.addAll(articlesByDescription);
+
+            // Mettre à jour la TableView avec les articles filtrés
+            articlesTable.setItems(FXCollections.observableArrayList(new ArrayList<>(mergedArticles)));
+        } catch (SQLException e) {
+            showAlert("Error Loading Articles", "Could not load articles from the database: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void initializeTableColumns() {
@@ -120,14 +164,31 @@ public class ArticleController {
     private void handleAddArticle() throws SQLException {
         Dialog<Article> dialog = new Dialog<>();
         dialog.setTitle("Add New Article");
+
         dialog.setHeaderText("Enter the details of the new article.");
 
+        Button addImageButton = new Button("Add Image");
+        TextField imagePathField = new TextField();
+        imagePathField.setEditable(false);
+        addImageButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File");
+            File selectedFile = fileChooser.showOpenDialog(dialog.getOwner());
+            if (selectedFile != null) {
+                imagePathField.setText(selectedFile.getAbsolutePath());
+            }
+        });
         // Set the button types.
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        // Create the article form fields
         GridPane grid = new GridPane();
+        // Ajoutez les autres champs du formulaire à grid
+        grid.add(new Label("Image:"), 0, 5);
+        grid.add(imagePathField, 1, 5);
+        grid.add(addImageButton, 2, 5);
+
+
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
@@ -182,6 +243,10 @@ public class ArticleController {
 
         Optional<Article> result = dialog.showAndWait();
         result.ifPresent(article -> {
+            String imagePath = imagePathField.getText();
+            if (!imagePath.isEmpty()) {
+                article.setArticlePicture(imagePath);
+            }
             try {
                 articleService.add(article);
                 loadArticles();

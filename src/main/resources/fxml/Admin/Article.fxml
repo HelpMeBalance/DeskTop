@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.scene.control.Pagination?>
 
 <?import java.net.URL?>
 <StackPane prefHeight="712.0" prefWidth="1424.0" style="-fx-background-color: #edf0f2; -fx-border-color: -light-gray-2;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.ArticleController">
@@ -35,6 +36,8 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                 </TableView>
+                <Pagination fx:id="pagination" />
+
             </VBox>
         </HBox>
     </children>
