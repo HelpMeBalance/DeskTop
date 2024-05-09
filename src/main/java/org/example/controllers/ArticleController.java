@@ -4,13 +4,16 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.example.models.Article;
 import org.example.models.CategorieProduit;
 import org.example.service.ArticleService;
@@ -24,6 +27,10 @@ import java.util.Optional;
 import java.util.ArrayList;
 import javafx.util.Callback;
 import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 
 
@@ -45,6 +52,7 @@ public class ArticleController {
     private TableColumn<Article, Void> actionsColumn;
     @FXML
     private TextField searchField;
+
 
     private static final int ITEMS_PER_PAGE = 4;
     private List<Article> allArticles;
@@ -277,4 +285,38 @@ public class ArticleController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
+    @FXML
+    private void handleViewStatistics() {
+        try {
+            List<CategorieProduit> categories = categorieProduitService.selectAllCategories();
+
+            CategoryAxis xAxis = new CategoryAxis();
+            NumberAxis yAxis = new NumberAxis();
+            BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+            barChart.setTitle("Product Statistics by Category");
+            xAxis.setLabel("Category");
+            yAxis.setLabel("Number of Products");
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+            for (CategorieProduit category : categories) {
+                int count = articleService.selectByCategory(category).size();
+                series.getData().add(new XYChart.Data<>(category.toString(), count));
+            }
+
+            barChart.getData().add(series);
+
+            // Create a new stage to display the chart
+            Stage stage = new Stage();
+            stage.setTitle("Product Statistics");
+            Scene scene = new Scene(barChart, 800, 600);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (SQLException e) {
+            showAlert("Error", "Failed to load statistics: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
 }

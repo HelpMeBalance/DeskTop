@@ -21,6 +21,12 @@
                             <FontAwesomeIcon glyphName="PLUS" size="1em"/>
                         </graphic>
                     </Button>
+                    <Button text="View Statistics" onAction="#handleViewStatistics" styleClass="button">
+                        <graphic>
+                            <FontAwesomeIcon glyphName="CHART_BAR" size="1em"/>
+                        </graphic>
+                    </Button>
+
                     <TextField fx:id="searchField" promptText="Search articles..." maxWidth="200.0"/>
                 </HBox>
                 <TableView fx:id="articlesTable" VBox.vgrow="ALWAYS">
