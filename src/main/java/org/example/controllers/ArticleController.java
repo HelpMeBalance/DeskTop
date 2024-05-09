@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -94,13 +96,25 @@ public class ArticleController {
         categorieColumn.setCellValueFactory(new PropertyValueFactory<>("categorieId"));  // Assume there's a getCategorieNom() in Article that returns the name of the category
 
         actionsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
+            private final Button editButton = new Button();
+            private final Button deleteButton = new Button();
             private final HBox container = new HBox(5, editButton, deleteButton);
 
             {
+                FontAwesomeIcon editIcon = new FontAwesomeIcon();
+                editIcon.setIcon(FontAwesomeIcons.PENCIL);
+                editButton.setGraphic(editIcon);
+
+                FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
+                deleteIcon.setIcon(FontAwesomeIcons.TRASH);
+                deleteButton.setGraphic(deleteIcon);
+
+                editButton.setStyle("-fx-background-color: transparent;");
+                deleteButton.setStyle("-fx-background-color: transparent;");
+
                 editButton.setOnAction(e -> handleEditArticle(getTableRow().getItem()));
                 deleteButton.setOnAction(e -> handleDeleteArticle(getTableRow().getItem()));
+
             }
 
             @Override

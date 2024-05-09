@@ -7,10 +7,9 @@ import org.example.utils.MyDataBase;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class UserService implements IService <User>{
     private Connection connect;
@@ -418,4 +417,26 @@ public class UserService implements IService <User>{
             return null;
         }
     }
+
+    public Map<LocalDate, Integer> getDailySignupData(int year, int month) {
+        Map<LocalDate, Integer> signupData = new TreeMap<>();
+        String sql = "SELECT DATE(created_at) as signup_date, COUNT(*) as count " +
+                "FROM user " +
+                "WHERE YEAR(created_at) = ? AND MONTH(created_at) = ? " +
+                "GROUP BY signup_date";
+        try (PreparedStatement stmt = connect.prepareStatement(sql)) {
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                LocalDate date = rs.getDate("signup_date").toLocalDate();
+                int count = rs.getInt("count");
+                signupData.put(date, count);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // Handle exceptions properly
+        }
+        return signupData;
+    }
+
 }

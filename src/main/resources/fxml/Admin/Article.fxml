@@ -11,7 +11,7 @@
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
     <children>
-        <HBox spacing="10" style="-fx-background-color: #FFFFFF;">
+        <HBox spacing="10" VBox.vgrow="ALWAYS">
             <fx:include source="../Reusable/AdminSidebar.fxml" />
             <VBox style="-fx-padding: 10;" spacing="10" fillWidth="true">
                 <HBox alignment="CENTER_LEFT" spacing="10">

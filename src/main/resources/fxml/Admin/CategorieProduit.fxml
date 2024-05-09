@@ -12,8 +12,10 @@
     <children>
         <HBox spacing="10">
             <fx:include source="../Reusable/AdminSidebar.fxml"/>
-            <VBox spacing="10" style="-fx-padding: 10;" fillWidth="true">
-                <HBox alignment="CENTER_LEFT">
+            <VBox spacing="10" style="-fx-padding: 10;"  alignment="CENTER">
+                <Pane layoutX="-2.0" prefHeight="145.0" prefWidth="1062.0" >
+                </Pane>
+                <HBox alignment="CENTER">
                     <Label text="Category Management" styleClass="header-label"/>
                     <Button fx:id="addCategoryBtn" onAction="#handleAddCategory" styleClass="button">
                         <graphic>
@@ -23,10 +25,10 @@
                     <Label text="Search:"/>
                     <TextField fx:id="searchField" maxWidth="200.0"/>
                 </HBox>
-                <TableView fx:id="categoriesTable" VBox.vgrow="ALWAYS">
+                <TableView fx:id="categoriesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="746.0">
                     <columns>
                         <TableColumn fx:id="nomColumn" text="Name" prefWidth="200"/>
-                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
+                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200" />
                     </columns>
                 </TableView>
                 <Pagination fx:id="pagination"/>
