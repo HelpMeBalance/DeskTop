@@ -35,7 +35,7 @@
                                     <FontAwesomeIcon fx:id="edit" glyphName="EDIT" onMouseClicked="#handleEdit" />
                                 </children>
                             </HBox>
-                            <Button mnemonicParsing="false" text="Send Certificate" onAction="#ActovateCertifcat" />
+                            <Button fx:id="certifButton" mnemonicParsing="false" text="Send Certificate" onAction="#ActivateCertificate" />
                             <Separator prefWidth="200.0" />
                             <VBox alignment="CENTER" style="-fx-background-color: #f4fcfa;" styleClass="form-container">
                                 <children>

@@ -1,38 +1,31 @@
 package org.example.controllers;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.Rating;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
-import org.example.models.User;
 import org.example.service.ConsultationService;
 import org.example.service.RendezVousService;
-import org.example.service.UserService;
-import org.example.utils.AppointmentStringConverter;
 import org.example.utils.Navigation;
-import org.example.utils.UserStringConverter;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ConsultationDisplay implements Initializable {
     public static Consultation con;
+    @FXML
+    public Button certifButton;
     @FXML
     private Label noteLabel, recommandationLabel;
     @FXML
@@ -51,6 +44,8 @@ public class ConsultationDisplay implements Initializable {
     public void InitCon(Consultation con){
         noteLabel.setText(con.getNote());
         recommandationLabel.setText(con.isRecommandation_suivi()? "Recommend a follow-up":"Do not need a follow-up");
+        if(con.getAppointment().isCertificat())
+            certifButton.setDisable(true);
     }
 
     public void handleDelete() {
@@ -182,10 +177,11 @@ public class ConsultationDisplay implements Initializable {
         }
     }
 
-    public void ActovateCertifcat() {
+    public void ActivateCertificate() {
         con.getAppointment().setCertificat(true);
         try {
             appServ.update(con.getAppointment());
+            certifButton.setDisable(true);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

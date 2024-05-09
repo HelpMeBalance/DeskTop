@@ -15,7 +15,7 @@
    </top>
 
    <center>
-      <VBox alignment="CENTER">
+      <VBox fx:id="VBOX" alignment="CENTER">
       <Label styleClass="header-label" text="Appointment Management" />
          <Hyperlink onAction="#redirectToCreation" text="Create new appointment" />
          <Label alignment="CENTER" text="user's name and lastname" textAlignment="CENTER">

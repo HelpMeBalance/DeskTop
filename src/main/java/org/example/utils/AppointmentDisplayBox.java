@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Scale;
 import org.controlsfx.control.Rating;
+import org.example.controllers.AppointmentManagementController;
 import org.example.controllers.ConsultationDisplay;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
@@ -104,12 +105,11 @@ public class AppointmentDisplayBox {
         });
 
         //Certificat button
-        ImageView certifIcon = new ImageView(new Image("assets/bin.png"));
-        certifIcon.setFitWidth(20);
-        certifIcon.setFitHeight(20);
+        FontAwesomeIcon certif = new FontAwesomeIcon();
+        certif.setIcon(FontAwesomeIcons.FILE_PDF_ALT);
 
         // Set event handler for clicking on the delete icon
-        certifIcon.setOnMouseClicked(e -> {
+        certif.setOnMouseClicked(e -> {
             try {
                 Navigation.navigateTo("/fxml/Admin/pdf.fxml", deleteIcon);
                 pdfservice.rv = app.getId();
@@ -132,7 +132,7 @@ public class AppointmentDisplayBox {
         // Add icons to HBox
         HBox editDeleteHBox = new HBox(editIcon, deleteIcon);
         if(app.isCertificat())
-            editDeleteHBox.getChildren().add(certifIcon);
+            editDeleteHBox.getChildren().add(certif);
 
         editDeleteHBox.setAlignment(Pos.TOP_CENTER);
 
@@ -148,6 +148,11 @@ public class AppointmentDisplayBox {
                             ratingButton.setGraphic(star);
                             ratingButton.setOnAction(event -> {
                                 showRatingDialog(app,deleteIcon,"/fxml/Appointment/AppointmentDisplay.fxml");
+                                try {
+                                    Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", AppointmentManagementController.hboxNode);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             });
                             editDeleteVBox.getChildren().add(ratingButton);
                         }
@@ -221,12 +226,10 @@ public class AppointmentDisplayBox {
                     if(c.getAppointment().getId() == app.getId()){
                         c.setRating(r.getRating());
                         conServ.update(c);
-                        Navigation.navigateTo(fxml, deleteIcon);
                     }
                 }
                 dialog.close();
-                Navigation.navigateTo(fxml, node);
-            }catch (SQLException | IOException ex){
+            }catch (SQLException ex){
                 System.out.println(ex.getMessage());
             }
         });

@@ -22,7 +22,7 @@
    <center>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Thank you for your answer. Do you like questions?" textFill="#1bdc0a">
+            <Label fx:id="questionLabel" text="Thank you for your answer. Do you like questions?" textFill="#1bdc0a">
                <font>
                   <Font name="Bodoni MT" size="25.0" />
                </font>
