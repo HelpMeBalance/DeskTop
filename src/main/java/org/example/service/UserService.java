@@ -392,6 +392,7 @@ public class UserService implements IService <User>{
             // Handle exception
         }
         return null;
+    }
 
     public User getUserById(int userId) {
         // Implement logic to retrieve the user from the database using the provided userId

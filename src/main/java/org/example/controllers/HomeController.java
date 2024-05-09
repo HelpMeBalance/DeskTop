@@ -51,17 +51,17 @@ public class HomeController {
                 Random random = new Random();
                 var randomQuote = quotesArray.get(random.nextInt(quotesArray.size())).getAsJsonObject();
                 String text = randomQuote.get("text").getAsString();
-                String author = randomQuote.has("author") ? randomQuote.get("author").getAsString() : "Unknown";
+                String author = randomQuote.has("author") ? "fares" : "fares";
                 Platform.runLater(() -> {
                     Notifications.create()
                             .title("Quote of the Moment")
                             .text(text + "\n~ " + author)
-                            .hideAfter(Duration.seconds(5))
+                            .hideAfter(Duration.seconds(4))
                             .showInformation();
                 });
             }
         };
-        scheduler.scheduleAtFixedRate(notifier, 0, 5, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(notifier, 0, 25, TimeUnit.SECONDS);
     }
 
     @FXML

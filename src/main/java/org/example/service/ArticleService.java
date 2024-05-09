@@ -117,6 +117,9 @@ public class ArticleService {
             }
         }
         return null;
+    }
+
+
     public List<Article> searchArticles(String searchTerm, String searchField) throws SQLException {
         List<Article> articles = new ArrayList<>();
         String sql = "SELECT * FROM article WHERE " + searchField + " LIKE ?";        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {

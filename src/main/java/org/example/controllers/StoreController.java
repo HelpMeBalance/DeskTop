@@ -105,7 +105,7 @@ public class StoreController {
                 viewMoreButton.setStyle("-fx-font-weight: bold; -fx-text-fill: #077690;");
                 viewMoreButton.setOnAction(e -> displayArticleDetails(article));
 
-                articleBox.getChildren().addAll(imageView, titleLabel, priceLabel, descriptionLabel, addToCartButton, viewMoreButton);
+                articleBox.getChildren().addAll(imageView, titleLabel, priceLabel, addToCartButton, viewMoreButton);
                 articlesContainer.getChildren().add(articleBox);
 
             });
