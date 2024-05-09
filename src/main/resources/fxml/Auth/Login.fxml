@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.Label?>
 <BorderPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../../css/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.LoginController">
 <top>
     <fx:include source="../Reusable/Navbar.fxml" />
@@ -21,39 +20,26 @@
         <fx:include source="../Reusable/Footer.fxml" />
     </bottom>
    <center>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <VBox fx:id="imageContainer" alignment="CENTER" minWidth="300" prefWidth="400" styleClass="form-container">
-               <children>
+      <HBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" minWidth="300" prefWidth="400" styleClass="form-container">
                   <ImageView fitHeight="200" fitWidth="400" preserveRatio="true">
-                     <image>
-                        <Image url="@../../assets/login.jpg" />
-                     </image>
+                     <Image url="@../../assets/login.jpg" />
                   </ImageView>
-               </children>
             </VBox>
             <VBox alignment="CENTER" minWidth="300" prefWidth="400" spacing="15" styleClass="form-container">
-               <children>
                   <TextField fx:id="emailField" promptText="E-mail Address" styleClass="text-field" />
                   <PasswordField fx:id="passwordField" promptText="Password" styleClass="text-field" />
-                  <CheckBox fx:id="rememberMeCheckbox" styleClass="checkbox" text="Remember me" />
                   <Label fx:id="errorMessage" textFill="red" />
                   <HBox alignment="CENTER" spacing="10">
-                     <children>
                         <Button fx:id="loginButton" onAction="#handleLogin" styleClass="login-button" text="Login" />
                         <Button fx:id="forgetPasswordButton" onAction="#handleForgetPassword" styleClass="forget-password-button" text="Forget password?" />
-                     </children>
                   </HBox>
-                  <Button fx:id="googleSignInButton" styleClass="google-button" text="Sign in with Google" />
+                  <Button onAction="#handleGoogleSignIn" styleClass="google-button" text="Sign in with Google" />
                   <HBox>
-                     <children>
                         <Text text="Don't have an account?" />
-                        <Button onAction="#handleRegisterAction" text="Register" />
-                     </children>
+                        <Button onAction="#handleRegisterAction" style="-fx-background-color: transparent; -fx-text-fill: #007bff;" text="Register" />
                   </HBox>
-               </children>
             </VBox>
-         </children>
       </HBox>
    </center>
 
