@@ -32,7 +32,7 @@
       <fx:include source="../Reusable/Footer.fxml" />
    </bottom>
    <stylesheets>
-<!--      <URL value="@../../style/css/colors.css" />-->
-<!--      <URL value="@../../style/css/skeleton.css" />-->
+      <URL value="@../../style/css/colors.css" />
+      <URL value="@../../style/css/skeleton.css" />
    </stylesheets>
 </BorderPane>
