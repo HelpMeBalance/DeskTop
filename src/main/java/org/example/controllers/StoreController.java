@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,9 +11,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.example.controllers.ArticleDetailsController;
 import org.example.models.Article;
@@ -36,6 +36,8 @@ public class StoreController {
     private VBox articlesContainer;
     @FXML
     private ListView<String> categoryList;
+    @FXML
+    private ListView<Article> articlesListView;
     @FXML
     private ListView<String> recommendedArticlesList;
     @FXML
@@ -69,28 +71,30 @@ public class StoreController {
         // Load articles and categories
         loadArticles();
         loadCategories();
+
       //  loadPanierItems(); // Load cart items
 
     }
 
     private void loadArticles() {
-
         try {
             List<Article> articles = articleService.selectAll();
             articles.forEach(article -> {
-                VBox articleBox = new VBox(5);
+                VBox articleContainer = new VBox(10);
+                articleContainer.getStyleClass().add("article-container");
 
-                // Apply CSS styles directly
-                articleBox.setStyle("-fx-padding: 10px; -fx-background-color: #f0f0f0; -fx-border-color: #077690; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-border-style: solid;");
-                articleBox.setAlignment(Pos.CENTER);
+                HBox titleAndPriceBox = new HBox(10);
+                titleAndPriceBox.setAlignment(Pos.CENTER);
+
                 Label titleLabel = new Label(article.getNom());
-                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-font-family: Cambria; -fx-text-fill: black;");
+                titleLabel.getStyleClass().add("title-label");
 
-                Label priceLabel = new Label("Price: $" + article.getPrix());
+                Label priceLabel = new Label("$" + article.getPrix());
+                priceLabel.getStyleClass().add("price-label");
+                priceLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY)));
+                priceLabel.setPadding(new Insets(5));
 
-                priceLabel.setStyle("-fx-text-fill: #a9cd71;");
-
-
+                titleAndPriceBox.getChildren().addAll(titleLabel, priceLabel);
 
                 ImageView imageView = new ImageView();
                 if (article.getArticlePicture() != null && !article.getArticlePicture().isEmpty()) {
@@ -99,22 +103,37 @@ public class StoreController {
                     imageView.setFitWidth(100);
                 }
 
+                VBox.setMargin(imageView, new Insets(0, 0, 10, 0)); // Add margin below the image
+
+                HBox imageAndTextContainer = new HBox(10);
+                imageAndTextContainer.setAlignment(Pos.CENTER);
+
+                imageAndTextContainer.getChildren().addAll(imageView, titleAndPriceBox);
+
+                HBox buttonBox = new HBox(10);
+                buttonBox.setAlignment(Pos.CENTER);
+
                 Button addToCartButton = new Button("Add to Cart");
+                addToCartButton.getStyleClass().add("add-to-cart-button");
                 addToCartButton.setOnAction(e -> addToCart(article));
 
                 Button viewMoreButton = new Button("View More");
-                viewMoreButton.setStyle("-fx-background-radius: 15px; -fx-background-color: transparent; -fx-background-insets: 0, 1, 2; -fx-text-fill: grey;");
+                viewMoreButton.getStyleClass().add("view-more-button");
                 viewMoreButton.setOnAction(e -> displayArticleDetails(article));
 
-                articleBox.getChildren().addAll(imageView, titleLabel, priceLabel, addToCartButton, viewMoreButton);
-                articlesContainer.getChildren().add(articleBox);
+                buttonBox.getChildren().addAll(addToCartButton, viewMoreButton);
 
+                articleContainer.getChildren().addAll(imageAndTextContainer, buttonBox);
+                articlesContainer.getChildren().add(articleContainer);
             });
         } catch (Exception e) {
             e.printStackTrace();
             // Handle exceptions, perhaps show an alert dialog
         }
     }
+
+
+
 
     private void addToCart(Article article) {
         try {
@@ -142,14 +161,17 @@ public class StoreController {
         try {
             List<CategorieProduit> categories = categorieProduitService.selectAllCategories();
 
-            categories.forEach(categorie -> {
-                categoryList.getItems().add(categorie.getNom());
-                // Appliquer un style CSS à chaque élément de la liste des catégories
-                categoryList.setStyle("-fx-font-size: 14px; -fx-text-fill: black ; -fx-border-color: #077690; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-border-style: solid;"); // Exemple de style CSS
-            });
+            for (CategorieProduit category : categories) {
+                int articleCount = articleService.selectByCategory(category).size();
+                if (articleCount > 0) {
+                    categoryList.getItems().add(category.getNom() + " (" + articleCount + ")");
+                }
+            }
+
+            // Apply CSS style to each category list item
+            categoryList.setStyle("-fx-font-size: 14px; -fx-text-fill: black ; -fx-border-color: #fffff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-border-style: solid; -fx-background-color: #fffff;");
         } catch (Exception e) {
             e.printStackTrace();
-
         }
     }
 

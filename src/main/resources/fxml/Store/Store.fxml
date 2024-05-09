@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -11,26 +11,27 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainContainer" prefHeight="487.0" prefWidth="757.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.StoreController">
+<BorderPane fx:id="mainContainer" prefHeight="487.0" prefWidth="757.0" stylesheets="@../../css/store.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.StoreController">
     <top>
         <fx:include source="../Reusable/Navbar.fxml" />
     </top>
     <center>
 
-        <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
-            <HBox alignment="CENTER" prefHeight="307.0" prefWidth="699.0">
+        <StackPane fx:id="contentArea" style="-fx-background-color: ffff;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="307.0" prefWidth="699.0" style="-fx-background-color: ffff;">
                 <children> <!-- This will be the dynamic content area -->
                     <!-- Main content area for articles -->
-                    <ScrollPane fitToWidth="true" prefHeight="246.0" prefWidth="800.0">
+                    <ScrollPane fitToWidth="true" prefHeight="246.0" prefWidth="800.0" style="-fx-background-color: ffff;">
                         <VBox fx:id="articlesContainer" spacing="10">
                         </VBox>
+
                   <padding>
                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                   </padding>
                     </ScrollPane>
 
                     <!-- Sidebar for categories and other information -->
-                    <ScrollPane fitToWidth="true" prefHeight="307.0" prefWidth="92.0" style="-fx-background-color: #f5f5f5;">
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="255.0" prefWidth="200.0" style="-fx-background-color: ffff;" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
                         <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Categories" />
                         <ListView fx:id="categoryList" prefHeight="400.0" prefWidth="74.0" />
 
@@ -43,7 +44,7 @@
         <VBox alignment="BASELINE_RIGHT">
             <HBox>
                 <Button onAction="#handleCommanderButtonClick" text="Commander" />
-                <Button text="Show Command History" onAction="#handleShowCommandHistory" />
+                <Button onAction="#handleShowCommandHistory" text="Show Command History" />
             </HBox>
             <Label fx:id="totalPriceLabel" style="-fx-font-weight: bold;">
             <font>
@@ -52,8 +53,4 @@
             <fx:include source="../Reusable/Footer.fxml" />
         </VBox>
     </bottom>
-
-    <right>
-        <VBox fx:id="panierItemsContainer" spacing="10" />
-    </right>
 </BorderPane>
