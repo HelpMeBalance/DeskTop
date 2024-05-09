@@ -1,0 +1,41 @@
+.root {
+    -fx-font-family: 'Arial';
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+}
+
+.label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.button {
+    -fx-background-color: #5a67d8;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px 20px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.button:hover {
+    -fx-background-color: #4c51bf;
+}
+
+.text-field {
+    -fx-border-color: #cbd5e0;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.image-view {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 0);
+}
+
+.vbox {
+    -fx-background-color: #f7fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 5px;
+    -fx-padding: 20px;
+    -fx-spacing: 10;
+}

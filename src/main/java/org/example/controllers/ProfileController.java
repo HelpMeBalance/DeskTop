@@ -88,35 +88,20 @@ public class ProfileController {
     private void handleUploadPicture() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Profile Picture");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-        );
-        File file = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
-        if (file != null) {
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        File selectedFile = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
+        if (selectedFile != null) {
+            String targetDir = System.getProperty("user.dir") + "/src/main/resources/assets/uploadedprofilepicture/7_images.jpg";
             try {
-
-                String targetDir = System.getProperty("user.dir") + "/src/main/resources/assets/uploadedprofilepicture/";
-                Path targetPath = Paths.get(targetDir, file.getName());
-
-                // Ensure unique filename
-                int counter = 1;
-                while (Files.exists(targetPath)) {
-                    targetPath = Paths.get(targetDir, counter + "_" + file.getName());
-                    counter++;
-                }
-
-                Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-                String relativePath = "/assets/uploadedprofilepicture/" + targetPath.getFileName().toString();
-                user.setProfile_picture(relativePath);
-                updateImageView(relativePath);
-
-
-
+                Files.copy(selectedFile.toPath(), Paths.get(targetDir), StandardCopyOption.REPLACE_EXISTING);
+                user.setProfile_picture(targetDir);
+                profileImageView.setImage(new Image("file:" + targetDir));
             } catch (IOException e) {
-                showAlert("Error", "Failed to save profile picture.", Alert.AlertType.ERROR);
                 e.printStackTrace();
+                showAlert("Error", "Failed to upload image: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         }
+
     }
 
     private void updateImageView(String imagePath) {

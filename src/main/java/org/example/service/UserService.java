@@ -11,13 +11,29 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class UserService implements IService <User>{
-    Connection connect;
+    private Connection connect;
     public UserService()
     {
-        connect= MyDataBase.getInstance().getConnection();
+        connect = MyDataBase.getInstance().getConnection();
+    }
+
+    public static boolean emailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
+        try (Connection connection = MyDataBase.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return false;
     }
 
     @Override
@@ -27,7 +43,8 @@ public class UserService implements IService <User>{
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getEmail());
             preparedStatement.setString(2,getRolesjson(user.getRoles()));
-            preparedStatement.setString(3, new BCryptPasswordEncoder().encode(user.getPassword()));
+            String encodedPassword = user.getPassword() == null ? null : new BCryptPasswordEncoder().encode(user.getPassword());
+            preparedStatement.setString(3, encodedPassword);
             preparedStatement.setString(4, user.getFirstname());
             preparedStatement.setString(5, user.getLastname());
             preparedStatement.setString(6, user.getProfile_picture());
@@ -36,6 +53,7 @@ public class UserService implements IService <User>{
             preparedStatement.setObject(9, user.getCreated_at());
             preparedStatement.setString(10, user.getGoogle_id());
             preparedStatement.executeUpdate();
+
         }
         System.out.println("user added ");
     }
@@ -242,7 +260,7 @@ public class UserService implements IService <User>{
     }
 
 
-    private void savePasswordResetToken(PasswordResetToken passwordResetToken) {
+    public void savePasswordResetToken(PasswordResetToken passwordResetToken) {
         String sql = "INSERT INTO password_reset_token (user_id, token, expires_at) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
             preparedStatement.setInt(1, passwordResetToken.getUserId());
@@ -313,5 +331,66 @@ public class UserService implements IService <User>{
     }
 
 
+    public User findByEmail(String email) {
+        String sql = "SELECT * FROM user WHERE email = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return createUser(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return null;
+    }
 
+
+    public boolean resetPassword(String email, String newPassword) {
+        String sql = "UPDATE user SET password = ? WHERE email = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, new BCryptPasswordEncoder().encode(newPassword));
+            preparedStatement.setString(2, email);
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return false;
+    }
+
+    public void save(User user) {
+        if (user.getId() > 0) {
+            try {
+                update(user);
+            } catch (SQLException e) {
+                System.out.println("error in updating user");
+            }
+        } else {
+            try {
+                add(user);
+            } catch (SQLException e) {
+                System.out.println("error in adding user");
+            }
+        }
+    }
+
+    public User findByGoogleId(String id) {
+        String sql = "SELECT * FROM user WHERE google_id = ?";
+        try (PreparedStatement preparedStatement = connect.prepareStatement(sql)) {
+            preparedStatement.setString(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return createUser(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        return null;
+    }
 }

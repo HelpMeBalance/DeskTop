@@ -31,6 +31,9 @@ public class Session {
     }
 
     public User getUser() {
-        return user;
+        if (isLoggedIn()) {
+            return user;
+        }
+        return null;  // Return null if not logged in
     }
 }

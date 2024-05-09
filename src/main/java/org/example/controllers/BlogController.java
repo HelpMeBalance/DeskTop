@@ -806,7 +806,10 @@ public class BlogController implements Initializable {
     }
     public  void initExploreMore() throws SQLException {
         List<Publication> pubs=pS.select();
-        for(int i=0;i<3;i++)
+        // setmax between 3 and pub.size
+        int max=pubs.size();
+        if(max>3)max=3;
+        for(int i=0;i<max;i++)
         {
             exploremore.getChildren().add(createPublicationBox(pubs.get(i)));
         }
