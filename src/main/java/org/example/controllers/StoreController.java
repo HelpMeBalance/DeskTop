@@ -87,7 +87,8 @@ public class StoreController {
                 titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-font-family: Cambria; -fx-text-fill: black;");
 
                 Label priceLabel = new Label("Price: $" + article.getPrix());
-                priceLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-font-family: Arial; -fx-text-fill: red;");
+
+                priceLabel.setStyle("-fx-text-fill: #a9cd71;");
 
 
 
@@ -102,7 +103,7 @@ public class StoreController {
                 addToCartButton.setOnAction(e -> addToCart(article));
 
                 Button viewMoreButton = new Button("View More");
-                viewMoreButton.setStyle("-fx-font-weight: bold; -fx-text-fill: #077690;");
+                viewMoreButton.setStyle("-fx-background-radius: 15px; -fx-background-color: transparent; -fx-background-insets: 0, 1, 2; -fx-text-fill: grey;");
                 viewMoreButton.setOnAction(e -> displayArticleDetails(article));
 
                 articleBox.getChildren().addAll(imageView, titleLabel, priceLabel, addToCartButton, viewMoreButton);
