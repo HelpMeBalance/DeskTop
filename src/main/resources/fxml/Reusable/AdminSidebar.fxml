@@ -76,7 +76,7 @@
                         <FontAwesomeIcon glyphName="LIST_ALT" />
                     </graphic>
                 </ToggleButton>
-                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#action" selected="false" styleClass="drawer-item" text="Commandes">
+                <ToggleButton alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleCommande" selected="false" styleClass="drawer-item" text="Commandes">
                     <graphic>
                         <FontAwesomeIcon glyphName="MONEY" />
                     </graphic>

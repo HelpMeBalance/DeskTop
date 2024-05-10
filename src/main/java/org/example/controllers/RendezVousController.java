@@ -1,7 +1,6 @@
 package org.example.controllers;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -24,6 +23,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -74,9 +74,10 @@ public class RendezVousController implements Initializable {
         return isValid;
     }
 
-    public void add(ActionEvent actionEvent) {
+    public void add() {
         try{
-            LocalDate localDate = LocalDate.now(); // Example LocalDate object
+            User user = org.example.utils.Session.getInstance().getUser();
+            LocalDate localDate = date.getValue(); // Example LocalDate object
             LocalDateTime selectedDateTime = localDate.atTime(15, 30);
             if (!areFieldsValid())
                 return;
@@ -102,9 +103,11 @@ public class RendezVousController implements Initializable {
 
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("HelpMeBalance@org.com"));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("abdelbakikacem2015@gmail.com"));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(user.getEmail()));
                 message.setSubject("Appointment creation");
-                message.setText("your appointment has been created");
+                message.setText(user.getFirstname()+" "+user.getLastname()+", your appointment has been created with psychologist "+rd.getPsy().getFirstname()+" "+rd.getPsy().getLastname()+" on the "+rd.getDateR().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+
+                System.out.println(user.getEmail());
 
                 Transport.send(message);
                 // end test

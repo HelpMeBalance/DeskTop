@@ -521,11 +521,15 @@ public class QuizeControllerAd implements Initializable {
             }
         }
         System.out.println(likeCount);
+        double percentage1 = ((double) likeCount / likeeList.size()) * 100;
+        double percentage2 = ((double) dislikeCount / likeeList.size()) * 100;
 
+        String label = String.format("%s (%.1f%%)", "Like", percentage1);
+        String label1 = String.format("%s (%.1f%%)", "DisLike",percentage2);
         // Create PieChart data based on the calculated statistics
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Like", likeCount),
-                new PieChart.Data("Dislike", dislikeCount)
+                new PieChart.Data(label, likeCount),
+                new PieChart.Data(label1, dislikeCount)
         );
 
         // Create the PieChart with the computed data

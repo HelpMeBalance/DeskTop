@@ -46,7 +46,12 @@ public class AdminSidebarController {
     public void action(ActionEvent actionEvent) {
     }
 
-    public void handleDashboard(ActionEvent actionEvent) {
+    public void handleDashboard() {
+        try {
+            Navigation.navigateTo("/fxml/Admin/Dashboard.fxml", usersButton);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void handleAppointments() {
@@ -76,4 +81,8 @@ public class AdminSidebarController {
     public void handleCategoriesProduit() {
         navigate("/fxml/Admin/CategorieProduit.fxml");
     }
+    public void handleCommande() {
+        navigate("/fxml/Admin/Commande.fxml");
+    }
+
 }

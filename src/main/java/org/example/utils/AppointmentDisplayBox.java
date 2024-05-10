@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Scale;
 import org.controlsfx.control.Rating;
+import org.example.controllers.AppointmentManagementController;
 import org.example.controllers.ConsultationDisplay;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
@@ -26,6 +27,7 @@ import org.example.service.pdfservice;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class AppointmentDisplayBox {
@@ -104,12 +106,11 @@ public class AppointmentDisplayBox {
         });
 
         //Certificat button
-        ImageView certifIcon = new ImageView(new Image("assets/bin.png"));
-        certifIcon.setFitWidth(20);
-        certifIcon.setFitHeight(20);
+        FontAwesomeIcon certif = new FontAwesomeIcon();
+        certif.setIcon(FontAwesomeIcons.FILE_PDF_ALT);
 
         // Set event handler for clicking on the delete icon
-        certifIcon.setOnMouseClicked(e -> {
+        certif.setOnMouseClicked(e -> {
             try {
                 Navigation.navigateTo("/fxml/Admin/pdf.fxml", deleteIcon);
                 pdfservice.rv = app.getId();
@@ -127,12 +128,17 @@ public class AppointmentDisplayBox {
         // Set event handler for clicking on the edit icon
         editIcon.setOnMouseClicked(e -> {
             showUpdateDialog(app, vBox, "/fxml/Appointment/AppointmentDisplay.fxml");
+            try {
+                Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", AppointmentManagementController.hboxNode);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         // Add icons to HBox
         HBox editDeleteHBox = new HBox(editIcon, deleteIcon);
         if(app.isCertificat())
-            editDeleteHBox.getChildren().add(certifIcon);
+            editDeleteHBox.getChildren().add(certif);
 
         editDeleteHBox.setAlignment(Pos.TOP_CENTER);
 
@@ -148,6 +154,11 @@ public class AppointmentDisplayBox {
                             ratingButton.setGraphic(star);
                             ratingButton.setOnAction(event -> {
                                 showRatingDialog(app,deleteIcon,"/fxml/Appointment/AppointmentDisplay.fxml");
+                                try {
+                                    Navigation.navigateTo("/fxml/Appointment/AppointmentDisplay.fxml", AppointmentManagementController.hboxNode);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             });
                             editDeleteVBox.getChildren().add(ratingButton);
                         }
@@ -221,12 +232,10 @@ public class AppointmentDisplayBox {
                     if(c.getAppointment().getId() == app.getId()){
                         c.setRating(r.getRating());
                         conServ.update(c);
-                        Navigation.navigateTo(fxml, deleteIcon);
                     }
                 }
                 dialog.close();
-                Navigation.navigateTo(fxml, node);
-            }catch (SQLException | IOException ex){
+            }catch (SQLException ex){
                 System.out.println(ex.getMessage());
             }
         });
@@ -315,15 +324,12 @@ public class AppointmentDisplayBox {
                 if (!areFieldsValid())
                     return;
                 RendezVousService rs = new RendezVousService();
-                app.update(datePicker.getValue().atStartOfDay(), serviceComboBox.getValue(), app.isStatut(), app.isCertificat(), psyComboBox.getValue(), app.getPatient());
+                app.update(datePicker.getValue().atTime(15, 30), serviceComboBox.getValue(), app.isStatut(), app.isCertificat(), psyComboBox.getValue(), app.getPatient());
                 rs.update(app);
 
                 dialog.close();
-                Navigation.navigateTo(fxml, node);
             }catch (SQLException ex){
                 System.out.println(ex.getMessage());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
             }
 
         });
@@ -423,12 +429,17 @@ public class AppointmentDisplayBox {
         hBox.setPadding(new Insets(10, 10, 10, 10));
 
         // Create Label outside HBox with custom service name
+        Label patientLabel = new Label(app.getPatient().getFirstname()+" "+app.getPatient().getLastname());
+        patientLabel.setPadding(new Insets(0, 0, 10, 0));
+        patientLabel.setFont(new Font(patientLabel.getFont().getSize() * 1.3)); // 20% bigger
+
+        // Create Label outside HBox with custom service name
         Label serviceNameLabel = new Label(serviceName);
         serviceNameLabel.setPadding(new Insets(0, 0, 10, 0));
         serviceNameLabel.setFont(new Font(serviceNameLabel.getFont().getSize() * 1.3)); // 20% bigger
 
         // Add children to VBox
-        vBox.getChildren().addAll(hBox, serviceNameLabel);
+        vBox.getChildren().addAll(hBox, patientLabel, serviceNameLabel);
         return vBox;
     }
 }

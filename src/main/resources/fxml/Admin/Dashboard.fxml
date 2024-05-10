@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedAreaChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.chart.LineChart?>
+<StackPane prefHeight="505.0" prefWidth="975.0" style="-fx-background-color: #edf0f2; -fx-border-color: -light-gray-2; -fx-border-width: 0 1 0 0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AdminDashboardController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+   <HBox prefHeight="534.0" prefWidth="1047.0">
+      <children>
+          <fx:include source="../Reusable/AdminSidebar.fxml" />
+          <VBox alignment="CENTER" prefHeight="800.0" prefWidth="1110.0">
+
+          <ScrollPane prefHeight="500.0" prefWidth="1012.0" style="-fx-background-color: transparent;">
+              <VBox fx:id="body" prefHeight="502.0" prefWidth="965.0" spacing="10.0">
+                  <padding>
+                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  </padding>
+                  <GridPane fx:id="gridTiles" alignment="CENTER_LEFT" hgap="20.0" prefHeight="126.0" prefWidth="734.0" vgap="20.0">
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="0.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: -light-gray-2;">
+                          <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                          </padding>
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                          <Label alignment="CENTER" contentDisplay="GRAPHIC_ONLY" style="-fx-background-color: -info; -fx-padding: 20; -fx-background-radius: 10;" text="Label">
+                              <graphic>
+                                  <SVGPath content="M12 15.5c1.93 0 3.5-1.57 3.5-3.5S13.93 8.5 12 8.5 8.5 10.07 8.5 12s1.57 3.5 3.5 3.5zm6.5 1h-13c-1.1 0-2 .9-2 2V21h17v-2.5c0-1.1-.9-2-2-2z" style="-fx-fill: white;" />
+                              </graphic>
+                          </Label>
+                          <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                              <padding>
+                                  <Insets right="20.0" />
+                              </padding>
+                              <Text fx:id="totalUsersText" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -info;" text="39">
+                                  <styleClass>
+                                      <String fx:value="info-text" />
+                                      <String fx:value="text-36" />
+                                  </styleClass>
+                              </Text>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -aqua;" styleClass="subtitle" text="Total Users" />
+                          </VBox>
+                      </HBox>
+                      <HBox alignment="CENTER_LEFT" layoutX="199.0" layoutY="10.0" minHeight="-Infinity" minWidth="0.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: -light-gray-2;" GridPane.columnIndex="3">
+                          <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                          </padding>
+                          <Label alignment="CENTER" contentDisplay="GRAPHIC_ONLY" prefHeight="55.0" prefWidth="2.0" style="-fx-background-color: -grapefruit; -fx-padding: 20; -fx-background-radius: 10;" styleClass="buy" text="Label">
+                              <graphic>
+                                  <SVGPath content="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h11v2H3z" style="-fx-fill: white;" />
+                              </graphic>
+                          </Label>
+                          <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                              <padding>
+                                  <Insets right="20.0" />
+                              </padding>
+                              <Text fx:id="Articles" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -grapefruit;" text="10">
+                                  <styleClass>
+                                      <String fx:value="info-text" />
+                                      <String fx:value="text-36" />
+                                  </styleClass>
+                              </Text>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -grapefruit;" styleClass="subtitle" text="Articles" />
+                          </VBox>
+                      </HBox>
+                      <HBox alignment="CENTER_LEFT" layoutX="388.0" layoutY="10.0" minHeight="-Infinity" minWidth="0.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: -light-gray-2;" GridPane.columnIndex="2">
+                          <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                          </padding>
+                          <Label alignment="CENTER" contentDisplay="GRAPHIC_ONLY" minWidth="74.0" style="-fx-background-color: -amber; -fx-padding: 20; -fx-background-radius: 10;" text="Label">
+                              <graphic>
+                                  <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 15c-.29 0-.62-.06-.97-.19-1.07-.4-1.88-1.27-2.47-2.56C13.08 13.62 12.58 13 12 13s-1.07.62-1.56 1.25c-.59 1.29-1.4 2.16-2.47 2.56-.35.13-.68.19-.97.19-1.1 0-2-.9-2-2 0-1.1.9-2 2-2 .29 0 .62.06.97.19.62.24 1.13.56 1.53.97V10c0-1.1.9-2 2-2s2 .9 2 2v3.31c.4-.41.91-.73 1.53-.97.35-.13.68-.19.97-.19 1.1 0 2 .9 2 2s-.9 2-2 2z" style="-fx-fill: white;" />
+                              </graphic>
+                          </Label>
+                          <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                              <padding>
+                                  <Insets right="20.0" />
+                              </padding>
+                              <Text fx:id="Psy" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -amber;" text="1">
+                                  <styleClass>
+                                      <String fx:value="info-text" />
+                                      <String fx:value="text-36" />
+                                  </styleClass>
+                              </Text>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -amber;" styleClass="subtitle" text="Psy" />
+                          </VBox>
+                      </HBox>
+                      <HBox alignment="CENTER_LEFT" layoutX="388.0" layoutY="10.0" minHeight="-Infinity" minWidth="0.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: -light-gray-2;" GridPane.columnIndex="1">
+                          <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                          </padding>
+                          <Label alignment="CENTER" contentDisplay="GRAPHIC_ONLY" minWidth="74.0" style="-fx-background-color: -mint; -fx-padding: 20; -fx-background-radius: 10;" text="Label">
+                              <graphic>
+                                  <SVGPath content="M12 2L3 7v5c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" style="-fx-fill: white;" />
+                              </graphic>
+                          </Label>
+                          <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                              <padding>
+                                  <Insets right="20.0" />
+                              </padding>
+                              <Text fx:id="Admins" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -mint;" text="1">
+                                  <styleClass>
+                                      <String fx:value="info-text" />
+                                      <String fx:value="text-36" />
+                                  </styleClass>
+                              </Text>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: -mint;" styleClass="subtitle" text="Admins" />
+                          </VBox>
+                      </HBox>
+                  </GridPane>
+                  <!-- Line Chart for User Sign Ups -->
+                  <LineChart fx:id="userSignUpChart" title="Users Sign up this month" VBox.vgrow="ALWAYS" minHeight="200.0" style="-fx-border-color: -light-gray-2;">
+                      <xAxis>
+                          <NumberAxis label="Day of Month" forceZeroInRange="false"/>
+                      </xAxis>
+                      <yAxis>
+                          <NumberAxis label="Number of Sign-Ups"/>
+                      </yAxis>
+                  </LineChart>
+                  <GridPane fx:id="footer" hgap="10.0" vgap="10.0">
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                  </GridPane>
+              </VBox>
+          </ScrollPane>
+            </VBox>
+      </children>
+   </HBox>
+    <stylesheets>
+        <URL value="@../../style/css/colors.css" />
+        <URL value="@../../style/css/drawer.css" />
+        <URL value="@../../style/css/dash.css" />
+        <URL value="@../../style/css/skeleton.css" />
+        <URL value="@../../style/css/bootstrap.css" />
+        <URL value="@../../style/css/immersive_scroll.css" />
+        <URL value="@../../style/css/typographic.css" />
+        <URL value="@../../style/css/shapes.css" />
+    </stylesheets>
+</StackPane>

@@ -161,4 +161,22 @@ public class CategorieProduitService {
         return categories;
     }
 
+    public CategorieProduit getCategoryByName(String categoryName) throws SQLException {
+        // Implement code to retrieve category by name from your data source (e.g., database)
+        // Example SQL query:
+        String sql = "SELECT * FROM categorie_produit WHERE nom = ?";
+        try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
+            pstmt.setString(1, categoryName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new CategorieProduit(
+                            rs.getInt("id"),
+                            rs.getString("nom")
+                    );
+                }
+            }
+        }
+        return null; // Category not found
+    }
+
 }

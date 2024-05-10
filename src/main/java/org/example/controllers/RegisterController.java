@@ -1,11 +1,21 @@
 package org.example.controllers;
 
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import javafx.fxml.FXML;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
+import javafx.scene.canvas.Canvas;
+
+import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -16,6 +26,7 @@ import org.example.utils.PasswordUtil;
 import java.time.LocalDateTime;  // Import this at the top
 import java.time.format.DateTimeFormatter;  // Import this to format the datetime
 import org.example.utils.Navigation; // Import the Navigation class
+import javafx.embed.swing.SwingFXUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,8 +56,6 @@ public class RegisterController {
     private Label errorMessage; // Add a label in your FXML to display errors
 
 
-    @FXML
-    private CheckBox notARobotCheck;
 
     @FXML
     private CheckBox termsCheckBox;
@@ -56,6 +65,9 @@ public class RegisterController {
 
     @FXML
     private Hyperlink signInLink;
+    @FXML private Canvas captchaCanvas;
+    @FXML private TextField captchaField;
+    private DefaultKaptcha captchaProducer;
 
 
     /**
@@ -64,7 +76,7 @@ public class RegisterController {
      */
     @FXML
     private void initialize() {
-        // Initialize your controller here if needed
+        initializeCaptcha();
     }
 
     @FXML
@@ -83,6 +95,14 @@ public class RegisterController {
         newUser.setIs_banned(false);
         newUser.setCreated_at(LocalDateTime.now());
 
+        String enteredCaptcha = captchaField.getText();
+        String realCaptcha = (String) captchaCanvas.getUserData();
+
+        if (!enteredCaptcha.equals(realCaptcha)) {
+            showAlert("Captcha Error", "Captcha does not match.", Alert.AlertType.ERROR);
+            refreshCaptcha(); // Refresh captcha to give the user another try
+            return;
+        }
 
 
         // Use UserService to add the new user
@@ -107,6 +127,25 @@ public class RegisterController {
 
     }
 
+    private void initializeCaptcha() {
+        captchaProducer = new DefaultKaptcha();
+        Config config = new Config(new java.util.Properties());
+        config.getProperties().setProperty("kaptcha.image.width", "200");
+        config.getProperties().setProperty("kaptcha.image.height", "50");
+        config.getProperties().setProperty("kaptcha.textproducer.font.size", "42");
+        config.getProperties().setProperty("kaptcha.noise.color", "blue");
+        captchaProducer.setConfig(config);
+
+        refreshCaptcha();
+    }
+
+    private void refreshCaptcha() {
+        String text = captchaProducer.createText();
+        WritableImage image = SwingFXUtils.toFXImage(captchaProducer.createImage(text), null);
+        GraphicsContext gc = captchaCanvas.getGraphicsContext2D();
+        gc.drawImage(image, 0, 0);
+        captchaCanvas.setUserData(text);  // Storing the text in the canvas for verification
+    }
 
     @FXML
     private void handleSignIn() {
@@ -164,10 +203,6 @@ public class RegisterController {
             isValid = false;
         }
 
-        if (!notARobotCheck.isSelected()) {
-            errors.append("Please confirm that you are not a robot.\n");
-            isValid = false;
-        }
 
         // add length validation for password
         if (passwordField.getText().length() < 8) {
@@ -190,6 +225,18 @@ public class RegisterController {
         // add length validation for last name
         if (lastnameField.getText().length() < 2) {
             errors.append("Last Name must be at least 2 characters long.\n");
+            isValid = false;
+        }
+
+        // add email validation using regex
+        if (!emailField.getText().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            errors.append("Email is not valid.\n");
+            isValid = false;
+        }
+
+        // kapcha validation
+        if (captchaField.getText().trim().isEmpty()) {
+            errors.append("Captcha must be filled.\n");
             isValid = false;
         }
 

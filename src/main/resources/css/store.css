@@ -24,3 +24,33 @@
 }
 
 /* You can add more styles for buttons, labels, list views, etc. */
+.article-container {
+    -fx-padding: 10px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-border-style: solid;
+}
+
+.title-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-font-family: Arial;
+    -fx-text-fill: black;
+}
+
+.price-label {
+    -fx-font-size: 14px;
+}
+
+.add-to-cart-button, .view-more-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.add-to-cart-button:hover, .view-more-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+

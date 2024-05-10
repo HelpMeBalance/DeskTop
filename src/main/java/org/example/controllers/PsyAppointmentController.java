@@ -19,6 +19,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.example.models.Consultation;
 import org.example.models.RendezVous;
 import org.example.models.User;
@@ -70,7 +71,8 @@ public class PsyAppointmentController implements Initializable {
             }
             System.out.println(list);
             carousel = new GNCarousel<>(FXCollections.observableArrayList(list));
-            carousel.setMinSize(250,100);
+            carousel.setMinSize(250,150);
+            carousel.setTransitionDuration(new Duration(10));
             displayHBox.getChildren().add(carousel);
         }catch (SQLException e){
             System.out.println(e.getMessage());
@@ -145,6 +147,7 @@ public class PsyAppointmentController implements Initializable {
 
         // test Calendarfx start
         CalendarView calendarView = new CalendarView();
+        calendarView.getStyleClass().add("");
 //        calendarView.setOnMouseClicked(null);
         calendarView.setCreateEntryClickCount(3);
 //        calendarView.setOnMouseClicked(Event::consume);

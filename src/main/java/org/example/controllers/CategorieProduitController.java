@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcons;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -46,11 +48,22 @@ public class CategorieProduitController {
     private void setupColumns() {
         nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
         actionsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
+            private final Button editButton = new Button();
+            private final Button deleteButton = new Button();
             private final HBox container = new HBox(5, editButton, deleteButton);
 
             {
+                FontAwesomeIcon editIcon = new FontAwesomeIcon();
+
+                editIcon.setIcon(FontAwesomeIcons.PENCIL);
+                editButton.setGraphic(editIcon);
+
+                FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
+                deleteIcon.setIcon(FontAwesomeIcons.TRASH);
+                deleteButton.setGraphic(deleteIcon);
+
+                editButton.setStyle("-fx-background-color: transparent;");
+                deleteButton.setStyle("-fx-background-color: transparent;");
                 editButton.setOnAction(e -> handleEdit(getTableRow().getItem()));
                 deleteButton.setOnAction(e -> handleDelete(getTableRow().getItem()));
             }

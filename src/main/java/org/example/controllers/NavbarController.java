@@ -1,15 +1,24 @@
 package org.example.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import org.controlsfx.control.PopOver;
 import org.example.utils.Navigation; // Import the Navigation class
 import org.example.utils.Session;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class NavbarController {
+    @FXML
+    public Button chatBot;
     @FXML
     private Button loginButton;
     @FXML
@@ -145,5 +154,28 @@ public class NavbarController {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void ChatBot() {
+
+        WebView webView = new WebView();
+//        webView.setZoom(0.5);
+        webView.setContextMenuEnabled(false);
+
+        WebEngine webEngine = webView.getEngine();
+        webEngine.setJavaScriptEnabled(true);
+        webEngine.load("https://www.freeaitherapist.com/onboarding");
+        webEngine.getLoadWorker().exceptionProperty().addListener((obs, oldExc, newExc) -> {
+            if (newExc != null) {
+                newExc.printStackTrace();
+            }
+        });
+
+        PopOver popOver = new PopOver();
+        popOver.setContentNode(webView);
+
+        chatBot.setOnAction(e -> {
+            popOver.show(chatBot);
+        });
     }
 }

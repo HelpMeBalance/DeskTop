@@ -18,12 +18,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.models.User;
 import org.example.service.UserService;
-import javafx.scene.control.Pagination;
 import org.example.utils.Navigation;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -132,7 +130,7 @@ public class AdminUsersController {
         content.setPadding(new Insets(10));
 
         String userDetails = String.format(
-                "First Name: %s\n" +
+                        "First Name: %s\n" +
                         "Last Name: %s\n" +
                         "Email: %s\n" +
                         "Roles: %s\n" +
