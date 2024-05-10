@@ -62,7 +62,7 @@ public class CommandeHistoryController {
             // Handle error
         }
     }
-    public void generateCommandePDF(Commande commande, String logoPath, String filePath) {
+    public void generateCommandePDF(Commande commande, String logoPath, String signaturePath, String filePath) {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
@@ -77,9 +77,13 @@ public class CommandeHistoryController {
 
                 // Load the logo image
                 PDImageXObject logo = PDImageXObject.createFromFile(logoPath, document);
-
                 // Draw the logo at a specific position on the page
-                contentStream.drawImage(logo, 300, 550, logo.getWidth() / 2, logo.getHeight() / 2);
+                contentStream.drawImage(logo, 270, 550, logo.getWidth() / 2, logo.getHeight() / 2);
+
+                // Load the signature image
+                PDImageXObject signature = PDImageXObject.createFromFile(signaturePath, document);
+                // Draw the signature at a specific position on the page
+                contentStream.drawImage(signature, 100, 200, signature.getWidth() / 4, signature.getHeight() / 4);
 
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
@@ -125,9 +129,10 @@ public class CommandeHistoryController {
         Commande selectedCommande = commandeTable.getSelectionModel().getSelectedItem();
         if (selectedCommande != null) {
             String filePath = "C:/Users/MSI/Desktop/pdf/commande.pdf"; // Change this to your desired file path
-            String logoPath = "C:/Users/MSI/Desktop/HelpMeBalance_DesktopFinal/DeskTop/src/main/resources/assets/logo.png";
-            generateCommandePDF(selectedCommande, logoPath, filePath);
-            showAlert("PDF Generated", "Command PDF has been generated successfully at: " + filePath);
+            String logoPath = "src/main/resources/assets/logo.png";
+            String signaturePath = "src/uploads/pub_pictures/signature.png";
+            generateCommandePDF(selectedCommande, logoPath, signaturePath, filePath);
+            showAlertConfirmation("PDF Generated", "Command PDF has been generated successfully at: " + filePath);
         } else {
             showAlert("Selection Error", "Please select a commande from the table.");
         }

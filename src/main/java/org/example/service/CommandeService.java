@@ -49,8 +49,27 @@ public class CommandeService {
             // Execute the insert query
             addCommandeStatement.executeUpdate();
 
+            String username = Session.getInstance().getUser().getFirstname(); // Change to the appropriate method to get the username
+            String email = Session.getInstance().getUser().getEmail(); // Change to the appropriate method to get the email address
+            String address = commande.getAddress();
+            double totalPrice = commande.getTotalPrice();
+
+
+
+            sendOrderConfirmationEmail(username, email, address, totalPrice);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Handle email sending failure
         }
     }
+    private void sendOrderConfirmationEmail(String username, String email, String address, double totalPrice) throws MessagingException {
+        String subject = "Order Confirmation";
+        String body = "Dear " + username + ",\n\nYour order has been successfully placed!\n\n"
+                + "Total Price: $" + totalPrice + "\nDelivery Address: " + address + "\n\nThank you for shopping with us!";
+        sendEmail(email, subject, body);
+    }
+
+
     public List<Commande> getAllCommandes() throws SQLException {
         List<Commande> commandes = new ArrayList<>();
         String sql = "SELECT * FROM commande";
