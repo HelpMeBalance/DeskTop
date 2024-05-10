@@ -67,7 +67,7 @@
                             <Insets />
                         </VBox.margin>
                     </TableView>
-                    <Pagination fx:id="pagination"  />
+
 
 
                 </children>
