@@ -676,8 +676,9 @@ public class BlogController implements Initializable {
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
         Button AddPictureButton = new Button("Add Picture");
-        Label errorMessage=new Label();
-        errorMessage.setStyle("-fx-fill: red;"); // Ensuring text color is white
+        Text errorMessage=new Text();
+        errorMessage.getStyleClass().add("text-bold");
+        errorMessage.setStyle("-fx-fill: red;");
 
         Label titlepublicationLabel = new Label("Title");
         Label contentLabel = new Label("Publication");

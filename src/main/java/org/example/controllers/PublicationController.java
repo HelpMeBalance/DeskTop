@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import org.example.models.Categorie;
 import org.example.models.Publication;
@@ -398,6 +399,9 @@ public class PublicationController implements Initializable {
         Label titleLabel = new Label("Edit Publication");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
+        Text errorMessage=new Text();
+        errorMessage.getStyleClass().add("text-bold");
+        errorMessage.setStyle("-fx-fill: red;");
         try {
             String imagePath = UPLOAD_ROOT +"/"+ publication.getImage();
             File imageFile = new File(imagePath);
@@ -436,7 +440,7 @@ public class PublicationController implements Initializable {
         titleImageBox.setAlignment(Pos.CENTER);
         titleImageBox.setSpacing(10);
         VBox contentBox = new VBox();
-        contentBox.getChildren().addAll(titleImageBox,UpdatePictureButton,titlepublicationLabel,title,contentLabel,content,allowcoms,anonyme);
+        contentBox.getChildren().addAll(titleImageBox,UpdatePictureButton,errorMessage,titlepublicationLabel,title,contentLabel,content,allowcoms,anonyme);
         contentBox.setSpacing(10);
         contentBox.setAlignment(Pos.CENTER_LEFT);
         Button updateButton = new Button("Update Publication");
@@ -447,23 +451,46 @@ public class PublicationController implements Initializable {
             selectImageFile();
         });
         updateButton.setOnAction(event -> {
-            try {
-                publication.setTitre(title.getText());
-                publication.setContenu(content.getText());
-                publication.setCom_ouvert(allowcoms.isSelected());
-                if(selectedFile != null) publication.setImage(saveImageFile(selectedFile,UPLOAD_ROOT));
-                pS.update(publication);
-                publicationsList.replaceAll(pub -> {
-                    if (pub.getId() == publication.getId()) {
-                        pub=publication;
-                    }
-                    return pub;
-                });
-                Publications.refresh();
-                loadPublications(pagination.getCurrentPageIndex());
-                dialog.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            boolean isValid = true;
+            errorMessage.setText("");
+            StringBuilder errors = new StringBuilder();
+
+            if (title.getText().trim().isEmpty()) {
+                errors.append("Title must be filled.\n");
+                isValid = false;
+            }
+            else if (content.getText().trim().isEmpty()) {
+                errors.append("Content must be filled.\n");
+                isValid = false;
+            }
+            else  if (title.getText().length() < 5) {
+                errors.append("Title must be at least 5 characters long.\n");
+                isValid = false;
+            }
+            else  if (content.getText().length() < 10) {
+                errors.append("Content must be at least 10 characters long.\n");
+                isValid = false;
+            }
+            errorMessage.setText(errors.toString());
+            if(isValid) {
+                try {
+                    publication.setTitre(title.getText());
+                    publication.setContenu(content.getText());
+                    publication.setCom_ouvert(allowcoms.isSelected());
+                    if (selectedFile != null) publication.setImage(saveImageFile(selectedFile, UPLOAD_ROOT));
+                    pS.update(publication);
+                    publicationsList.replaceAll(pub -> {
+                        if (pub.getId() == publication.getId()) {
+                            pub = publication;
+                        }
+                        return pub;
+                    });
+                    Publications.refresh();
+                    loadPublications(pagination.getCurrentPageIndex());
+                    dialog.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         });
@@ -480,9 +507,9 @@ public class PublicationController implements Initializable {
         titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
         imageView = new ImageView();
         Button AddPictureButton = new Button("Add Picture");
-        Label errorMessage=new Label();
-        errorMessage.setStyle("-fx-fill: red;"); // Ensuring text color is white
-
+        Text errorMessage=new Text();
+        errorMessage.getStyleClass().add("text-bold");
+        errorMessage.setStyle("-fx-fill: red;");
         Label titlepublicationLabel = new Label("Title");
         Label contentLabel = new Label("Publication");
         TextField title = new TextField();
@@ -570,6 +597,7 @@ public class PublicationController implements Initializable {
                 String fileName = "default.png";
                 if(selectedFile != null) fileName = saveImageFile(selectedFile,UPLOAD_ROOT);
                 Publication publication=new Publication(Session.getInstance().getUser(),catS.selectWhere(categoryComboBox.getValue()),souscatS.selectWhere(subcategoryComboBox.getValue()),title.getText(),content.getText(),allowcoms.isSelected(),false,fileName);
+                publication.setValide(true);
                 pS.add(publication);
                 pagination.setCurrentPageIndex(0);
                 loadPublications(0);
