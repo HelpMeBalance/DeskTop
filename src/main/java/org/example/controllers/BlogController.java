@@ -26,10 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
-import org.example.models.Categorie;
-import org.example.models.Like;
-import org.example.models.Publication;
-import org.example.models.SousCategorie;
+import org.example.models.*;
 import org.example.service.*;
 import org.example.utils.Navigation;
 import org.example.utils.Session;
@@ -47,6 +44,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -428,7 +427,8 @@ public class BlogController implements Initializable {
 
 
         return hBox;
-    }    private static Button getButton(Publication publication) {
+    }
+    private static Button getButton(Publication publication) {
         Button button = new Button(publication.getCategorie().getNom()); // Set button text
         button.setStyle("-fx-background-radius: 15px; -fx-background-color: #a9cd71; -fx-background-insets: 0, 1, 2;");
         button.setOnMouseEntered(e -> button.setStyle("-fx-background-radius: 15px; -fx-background-color: #b4c5d3; -fx-background-insets: 0, 1, 2;"));
@@ -502,7 +502,6 @@ public class BlogController implements Initializable {
         allowcoms.setSelected(publication.getCom_ouvert());
         CheckBox anonyme = new CheckBox("Post as Anonyme");
         anonyme.setSelected(publication.getAnonyme());
-        anonyme.setDisable(true);
         VBox titleImageBox = new VBox();
         titleImageBox.getChildren().addAll(titleLabel, imageView);
         titleImageBox.setAlignment(Pos.CENTER);
@@ -806,7 +805,8 @@ public class BlogController implements Initializable {
     }
     public  void initExploreMore() throws SQLException {
         List<Publication> pubs=pS.select();
-        for(int i=0;i<3;i++)
+        int numPubs = Math.min(pubs.size(), 3); // Get the minimum between the number of pubs and 3
+        for(int i=0;i<numPubs;i++)
         {
             exploremore.getChildren().add(createPublicationBox(pubs.get(i)));
         }
@@ -1084,8 +1084,254 @@ public class BlogController implements Initializable {
         shareandtopicsBox.setSpacing(100); // Set the spacing between the related topics and share sections
 // Add the HBox to the publicationDetails VBox
         publicationDetails.getChildren().add(shareandtopicsBox);
+        int nbComs=cS.countComments(publication);
+            publicationDetails.getChildren().add(showComments(nbComs,publication.getId()));
+
+
 
     }
+    private VBox showComments(int nbComs, int id) throws SQLException {
+        HBox labelbox=new HBox(5);
+        labelbox.setAlignment(Pos.CENTER);
+        Label commentsLabel = new Label("Comments ("+nbComs+")");
+        if(nbComs==0)commentsLabel.setText("No Comments Yet");
+        commentsLabel.getStyleClass().add("text-bold"); // Apply CSS style for bold text
+        commentsLabel.setStyle("-fx-text-fill: #b4c5d3;"); // Set text color to green
+        commentsLabel.getStyleClass().add("h2");
+        List <Commentaire> commentaires = cS.select(id);
+        Publication pub=pS.selectWhere(id);
+        VBox commentsBox = new VBox();
+        commentsBox.setAlignment(Pos.CENTER);
+        final Button addButton = new Button();
+        final Button refreshButton = new Button();
+        FontAwesomeIcon addIcon = new FontAwesomeIcon();
+        addIcon.setIcon(FontAwesomeIcons.PLUS);
+        addIcon.setSize("16px"); // Set the size of the icon
+        addIcon.setFill(Color.web("#a9cd71"));
+        addButton.setGraphic(addIcon);
+        FontAwesomeIcon refreshIcon = new FontAwesomeIcon();
+        refreshIcon.setIcon(FontAwesomeIcons.REFRESH);
+        refreshIcon.setSize("16px"); // Set the size of the icon
+        refreshIcon.setFill(Color.web("#a9cd71"));
+        refreshButton.setGraphic(refreshIcon);
+        addButton.setStyle("-fx-background-color: transparent;");
+        refreshButton.setStyle("-fx-background-color: transparent;");
+        addButton.setOnAction(event -> {
+            if(Session.getInstance().getUser()==null)
+            {try {
+                Navigation.navigateTo("/fxml/Auth/Login.fxml", addButton);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }}
+            else {
+                addcomment(pub);
+            }
+        });
+        refreshButton.setOnAction(event -> {
+            try {
+                viewPublication(pub);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if(pub.getCom_ouvert() )labelbox.getChildren().addAll(commentsLabel,refreshButton,addButton);
+        else labelbox.getChildren().addAll(commentsLabel,refreshButton);
+        commentsBox.getChildren().add(labelbox);
+        for (Commentaire comment : commentaires) {
+            commentsBox.getChildren().add(createCommentBox(comment));
+        }
+        return commentsBox;
+    }
+    private HBox createCommentBox(Commentaire commentaire) {
+        HBox hBox = new HBox(20);
+        hBox.setAlignment(Pos.CENTER);
+        ImageView imageView = new ImageView();
+        try {
+            String imagePath = UPLOAD_ROOT + "/" + commentaire.getPublication().getImage();
+            File file = new File(imagePath);
+            String imageUrl = file.toURI().toURL().toExternalForm();
+            Image image = new Image(imageUrl);
+            imageView.setImage(image);
+            imageView.setFitHeight(30.0);
+            imageView.setPreserveRatio(true);
+            hBox.getChildren().add(imageView);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // VBox for text details
+        VBox textDetails = new VBox(5);
+
+        Label authorLabel = new Label(commentaire.getUser().getLastname() +" "+commentaire.getUser().getFirstname());
+        if(commentaire.getAnonyme())authorLabel.setText("Anonyme");
+        authorLabel.getStyleClass().add("text-bold");
+        authorLabel.setStyle("-fx-fill: grey;");
+        authorLabel.getStyleClass().add("h4");
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        Duration duration = Duration.between(commentaire.getDate_m(), currentTime);
+        long secondsDiff = duration.getSeconds();
+        long minutesDiff = secondsDiff / 60;
+        long hoursDiff = minutesDiff / 60;
+
+        String timeText;
+        if (secondsDiff < 60) {
+            timeText = "il y a " + secondsDiff + " seconde" + (secondsDiff > 1 ? "s" : "");
+        } else if (minutesDiff < 60) {
+            timeText = "il y a " + minutesDiff + " minute" + (minutesDiff > 1 ? "s" : "");
+        } else if (hoursDiff < 24) {
+            timeText = "il y a " + hoursDiff + " heure" + (hoursDiff > 1 ? "s" : "");
+        } else {
+            // Use the original date format
+            timeText = commentaire.getDate_m().format(DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm:ss"));
+        }
+
+        Text dateText = new Text(timeText);
+        dateText.getStyleClass().add("text-bold");
+        dateText.setStyle("-fx-fill: #a9cd71;");
+        HBox dateBox = new HBox(5);
+        dateBox.getChildren().add(dateText);
+        if(!commentaire.getDate_c().equals(commentaire.getDate_m()))
+        {
+            Text updatedText = new Text(" Updated");
+            updatedText.getStyleClass().add("text-bold");
+            updatedText.setStyle("-fx-fill: #b4c5d3;");
+            dateBox.getChildren().addAll(new Text(" "), updatedText);
+        }
+
+        Text contentText = new Text(commentaire.getContenu());
+        contentText.getStyleClass().add("text-regular");
+        contentText.setStyle("-fx-fill: grey;");
+        HBox buttonsBox = new HBox(5);
+        buttonsBox.setAlignment(Pos.CENTER_LEFT);
+        buttonsBox.getChildren().add(authorLabel);
+        if(Session.getInstance().getUser() != null)
+        {
+            if(commentaire.getUser().getId()== Session.getInstance().getUser().getId())
+            {
+                buttonsBox.getChildren().clear();
+                final Button updateButton = new Button();
+                final Button deleteButton = new Button();
+                FontAwesomeIcon updateIcon = new FontAwesomeIcon();
+                updateIcon.setIcon(FontAwesomeIcons.PENCIL);
+                updateIcon.setSize("16px"); // Set the size of the icon
+                updateIcon.setFill(Color.web("#a9cd71"));
+                updateButton.setGraphic(updateIcon);
+                FontAwesomeIcon deleteIcon = new FontAwesomeIcon();
+                deleteIcon.setIcon(FontAwesomeIcons.TRASH);
+                deleteIcon.setSize("16px"); // Set the size of the icon
+                deleteIcon.setFill(Color.web("#a9cd71"));
+                deleteButton.setGraphic(deleteIcon);
+                updateButton.setStyle("-fx-background-color: transparent;");
+                deleteButton.setStyle("-fx-background-color: transparent;");
+                updateButton.setOnAction(event -> {
+                    try {
+                        showUpdateCommentDialog(commentaire);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                deleteButton.setOnAction(event -> {
+                    try {
+                        showDeleteConfirmationDialog(commentaire);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                buttonsBox.getChildren().addAll(authorLabel,deleteButton,updateButton);
+            }
+        }
+
+        textDetails.getChildren().addAll(buttonsBox,dateBox,contentText);
+        // Add the text VBox to the HBox
+        hBox.getChildren().add(textDetails);
+        return hBox;
+    }
+
+    private void showDeleteConfirmationDialog(Commentaire comment) throws SQLException {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete the comment ?");
+        alert.setContentText(" Posted By : "+comment.getUser().getLastname()+" "+comment.getUser().getFirstname());
+        ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(confirmButton, cancelButton);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == confirmButton) {
+            cS.delete(comment.getId());
+            viewPublication(comment.getPublication());
+        }
+    }
+
+    private void showUpdateCommentDialog(Commentaire comment) throws SQLException {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("HelpMeBalance");
+        Label titleLabel = new Label("Edit Comment");
+        titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+        Label contentLabel = new Label("Content");
+        TextField content = new TextField(comment.getContenu());
+        VBox titleImageBox = new VBox();
+        titleImageBox.getChildren().addAll(titleLabel);
+        titleImageBox.setAlignment(Pos.CENTER);
+        titleImageBox.setSpacing(10);
+        VBox contentBox = new VBox();
+        contentBox.getChildren().addAll(titleImageBox,contentLabel,content);
+        contentBox.setSpacing(10);
+        contentBox.setAlignment(Pos.CENTER_LEFT);
+        Button updateButton = new Button("Update Comment");
+        HBox buttonBox = new HBox();
+        buttonBox.getChildren().add(updateButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        updateButton.setOnAction(event -> {
+            try {
+                comment.setContenu(content.getText());
+                cS.update(comment);
+                viewPublication(comment.getPublication());
+                dialog.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+        dialog.showAndWait();
+    }
+    public void addcomment(Publication pub) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("HelpMeBalance");
+        Label titleLabel = new Label("Add Comment");
+        titleLabel.setStyle("-fx-font-weight: bold; -fx-alignment: center;");
+        Label contentLabel = new Label("Content");
+        TextField content = new TextField();
+        VBox titleImageBox = new VBox();
+        titleImageBox.getChildren().addAll(titleLabel);
+        titleImageBox.setAlignment(Pos.CENTER);
+        titleImageBox.setSpacing(10);
+        VBox contentBox = new VBox();
+        contentBox.getChildren().addAll(titleImageBox,contentLabel,content);
+        contentBox.setSpacing(10);
+        contentBox.setAlignment(Pos.CENTER_LEFT);
+        Button addButton = new Button("Post Comment");
+        HBox buttonBox = new HBox();
+        buttonBox.getChildren().add(addButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        addButton.setOnAction(event -> {
+            try {
+                Commentaire commentaire =new Commentaire(Session.getInstance().getUser(),pub,content.getText(),false);
+                cS.add(commentaire);
+                viewPublication(pub);
+                dialog.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        dialog.getDialogPane().setContent(new VBox(contentBox, buttonBox));
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setVisible(false);
+        dialog.showAndWait();
+    }
+
     private void leaveviewpublication()
     {
         viewPublication.getChildren().clear();
