@@ -212,7 +212,7 @@ public class CommentaireService implements IService <Commentaire> {
     }
     public List<Commentaire> select(int pubId) throws SQLException {
         List<Commentaire> commentaires = new ArrayList<>();
-        PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire  WHERE publication_id = ? ORDER BY date_m DESC");
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT * FROM  commentaire  WHERE publication_id = ? AND valide = true ORDER BY date_m DESC");
         try (preparedStatement)
         {
             preparedStatement.setInt(1, pubId);
@@ -257,7 +257,20 @@ public class CommentaireService implements IService <Commentaire> {
     }
     public int countComments(Publication publication) throws SQLException {
         int count = 0;
-        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM commentaire WHERE publication_id = ?");
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM commentaire WHERE publication_id = ?  AND valide = true");
+        try (preparedStatement) {
+            preparedStatement.setInt(1, publication.getId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        }
+        return count;
+    }
+    public int countCommentsAdmin(Publication publication) throws SQLException {
+        int count = 0;
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT COUNT(*) FROM commentaire WHERE publication_id = ? ");
         try (preparedStatement) {
             preparedStatement.setInt(1, publication.getId());
             try (ResultSet resultSet = preparedStatement.executeQuery()) {

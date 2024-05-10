@@ -134,7 +134,7 @@ public class PublicationController implements Initializable {
         for (Publication publication : publicationsList) {
             viewsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), publication.getVues()));
             likesSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), lS.countLikes(publication)));
-            commentsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), cS.countComments(publication)));
+            commentsSeries.getData().add(new XYChart.Data<>(publication.getId() + " : " + publication.getTitre(), cS.countCommentsAdmin(publication)));
         }
         barChart.getData().clear();
         barChart.getData().addAll(viewsSeries, likesSeries, commentsSeries);
@@ -202,7 +202,7 @@ public class PublicationController implements Initializable {
             });
             comments.setCellValueFactory(cellData -> {
                 try {
-                    int count = cS.countComments(cellData.getValue());
+                    int count = cS.countCommentsAdmin(cellData.getValue());
                     String res;
                     if(cellData.getValue().getCom_ouvert())
                     {
@@ -229,7 +229,7 @@ public class PublicationController implements Initializable {
                     viewButton.setOnAction(event -> {
                         Publication publication = getTableView().getItems().get(getIndex());
                         try {
-                            if(cS.countComments(publication)==0 && !publication.getCom_ouvert())
+                            if(cS.countCommentsAdmin(publication)==0 && !publication.getCom_ouvert())
                                 showemptycommentsDialog();
                             else Navigation.navigateTo("/fxml/Admin/Commentaire.fxml", viewButton, publication.getId());
                         } catch (SQLException e) {
