@@ -91,7 +91,7 @@ public class ProfileController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         File selectedFile = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
         if (selectedFile != null) {
-            String targetDir = System.getProperty("user.dir") + "/src/main/resources/assets/uploadedprofilepicture";
+            String targetDir = "C:\\Users\\fares\\OneDrive\\Desktop\\9raya\\Web_2\\public\\uploads\\profile_pictures\\61fB-s4DPVS-AC-UF1000-1000-QL80-65eafc7543938.jpg";
             try {
                 Files.copy(selectedFile.toPath(), Paths.get(targetDir), StandardCopyOption.REPLACE_EXISTING);
                 user.setProfile_picture(targetDir);
