@@ -128,7 +128,7 @@ public class CommandeHistoryController {
     private void handleGeneratePDF() {
         Commande selectedCommande = commandeTable.getSelectionModel().getSelectedItem();
         if (selectedCommande != null) {
-            String filePath = "C:/Users/MSI/Desktop/pdf/commande.pdf"; // Change this to your desired file path
+            String filePath = "C:/Users/Kacem Adelbaki/Desktop/pdf/commande.pdf"; // Change this to your desired file path
             String logoPath = "src/main/resources/assets/logo.png";
             String signaturePath = "src/uploads/pub_pictures/signature.png";
             generateCommandePDF(selectedCommande, logoPath, signaturePath, filePath);

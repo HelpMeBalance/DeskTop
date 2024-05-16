@@ -61,7 +61,7 @@ public class HomeController {
                 });
             }
         };
-        scheduler.scheduleAtFixedRate(notifier, 0, 25, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(notifier, 0, 60, TimeUnit.SECONDS);
     }
 
     @FXML

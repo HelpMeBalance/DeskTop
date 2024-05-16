@@ -231,8 +231,8 @@ public class ReponseContollerAd implements Initializable {
 
         boolean isValid = true;
         StringBuilder errors = new StringBuilder();
-        if ( questionTextArea.getText()=="") {
-            errors.append("reponse must be filled in.\n");
+        if (questionTextArea.getText().isEmpty()) {
+            errors.append("Response must be filled in.\n");
             isValid = false;
         }
         errorMessage.setText(errors.toString());

@@ -91,7 +91,7 @@ public class ProfileController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         File selectedFile = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
         if (selectedFile != null) {
-            String targetDir = System.getProperty("user.dir") + "/src/main/resources/assets/uploadedprofilepicture/7_images.jpg";
+            String targetDir = System.getProperty("user.dir") + "/src/main/resources/assets/uploadedprofilepicture";
             try {
                 Files.copy(selectedFile.toPath(), Paths.get(targetDir), StandardCopyOption.REPLACE_EXISTING);
                 user.setProfile_picture(targetDir);
