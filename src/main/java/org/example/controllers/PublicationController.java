@@ -91,7 +91,7 @@ public class PublicationController implements Initializable {
     @FXML
     public TableColumn <Publication, Integer> likes;
     private static final int PAGE_SIZE = 4;
-    private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
+    private static final String UPLOAD_ROOT="D:\\Studies\\JavaProjects\\Web_2\\public\\uploads\\pub_pictures";
     private PublicationService pS=new PublicationService();
     private CommentaireService cS=new CommentaireService();
     private CategorieService catS=new CategorieService();

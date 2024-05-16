@@ -18,13 +18,15 @@ import org.example.models.Article;
 import org.example.models.CategorieProduit;
 import org.example.service.ArticleService;
 import org.example.service.CategorieProduitService;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
+
 import javafx.util.Callback;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
@@ -139,24 +141,90 @@ public class ArticleController {
 
     private void handleEditArticle(Article article) {
         if (article != null) {
-            TextInputDialog dialog = new TextInputDialog(article.getNom());
+            // Create dialog for editing article details
+            Dialog<Article> dialog = new Dialog<>();
             dialog.setTitle("Edit Article");
             dialog.setHeaderText("Edit the article details:");
-            dialog.setContentText("Name:");
-            Optional<String> result = dialog.showAndWait();
-            result.ifPresent(name -> {
-                if (!name.trim().isEmpty()) {
-                    article.setNom(name);
+
+            // Create text input fields for name, description, and price
+            TextField nameField = new TextField(article.getNom());
+            TextField descriptionField = new TextField(article.getDescription());
+            TextField priceField = new TextField(String.valueOf(article.getPrix()));
+
+            // Create button for selecting image
+            Button selectImageButton = new Button("Select Image");
+
+            // Create file chooser for selecting image file
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File");
+
+            // Handle action for selecting image file
+            selectImageButton.setOnAction(e -> {
+                File selectedFile = fileChooser.showOpenDialog(dialog.getOwner());
+                if (selectedFile != null) {
+                    // Generate unique name for image file
+                    String uniqueName = UUID.randomUUID().toString() + "-" + selectedFile.getName();
+                    // Copy selected image file to profile pictures directory
                     try {
-                        articleService.update(article);
-                        loadArticles();  // Refresh list after update
-                    } catch (SQLException e) {
-                        showAlert("Error", "Failed to update the article: " + e.getMessage(), Alert.AlertType.ERROR);
+                        Files.copy(selectedFile.toPath(), Paths.get("D:/Studies/JavaProjects/Web_2/public/uploads/profile_pictures/" + uniqueName), StandardCopyOption.REPLACE_EXISTING);
+                        article.setArticlePicture(uniqueName);
+                    } catch (IOException ex) {
+                        showAlert("Error", "Failed to copy image file: " + ex.getMessage(), Alert.AlertType.ERROR);
                     }
                 }
             });
+
+            // Create grid pane for organizing dialog elements
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            // Add text input fields and button to grid
+            grid.add(new Label("Name:"), 0, 0);
+            grid.add(nameField, 1, 0);
+            grid.add(new Label("Description:"), 0, 1);
+            grid.add(descriptionField, 1, 1);
+            grid.add(new Label("Price:"), 0, 2);
+            grid.add(priceField, 1, 2);
+            grid.add(new Label("Image:"), 0, 3);
+            grid.add(selectImageButton, 1, 3);
+
+            // Set dialog content to grid
+            dialog.getDialogPane().setContent(grid);
+
+            // Add buttons to dialog pane
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            // Handle OK button action
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == ButtonType.OK) {
+                    // Update article details with user input
+                    article.setNom(nameField.getText());
+                    article.setDescription(descriptionField.getText());
+                    try {
+                        double price = Double.parseDouble(priceField.getText());
+                        article.setPrix(price);
+                    } catch (NumberFormatException ex) {
+                        showAlert("Error", "Invalid price format", Alert.AlertType.ERROR);
+                        return null; // Return null to prevent dialog from closing
+                    }
+                    try {
+                        // Update article in database
+                        articleService.update(article);
+                        loadArticles();  // Refresh list after update
+                    } catch (SQLException ex) {
+                        showAlert("Error", "Failed to update the article: " + ex.getMessage(), Alert.AlertType.ERROR);
+                    }
+                }
+                return null;
+            });
+
+            // Show dialog and wait for user input
+            dialog.showAndWait();
         }
     }
+
 
     private void handleDeleteArticle(Article article) {
         if (article != null) {
@@ -200,12 +268,13 @@ public class ArticleController {
                 imagePathField.setText(selectedFile.getAbsolutePath());
             }
         });
+
         // Set the button types.
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
-        // Ajoutez les autres champs du formulaire à grid
+        // Add other fields of the form to the grid
         grid.add(new Label("Image:"), 0, 5);
         grid.add(imagePathField, 1, 5);
         grid.add(addImageButton, 2, 5);
@@ -252,9 +321,22 @@ public class ArticleController {
                         newArticle.setPrix(Double.parseDouble(prix.getText()));
                         newArticle.setQuantite(Integer.parseInt(quantite.getText()));
                         newArticle.setCategorie(categorie.getValue().getId());
+
+                        // Generate a unique file name for the image
+                        String imagePath = imagePathField.getText();
+                        if (!imagePath.isEmpty()) {
+                            File selectedFile = new File(imagePath);
+                            String imageName = UUID.randomUUID().toString() + "-" + selectedFile.getName(); // Generate unique name
+                            String destinationPath = "D:\\Studies\\JavaProjects\\Web_2\\public\\uploads\\profile_pictures\\" + imageName;
+                            File destinationFile = new File(destinationPath);
+                            Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            newArticle.setArticlePicture(imageName); // Save only the image name to the database
+                        }
                         return newArticle;
                     } catch (NumberFormatException e) {
                         showAlert("Input Error", "Please enter valid numbers for price and quantity.", Alert.AlertType.ERROR);
+                    } catch (IOException e) {
+                        showAlert("File Error", "Failed to copy image file: " + e.getMessage(), Alert.AlertType.ERROR);
                     }
                 } else {
                     showAlert("Input Error", "Please complete all fields.", Alert.AlertType.ERROR);
@@ -265,10 +347,6 @@ public class ArticleController {
 
         Optional<Article> result = dialog.showAndWait();
         result.ifPresent(article -> {
-            String imagePath = imagePathField.getText();
-            if (!imagePath.isEmpty()) {
-                article.setArticlePicture(imagePath);
-            }
             try {
                 articleService.add(article);
                 loadArticles();
@@ -277,6 +355,8 @@ public class ArticleController {
             }
         });
     }
+
+
 
 
     private void showAlert(String title, String content, Alert.AlertType type) {

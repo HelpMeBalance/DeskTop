@@ -98,7 +98,8 @@ public class StoreController {
 
                 ImageView imageView = new ImageView();
                 if (article.getArticlePicture() != null && !article.getArticlePicture().isEmpty()) {
-                    imageView.setImage(new Image("file:" + article.getArticlePicture()));
+                    String imagePath = "file:D:/Studies/JavaProjects/Web_2/public/uploads/profile_pictures/" + article.getArticlePicture(); // Path to the image
+                    imageView.setImage(new Image(imagePath));
                     imageView.setFitHeight(100);
                     imageView.setFitWidth(100);
                 }
@@ -131,6 +132,7 @@ public class StoreController {
             // Handle exceptions, perhaps show an alert dialog
         }
     }
+
 
 
 

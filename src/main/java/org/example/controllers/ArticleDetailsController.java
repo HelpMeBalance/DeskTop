@@ -34,7 +34,9 @@ public class ArticleDetailsController {
     }
     private void loadArticleImage() {
         if (article.getArticlePicture() != null && !article.getArticlePicture().isEmpty()) {
-            Image image = new Image("file:" + article.getArticlePicture());
+            String imagePath = "file:D:/Studies/JavaProjects/Web_2/public/uploads/profile_pictures/" + article.getArticlePicture(); // Path to the image
+            Image image = new Image(imagePath);
             articleImageView.setImage(image);
         }
-}}
+    }
+}

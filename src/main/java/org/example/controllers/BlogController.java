@@ -65,8 +65,7 @@ public class BlogController implements Initializable {
     @FXML
     public Hyperlink hlLast;
     public Hyperlink hyperlinktitle;
-
-    private static final String UPLOAD_ROOT="src/uploads/pub_pictures";
+    private static final String UPLOAD_ROOT="D:\\Studies\\JavaProjects\\Web_2\\public\\uploads\\pub_pictures";
     private static final int PAGE_SIZE = 4;
     public Button addpublication;
     public VBox Categories;
