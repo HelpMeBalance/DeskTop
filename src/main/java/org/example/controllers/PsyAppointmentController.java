@@ -177,7 +177,7 @@ public class PsyAppointmentController implements Initializable {
                 String title = app.getNomService() + " - " + app.getPatient().getFirstname() + " " + app.getPatient().getLastname();
                 Entry<RendezVous> newEvent = new Entry<>(title, eventInterval);
                 newEvent.setUserObject(app);
-                if(app.getNomService().equalsIgnoreCase("Individual"))
+                if(app.getNomService().equalsIgnoreCase("Individuel"))
                     Individual.addEntry(newEvent);
                 else if (app.getNomService().equalsIgnoreCase("Couple"))
                     Couple.addEntry(newEvent);

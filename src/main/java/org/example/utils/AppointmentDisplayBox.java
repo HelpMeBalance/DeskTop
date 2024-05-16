@@ -379,8 +379,14 @@ public class AppointmentDisplayBox {
         // Set event handler for clicking on the edit icon
         editIcon.setOnMouseClicked(e -> {
             try {
+                for(var c: conServ.select()){
+                    if (c.getAppointment().getId() == app.getId())
+                        ConsultationDisplay.con = c;
+                }
                 Navigation.navigateTo("/fxml/Appointment/PsyConsultationDisplay.fxml", node);
             } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         });
