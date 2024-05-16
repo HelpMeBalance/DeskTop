@@ -40,6 +40,8 @@
             </HBox>
         </StackPane>
     </center>
+    <right>    <VBox fx:id="panierItemsContainer" spacing="10" />
+    </right>
     <bottom>
         <VBox alignment="BASELINE_RIGHT">
             <HBox>
